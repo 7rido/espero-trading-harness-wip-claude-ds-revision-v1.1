@@ -159,6 +159,15 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · Alpaca limit orders and a varied paper book
+
+- **Limit orders**: `alpaca.place_order(..., order_type="limit", limit_price=...)` with GTC; the trade
+  router and CLI expose `--type limit --limit-price`. Tests updated and passing.
+- **Eight paper orders placed** (all `accepted`, market closed, fill at the next open): longs — AAPL
+  market +1, MSFT 2, NVDA 3, SPY 1 market, AAPL limit 341.32; shorts — TSLA 1, META 2 market, AMZN
+  limit 242.75. Reserved buying power 5,413 of 400,000; cash untouched until fills.
+- **Paper only**: `paper-api.alpaca.markets`, live host absent from the module.
+
 ### 2026-10-30 · one trade command across the three paper venues
 
 - **`espero2/trade.py` + `cli trade`**: `--venue alpaca|coinbase|hyperliquid`, `--symbol`, `--side`,

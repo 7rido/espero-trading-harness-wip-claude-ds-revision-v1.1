@@ -134,7 +134,8 @@ def _cmd_trade(args: argparse.Namespace) -> int:
     from . import trade
     try:
         out = trade.place(args.venue, args.symbol, args.side, qty=args.qty,
-                          notional=args.notional, confirm=args.confirm)
+                          notional=args.notional, order_type=args.type,
+                          limit_price=args.limit_price, confirm=args.confirm)
     except (trade.Refused, trade.alpaca.Refused, trade.cb.Refused, trade.hl_signed.Refused) as exc:
         print(f"refused: {exc}", file=sys.stderr)
         return 2
@@ -399,6 +400,8 @@ def main(argv: list[str] | None = None) -> int:
     t.add_argument("--side", choices=["buy", "sell"], required=True)
     t.add_argument("--qty", type=float, default=None)
     t.add_argument("--notional", type=float, default=None)
+    t.add_argument("--type", choices=["market", "limit"], default="market")
+    t.add_argument("--limit-price", type=float, default=None)
     t.add_argument("--confirm", action="store_true")
     t.set_defaults(func=_cmd_trade)
 

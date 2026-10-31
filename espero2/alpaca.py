@@ -90,10 +90,16 @@ def crypto_bars(symbols: str | list[str], timeframe: str = "1Day", start: str | 
 
 
 def place_order(symbol: str, qty: float, side: str, order_type: str = "market",
-                confirm: bool = False) -> dict:
+                limit_price: float | None = None, confirm: bool = False) -> dict:
     """Paper only, and only with an explicit confirm. There is no live path in this module."""
     if not confirm:
         raise Refused("pass confirm=True (--confirm-paper) to send a paper order")
+    if order_type not in ("market", "limit"):
+        raise Refused("order type is market or limit")
+    if order_type == "limit" and limit_price is None:
+        raise Refused("a limit order needs a price")
     payload = {"symbol": symbol, "qty": str(qty), "side": side.lower(),
-               "type": order_type, "time_in_force": "day"}
+               "type": order_type, "time_in_force": "day" if order_type == "market" else "gtc"}
+    if limit_price is not None:
+        payload["limit_price"] = str(limit_price)
     return _call(PAPER, "/v2/orders", method="POST", payload=payload)

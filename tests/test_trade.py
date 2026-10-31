@@ -29,6 +29,7 @@ class TestTradeRouter(unittest.TestCase):
     def test_routing_passes_the_right_arguments(self):
         with patch.object(trade.alpaca, "place_order", return_value={"id": "x"}) as m:
             out = trade.place("alpaca", "AAPL", "buy", qty=3, confirm=True)
-        m.assert_called_once_with("AAPL", 3, "buy", confirm=True)
+        m.assert_called_once_with("AAPL", 3, "buy", order_type="market", limit_price=None,
+                                 confirm=True)
         self.assertEqual(out["venue"], "alpaca")
         self.assertEqual(out["mode"], "paper")

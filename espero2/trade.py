@@ -25,7 +25,8 @@ MODES = {"alpaca": "paper", "coinbase": "sandbox (mock)", "hyperliquid": "testne
 
 
 def place(venue: str, symbol: str, side: str, *, qty: float | None = None,
-          notional: float | None = None, confirm: bool = False) -> dict:
+          notional: float | None = None, order_type: str = "market",
+          limit_price: float | None = None, confirm: bool = False) -> dict:
     """Route one order to a paper venue. Returns the adapter's response with a unified header."""
     venue = venue.lower()
     if venue not in VENUES:
@@ -37,9 +38,10 @@ def place(venue: str, symbol: str, side: str, *, qty: float | None = None,
     if venue == "alpaca":
         if qty is None:
             raise Refused("alpaca orders are sized in shares/units: pass --qty")
-        out = alpaca.place_order(symbol, qty, side, confirm=confirm)
+        out = alpaca.place_order(symbol, qty, side, order_type=order_type,
+                                 limit_price=limit_price, confirm=confirm)
         return {"venue": venue, "mode": MODES[venue], "symbol": symbol, "side": side,
-                "qty": qty, "response": out}
+                "qty": qty, "type": order_type, "limit_price": limit_price, "response": out}
 
     if venue == "coinbase":
         if notional is None:
