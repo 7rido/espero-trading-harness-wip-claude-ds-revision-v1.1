@@ -159,6 +159,17 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · live signal check (proxy) between feeds
+
+- **`research/live_signal.py`**: evaluates E1's conditions on live proxies — Coinbase 5m candles for the
+  down-break/volume-z/burst test, OKX liquidations for the forced share — so "is there a signal now?"
+  is answerable between the daily feeds. Labels every condition pass/fail.
+- **Today (2026-10-31)**: BTC **+28.4 bp above** its 48-bar low, vol z **−0.28**, burst +1.3 bp → **no
+  down-break**; flow is **$34.2M of short liquidations vs $0 long in 6 h** (the mirror of E1's rule).
+  SOL +46.1 bp above the low, vol z −2.50 → no down-break either.
+- **Why the real rule still waits**: E1 uses Binance 5m bars and the daily aggr feed, which land after
+  the UTC close (07:45 sync); tags additionally need the prior day's terciles.
+
 ### 2026-10-31 · hardening: selection cost, E1 power, maker fills
 
 - **`research/selection_cost.py`** (+ `trials.csv`): exact two-sided tails, Monte-Carlo null maximum,
