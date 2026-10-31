@@ -159,6 +159,17 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · data inventory, generated from the database
+
+- **`research/inventory.py`** lists every substrate table with rows, real time span and key columns;
+  writes `research/DATA_INVENTORY.md`.
+- **16 tables**: bars_daily 82,774 (2020 → 2026-03), bars 128,959 (5m, 2021 → 2025-06), rv, funding
+  108,374, funding_multi 3,818 (2025-07 → 2026-10), metrics 105,120, tardis_derivative 4,415,916,
+  tardis_liquidations 44,353, book_ticker 45.5M (one day), trades 3.3M (one day), obi 4,320,
+  tardis_book 1,440, premium 13,675, depth 1.73M, liquidation_multi 100.
+- **Known data-quality issues surfaced**: `depth.day` is encoded as year-1 dates (parsing bug in the
+  depth ingest), and `liquidation_multi` collapses fills sharing ts/price/qty (PK too coarse).
+
 ### 2026-10-31 · Tardis.dev data: funding, OI and liquidations for two years
 
 - **What it is**: Tardis.dev publishes normalized historical exchange data. Its CSV datasets are free
