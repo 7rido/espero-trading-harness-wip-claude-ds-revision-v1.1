@@ -59,6 +59,8 @@ class TestAlpacaCard(unittest.TestCase):
         self.assertIn("BTCUSD", html)
         self.assertIn("AAPL", html)
         self.assertIn("394587", html)
+        self.assertIn("LONG", html)          # direction is explicit
+        self.assertIn("<th>direction</th>", html)
 
     def test_unavailable_is_a_sentence_not_a_crash(self):
         from espero2.dashboard import _alpaca_card

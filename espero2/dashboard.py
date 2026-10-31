@@ -143,27 +143,44 @@ def _alpaca_card(st: dict) -> str:
     if not st:
         return "<section class=\"card\"><h1>alpaca</h1><p class=muted>unavailable</p></section>"
     a = st.get("account", {})
+
+    def direction(p: dict) -> tuple[str, str]:
+        side = str(p.get("side") or "").lower()
+        if side not in ("long", "short"):
+            side = "long" if float(p.get("qty") or 0) >= 0 else "short"
+        return side.upper(), ("up" if side == "long" else "down")
+
     pos = "".join(
-        f"<tr><td>{html.escape(str(p.get('symbol')))}</td><td>{html.escape(str(p.get('qty')))}</td>"
+        f"<tr><td>{html.escape(str(p.get('symbol')))}</td>"
+        f"<td class=\"{cls}\"><b>{side}</b></td>"
+        f"<td>{html.escape(str(p.get('qty')))}</td>"
         f"<td>${html.escape(str(p.get('market_value')))}</td>"
         f"<td class=\"{'up' if float(p.get('unrealized_pl') or 0) >= 0 else 'down'}\">"
         f"{html.escape(str(p.get('unrealized_pl')))}</td></tr>"
-        for p in st.get("positions", []))
+        for p in st.get("positions", []) for side, cls in [direction(p)])
+
     orders = "".join(
-        f"<tr><td>{html.escape(str(o.get('symbol')))}</td><td>{html.escape(str(o.get('side')))}</td>"
+        f"<tr><td>{html.escape(str(o.get('symbol')))}</td>"
+        f"<td class=\"{'down' if str(o.get('side')).lower() == 'sell' else 'up'}\">"
+        f"<b>{html.escape(str(o.get('side')).upper())}</b></td>"
         f"<td>{html.escape(str(o.get('qty')))}</td><td>{html.escape(str(o.get('type')))}</td>"
         f"<td>{html.escape(str(o.get('status')))}</td></tr>"
         for o in st.get("orders", []))
+
     return f"""
     <section class="card"><h1 style="margin-bottom:8px">alpaca · paper</h1>
-      <table>
+      <table><thead><tr><th>metric</th><th>value</th></tr></thead><tbody>
         <tr><td>cash</td><td>${html.escape(str(a.get('cash')))}</td></tr>
         <tr><td>buying power</td><td>${html.escape(str(a.get('buying_power')))}</td></tr>
         <tr><td>portfolio value</td><td>${html.escape(str(a.get('portfolio_value')))}</td></tr>
         <tr><td>status</td><td>{html.escape(str(a.get('status')))}</td></tr>
-      </table>
-      <h2>positions</h2><table>{pos or '<tr><td class=muted>none</td></tr>'}</table>
-      <h2>open orders</h2><table>{orders or '<tr><td class=muted>none</td></tr>'}</table>
+      </tbody></table>
+      <h2>positions</h2>
+      <table><thead><tr><th>symbol</th><th>direction</th><th>qty</th><th>value</th><th>P&amp;L</th></tr></thead>
+      <tbody>{pos or '<tr><td colspan=5 class=muted>flat</td></tr>'}</tbody></table>
+      <h2>open orders</h2>
+      <table><thead><tr><th>symbol</th><th>side</th><th>qty</th><th>type</th><th>status</th></tr></thead>
+      <tbody>{orders or '<tr><td colspan=5 class=muted>none</td></tr>'}</tbody></table>
     </section>"""
 
 
@@ -209,6 +226,7 @@ def render(store: Store, out: Path, *, address: str | None = None,
     e1 = rs.get("e1", {})
     counts = ", ".join(f"{k} {v}" for k, v in sorted(rs.get("ledger", {}).get("counts", {}).items()))
     research_rows = f"""
+      <thead><tr><th>research</th><th>value</th></tr></thead>
       <tr><td>E1 window</td><td>{html.escape(str(e1.get('window')))}</td></tr>
       <tr><td>E1 state</td><td>{html.escape(str(e1.get('window_state')))}</td></tr>
       <tr><td>days recorded</td><td>{html.escape(str(e1.get('days_with_events')))}</td></tr>

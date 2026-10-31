@@ -159,6 +159,16 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · dashboard fix: direction, headers, no bare tables
+
+- **Positions show direction explicitly** — a dedicated `direction` column renders **LONG** or
+  **SHORT** (green/red), derived from Alpaca's `side` and falling back to the sign of quantity.
+- **Every table has a header row**: account metrics, positions (symbol/direction/qty/value/P&L), open
+  orders (symbol/side/qty/type/status), research state (research/value).
+- **Empty states** say `flat` / `none` with the right colspan instead of an unstyled orphan row.
+- **Verified on the live render**: BTCUSD and ETHUSD show LONG; AAPL/AMZN/META/TSLA orders show
+  BUY/SELL with headers.
+
 ### 2026-10-30 · dashboard shows the Alpaca paper account
 
 - **New card**: cash, buying power, portfolio value, status; positions with qty, market value and
