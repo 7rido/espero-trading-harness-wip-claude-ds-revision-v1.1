@@ -159,6 +159,21 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · deep cross-sectional momentum (#2/#7 rev 2) — sealed, FAIL on holdout
+
+- **Sealed** `research/PREREGISTRATION_XS_MOMENTUM.md` (**95005ac**) before any 2021-2023 price; universe
+  frozen from **1,051 symbols ever listed** (144 with 12+ months in 2021-2022, top 50 by design volume,
+  deduped by base asset to 47 — **53ffbfc**). LUNAUSDT is in it and exits at its last print, so the
+  survivorship test passes by construction.
+- **Design 2021-2022**: +101.4%/yr net (CI +15.8…+194.8), NW t 2.23, Sharpe 1.24; variants +57.5 /
+  +94.2; sign-flip placebo -108.9%/yr.
+- **Holdout 2023**: **+27.8%/yr (CI -36.4…+92.5), t 0.75 — P1 fails**; variants -15.1 / +72.4;
+  sign-flip placebo -34.8%/yr, random selection -14.8%/yr.
+- **P3 placebo passes** in both windows: the pipeline discriminates; the effect is regime-sized.
+- **P2 capacity not computed** — registered, not implemented, disclosed as a gap; no `aggTrades`
+  check and no DuckDB re-implementation either.
+- **Ledger row `R4`**; result `research/RESULTS_2026-10-30-xs-momentum.md`.
+
 ### 2026-10-30 · erratum: the carry P2 ratio used the wrong denominator
 
 - **Found by testing the "fix"**: the intercept formulation does not identify alpha (t = -734: basis

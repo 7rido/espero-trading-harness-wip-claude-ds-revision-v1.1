@@ -1,0 +1,59 @@
+{
+ "design": {
+  "label": "2021-2022 (design)",
+  "weeks": 106,
+  "ann_net_pct": 101.44212018940979,
+  "ci95_pct": [
+   15.756429176642492,
+   194.84193122227362
+  ],
+  "nw_t": 2.228649216237269,
+  "sharpe": 1.2406686826302507,
+  "variants": {
+   "registered_30d_7d": {
+    "ann_pct": 101.44212018940979,
+    "sharpe": 1.2406686826302507
+   },
+   "lookback_7d": {
+    "ann_pct": 57.49547948796435
+   },
+   "hold_14d": {
+    "ann_pct": 94.20278627744536
+   }
+  },
+  "deflated_sharpe_p": 0.9554661518857931,
+  "placebo_signflip_ann_pct": -108.85122471172191,
+  "placebo_shuffle_ann_pct": 19.80165628421645,
+  "autocorr": -0.19786776683737697,
+  "half_life_weeks": NaN
+ },
+ "holdout": {
+  "label": "2023 (holdout)",
+  "weeks": 53,
+  "ann_net_pct": 27.8445614242873,
+  "ci95_pct": [
+   -36.38866938468496,
+   92.48731229267831
+  ],
+  "nw_t": 0.7482044852150237,
+  "sharpe": 0.8490329731183942,
+  "variants": {
+   "registered_30d_7d": {
+    "ann_pct": 27.8445614242873,
+    "sharpe": 0.8490329731183942
+   },
+   "lookback_7d": {
+    "ann_pct": -15.122155512230737
+   },
+   "hold_14d": {
+    "ann_pct": 72.40556291415167
+   }
+  },
+  "deflated_sharpe_p": 0.7828237394199613,
+  "placebo_signflip_ann_pct": -34.756091822610145,
+  "placebo_shuffle_ann_pct": -14.784764309996163,
+  "autocorr": -0.02203361736256944,
+  "half_life_weeks": NaN
+ },
+ "seal": "95005ac"
+}
