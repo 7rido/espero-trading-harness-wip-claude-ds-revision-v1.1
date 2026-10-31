@@ -159,6 +159,19 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · signal provenance and a research-state card
+
+- **Per-signal metadata** (from the article's audit-trail idea): the `signals` table now carries
+  `prereg_id`, `model_version`, `inputs_hash`, `gate_state`; `Store.signal()` takes them as keyword
+  arguments; old journals migrate in place (verified on a pre-existing schema).
+- **Stamped at source**: `paper.tick` writes the ledger row id and status (`P1`, `retired`), the model
+  version (`sma20/50`) and a 16-hex SHA-256 of the last 60 closes used, so every signal is
+  reproducible from its inputs.
+- **Dashboard research card**: E1 window, state, days recorded, events, ledger status counts and the
+  number of `holds` (currently 0) — the thing the project is actually waiting on, visible on the page.
+- **Tests**: 3 new (`tests/test_meta.py`: provenance round-trip, old-journal migration, research state),
+  dashboard smoke-tested. Suite: 102.
+
 ### 2026-10-30 · RP3: cost-aware residual pairs — zero selected, the edge was never there
 
 - **Sealed** `PREREGISTRATION_RESIDUAL_PAIRS_COST.md` (`9942469`): RP2's fixed half-life floor replaced

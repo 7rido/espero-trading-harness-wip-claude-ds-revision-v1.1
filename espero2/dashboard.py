@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import html
+import json
 import time
 from pathlib import Path
 
@@ -97,6 +98,34 @@ def _orders(store: Store, limit: int = 20) -> list[tuple]:
     ).fetchall()
 
 
+RESEARCH = Path(__file__).resolve().parents[1] / "research"
+
+
+def research_state(root: Path | None = None) -> dict:
+    """What the project is waiting on: E1's window and the ledger's gate counts."""
+    root = Path(root) if root else RESEARCH
+    state: dict = {"e1": {}, "ledger": {}}
+    p = root / "e1_status.json"
+    if p.exists():
+        try:
+            e1 = json.loads(p.read_text())
+            state["e1"] = {k: e1.get(k) for k in
+                           ("window", "window_state", "events", "days_with_events",
+                            "forced_down_breaks", "complete_holds")}
+        except ValueError:
+            state["e1"] = {"error": "unreadable"}
+    try:
+        rows = ledger.load().values()
+        counts: dict[str, int] = {}
+        for r in rows:
+            counts[r.status] = counts.get(r.status, 0) + 1
+        state["ledger"] = {"counts": counts, "holds": counts.get("holds", 0),
+                           "strategies": {r.strategy: r.status for r in rows}}
+    except Exception:                              # noqa: BLE001 - dashboard must never crash on state
+        state["ledger"] = {}
+    return state
+
+
 def render(store: Store, out: Path, *, address: str | None = None,
            account_state: dict | None = None) -> Path:
     h = store.health()
@@ -134,6 +163,17 @@ def render(store: Store, out: Path, *, address: str | None = None,
         f"<td>{f:.4f}</td><td class=muted>{html.escape(n or '')}</td></tr>"
         for t, c, s, q, p, f, n in _orders(store))
 
+    rs = research_state()
+    e1 = rs.get("e1", {})
+    counts = ", ".join(f"{k} {v}" for k, v in sorted(rs.get("ledger", {}).get("counts", {}).items()))
+    research_rows = f"""
+      <tr><td>E1 window</td><td>{html.escape(str(e1.get('window')))}</td></tr>
+      <tr><td>E1 state</td><td>{html.escape(str(e1.get('window_state')))}</td></tr>
+      <tr><td>days recorded</td><td>{html.escape(str(e1.get('days_with_events')))}</td></tr>
+      <tr><td>events</td><td>{html.escape(str(e1.get('events')))}</td></tr>
+      <tr><td>ledger</td><td>{html.escape(counts or 'none')}</td></tr>
+      <tr><td>holds</td><td>{html.escape(str(rs.get('ledger', {}).get('holds', 0)))}</td></tr>
+    """
     led = "".join(f"<tr><td>{html.escape(r.id)}</td><td>{html.escape(r.strategy)}</td>"
                   f"<td>{html.escape(r.status)}</td><td>{html.escape(r.estimator_matches_claim)}</td>"
                   f"<td>{html.escape(r.economic_bar)}</td><td class=muted>{html.escape(r.note)}</td></tr>"
@@ -157,7 +197,10 @@ def render(store: Store, out: Path, *, address: str | None = None,
 <section class="card"><h1 style="margin-bottom:8px">orders</h1>
 <table><thead><tr><th>time</th><th>coin</th><th>side</th><th>qty</th><th>px</th><th>fee</th><th>note</th></tr></thead>
 <tbody>{rows or '<tr><td colspan=7 class=muted>none yet</td></tr>'}</tbody></table></section>
-<section class="card"><h1 style="margin-bottom:8px">strategy ledger</h1>
+<section class="card"><h1 style="margin-bottom:8px">research state</h1>
+    <table>{research_rows}</table>
+    </section>
+    <section class="card"><h1 style="margin-bottom:8px">strategy ledger</h1>
 <table><thead><tr><th>id</th><th>strategy</th><th>status</th><th>statistic</th><th>cost bar</th><th>note</th></tr></thead>
 <tbody>{led}</tbody></table></section>
 </main></body></html>"""

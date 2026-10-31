@@ -6,11 +6,12 @@ or closed. Nothing here can sign or read a key.
 """
 from __future__ import annotations
 
+import hashlib
 import time
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import hl
+from . import hl, ledger
 from .store import Store
 from .strategy import Signal, sma_regime, stop_hit_long, stop_hit_short
 
@@ -153,8 +154,15 @@ def tick(store: Store, coin: str, *, notional: float = 100.0, costs: Costs = Cos
 
     # 2. the strategy's regime
     sig: Signal = sma_regime(bars)
+    row = ledger.load().get("sma")
     if sig.side:
-        store.signal(now, coin, sig.side, mid, sig.reason)
+        fingerprint = hashlib.sha256(
+            repr([round(b["close"], 8) for b in bars[-60:]]).encode()).hexdigest()[:16]
+        store.signal(now, coin, sig.side, mid, sig.reason,
+                     prereg_id=getattr(row, "id", "") if row else "",
+                     model_version="sma20/50",
+                     inputs_hash=fingerprint,
+                     gate_state=getattr(row, "status", "") if row else "")
 
     want = 1 if sig.side == "long" else (-1 if sig.side == "short" else 0)
     held = 1 if st["qty"] > 0 else (-1 if st["qty"] < 0 else 0)

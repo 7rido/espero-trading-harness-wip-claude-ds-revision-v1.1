@@ -13,7 +13,9 @@ from typing import Iterable
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS bars(coin TEXT, ts INTEGER, open REAL, high REAL, low REAL,
                                 close REAL, volume REAL, PRIMARY KEY(coin, ts));
-CREATE TABLE IF NOT EXISTS signals(ts INTEGER, coin TEXT, side TEXT, price REAL, reason TEXT);
+CREATE TABLE IF NOT EXISTS signals(ts INTEGER, coin TEXT, side TEXT, price REAL, reason TEXT,
+                                   prereg_id TEXT DEFAULT '', model_version TEXT DEFAULT '',
+                                   inputs_hash TEXT DEFAULT '', gate_state TEXT DEFAULT '');
 CREATE TABLE IF NOT EXISTS orders(oid INTEGER PRIMARY KEY AUTOINCREMENT, ts INTEGER, coin TEXT,
                                   side TEXT, qty REAL, px REAL, fee REAL, kind TEXT, note TEXT);
 CREATE TABLE IF NOT EXISTS equity(coin TEXT, ts INTEGER, cash REAL, qty REAL, entry_px REAL,
@@ -41,6 +43,11 @@ class Store:
         self.db.commit()
 
     def _migrate(self) -> None:
+        cols = {r[1] for r in self.db.execute("PRAGMA table_info(signals)").fetchall()}
+        for name in ("prereg_id", "model_version", "inputs_hash", "gate_state"):
+            if name not in cols:
+                self.db.execute(f"ALTER TABLE signals ADD COLUMN {name} TEXT DEFAULT ''")
+        self.db.commit()
         cols = [r[1] for r in self.db.execute("PRAGMA table_info(equity)")]
         if cols and "coin" not in cols:            # v1 journal: one unnamed book
             self.db.executescript(MIGRATE_EQUITY)
@@ -70,8 +77,12 @@ class Store:
                 for t, o, h, lo, c, v in reversed(q)]
 
     # ------------------------------------------------------------- records
-    def signal(self, ts: int, coin: str, side: str, price: float, reason: str) -> None:
-        self.db.execute("INSERT INTO signals VALUES (?,?,?,?,?)", (ts, coin, side, price, reason))
+    def signal(self, ts: int, coin: str, side: str, price: float, reason: str, *,
+               prereg_id: str = "", model_version: str = "", inputs_hash: str = "",
+               gate_state: str = "") -> None:
+        self.db.execute("INSERT INTO signals(ts, coin, side, price, reason, prereg_id, model_version,"
+                        " inputs_hash, gate_state) VALUES (?,?,?,?,?,?,?,?,?)",
+                        (ts, coin, side, price, reason, prereg_id, model_version, inputs_hash, gate_state))
         self.db.commit()
 
     def order(self, ts: int, coin: str, side: str, qty: float, px: float, fee: float,
