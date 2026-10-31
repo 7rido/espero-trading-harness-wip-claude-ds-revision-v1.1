@@ -58,3 +58,12 @@ settle_fwd.csv
 
 # tardis downloads (large)
 data_tardis/
+
+# generated data archives and databases
+data_book/
+data_substrate/
+data_metrics/
+data_funding/
+data_carry/
+data_xs/
+data_exec/
