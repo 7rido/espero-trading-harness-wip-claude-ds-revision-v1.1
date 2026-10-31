@@ -1,0 +1,64 @@
+{
+ "tests": [
+  {
+   "id": "R1",
+   "name": "#21 liquidation spikes (replication)",
+   "kind": "replication",
+   "t": 0.85,
+   "n": 119,
+   "verdict": "FAIL",
+   "p_value": 0.39532508624538476,
+   "sharpe_annual": 0.5618845839799181
+  },
+  {
+   "id": "R2",
+   "name": "#26 forced bounce (in-sample replication)",
+   "kind": "replication",
+   "t": 7.11,
+   "n": 427,
+   "verdict": "replicated",
+   "p_value": 1.1604051053382136e-12,
+   "sharpe_annual": 2.481174648157687
+  },
+  {
+   "id": "R3",
+   "name": "carry deep (#12 rev2)",
+   "kind": "new",
+   "t": 3.13,
+   "n": 176,
+   "verdict": "FAIL (holdout flat)",
+   "p_value": 0.0017480630312631806,
+   "sharpe_annual": 1.701334369359426
+  },
+  {
+   "id": "R4",
+   "name": "XS momentum deep (#2/#7 rev2)",
+   "kind": "new",
+   "t": 2.23,
+   "n": 106,
+   "verdict": "FAIL (holdout)",
+   "p_value": 0.025747442877203985,
+   "sharpe_annual": 1.561901357018619
+  },
+  {
+   "id": "E1",
+   "name": "executable liquidation bounce",
+   "kind": "new",
+   "t": null,
+   "n": null,
+   "verdict": "pending 2027-04-30",
+   "p_value": null,
+   "sharpe_annual": null
+  }
+ ],
+ "completed": 4,
+ "pending": 1,
+ "best": "R2",
+ "deflated_sharpe_p_of_best": 0.9999999999954929,
+ "spend_rate": {
+  "registered_tests": 5,
+  "failed_on_holdout": 2,
+  "replications": 2,
+  "pending": 1
+ }
+}

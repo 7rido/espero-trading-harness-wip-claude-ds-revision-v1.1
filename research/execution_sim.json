@@ -1,0 +1,36 @@
+{
+ "liquidity_symbols": 15,
+ "median_1pct_notional_usd": 1829104.4309,
+ "xs": {
+  "design": {
+   "gross_ann_pct": 112.58128565414123,
+   "net_at_100k": 108.08088942371768,
+   "depth_coverage": 0.26018099547511314,
+   "net_at_1000k": 103.74846332104556,
+   "net_at_5000k": 84.49323619805847,
+   "net_at_10000k": 61.34798906832162
+  },
+  "holdout": {
+   "gross_ann_pct": 35.29611300091027,
+   "net_at_100k": 30.801823336675138,
+   "depth_coverage": 0.23557692307692307,
+   "net_at_1000k": 26.421301464941937,
+   "net_at_5000k": 6.952315368349926,
+   "net_at_10000k": -15.999271422746142
+  }
+ },
+ "carry": {
+  "100k": {
+   "median_added_bps_per_round_trip": 12.471318034083659,
+   "annual_drag_pct": 0.9977054427266927
+  },
+  "1000k": {
+   "median_added_bps_per_round_trip": 124.71318034083659,
+   "annual_drag_pct": 9.977054427266927
+  },
+  "5000k": {
+   "median_added_bps_per_round_trip": 200.0,
+   "annual_drag_pct": 16.0
+  }
+ }
+}

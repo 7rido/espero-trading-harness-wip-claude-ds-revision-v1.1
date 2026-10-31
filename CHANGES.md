@@ -159,6 +159,27 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · research substrate and the XS failure answer
+
+- **Substrate** (`research/substrate.py`): DuckDB with `valid_time` (venue date) and `known_time` (fetch
+  date) — 128,959 bars, 108,374 funding, 13,675 premium, 1,728,000 depth rows; zero duplicate keys;
+  gap reports per symbol; 6,664-file manifest. **The universe is a query**: top 47 by trailing 30-day
+  volume, deduped by base asset — overlaps the frozen 47 by 32/47, the difference explained by window
+  length and LUNAUSDT.
+- **Execution simulator** (`research/execution_sim.py`): impact from 112 `bookDepth` days, median 1%
+  notional $1.83M. XS holdout gross +35.3%/yr → net +30.8 at $100k/side, **+26.4 at $1M**, +7.0 at $5M,
+  −16.0 at $10M. Carry impact drag 1.0%/yr at $100k per position, 10.0% at $1M.
+- **Detector calibration** (`research/calibration.py`): 200 synthetic markets per effect size; null
+  estimate +3.2% (CI −80.6…+88.0, 51% positive), 0.4%/wk → +31.9% with 77% positive. The band is
+  ±80%/yr wide — the binding constraint is power, not execution.
+- **Trial budget** (`research/trial_budget.py`): R1 0.395, R2 0.000 (replication), R3 0.0017,
+  R4 0.026, E1 pending; deflated Sharpe of the best across four trials 1.000.
+- **Answer** (`research/ANSWER_xs_failure.md`): at $1M/side execution changes +27.8% to +26.4% — the
+  verdict is unchanged; decay of the gross spread (−69%) is what failed the test, while liquidity caps
+  scale at a few million per side.
+- **Gaps stated**: `bookTicker` not ingested, depth covers 15/47 symbols, no vendor overlap, no live
+  fills.
+
 ### 2026-10-30 · XS verification gaps closed
 
 - **Capacity computed**: 112 `bookDepth` days — median **$637,880/symbol** at 25 bps impact,
