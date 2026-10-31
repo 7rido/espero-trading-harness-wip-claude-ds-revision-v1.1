@@ -159,6 +159,19 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · regime signs studied and applied to today's market
+
+- **`research/regime_signs.py`**: 8 states (trend × vol × funding), market-relative 5/20-day outcomes,
+  42 symbols, 2023-01 → 2025-06, BH FDR. **16 cells, 0 pass.**
+- **Coherent descriptive pattern**: `up/low/high` and `up/high/high` (uptrend with expensive funding)
+  → 20-day median **−319 / −426 bps**, positive only **37%** of the time — the crowded-long fade again.
+- **`research/regime_now.py`**: classifies today from live data (Coinbase daily candles, Binance
+  funding percentile, HL venue funding/OI/premium, OKX liquidations).
+- **Today (2026-10-31)**: SOL `down/low/high` (hist median −205 bps at 20d), BTC `up/low/low`
+  (≈flat), with **$39.9M of short liquidations vs $5.1M long** in BTC over 24 h — a short squeeze —
+  and HL funding +10.9%/yr on both.
+- **Verdict**: context, not a forecast; no cell survives multiplicity, no trade authorised.
+
 ### 2026-10-31 · data inventory, generated from the database
 
 - **`research/inventory.py`** lists every substrate table with rows, real time span and key columns;
