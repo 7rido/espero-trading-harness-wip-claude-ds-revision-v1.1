@@ -199,7 +199,8 @@ def _cmd_cb(args: argparse.Namespace) -> int:
     elif args.what == "bars":
         from . import alpaca as ap
         try:
-            out = ap.bars(args.symbols, args.timeframe, args.start, args.end)
+            fn = ap.crypto_bars if args.crypto else ap.bars
+            out = fn(args.symbols, args.timeframe, args.start, args.end)
             bars = (out.get("bars") or {})
             for sym, rows in bars.items():
                 print(f"{sym}: {len(rows)} bars, last {rows[-1] if rows else None}")
@@ -421,6 +422,7 @@ def main(argv: list[str] | None = None) -> int:
     cb.add_argument("--end", default=None)
     cb.add_argument("--status", default="open")
     cb.add_argument("--confirm-paper", action="store_true")
+    cb.add_argument("--crypto", action="store_true", help="crypto bars (BTC/USD) instead of stocks")
     cb.set_defaults(func=_cmd_cb)
 
     h = sub.add_parser("health", help="is the loop alive? (exit 1 if stale)")

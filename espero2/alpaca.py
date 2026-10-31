@@ -77,6 +77,18 @@ def bars(symbols: str | list[str], timeframe: str = "1Day", start: str | None = 
     return _call(DATA, "/v2/stocks/bars", params)
 
 
+def crypto_bars(symbols: str | list[str], timeframe: str = "1Day", start: str | None = None,
+                end: str | None = None) -> dict:
+    """Crypto bars: Alpaca serves these on /v1beta3/crypto/us/bars (symbols like BTC/USD)."""
+    syms = ",".join(symbols) if isinstance(symbols, list) else symbols
+    params = {"symbols": syms, "timeframe": timeframe}
+    if start:
+        params["start"] = start
+    if end:
+        params["end"] = end
+    return _call(DATA, "/v1beta3/crypto/us/bars", params)
+
+
 def place_order(symbol: str, qty: float, side: str, order_type: str = "market",
                 confirm: bool = False) -> dict:
     """Paper only, and only with an explicit confirm. There is no live path in this module."""

@@ -39,3 +39,18 @@ class TestAlpaca(unittest.TestCase):
         self.assertIn("symbols=AAPL%2CMSFT", captured["url"])
         self.assertIn("timeframe=1Day", captured["url"])
         self.assertIn("feed=iex", captured["url"])
+
+
+class TestCryptoBars(unittest.TestCase):
+    def test_crypto_bars_use_the_crypto_endpoint(self):
+        captured = {}
+
+        def fake_urlopen(req, timeout=None):
+            captured["url"] = req.full_url
+            import io, json
+            return io.BytesIO(json.dumps({"bars": {}}).encode())
+
+        with patch.dict(os.environ, {"APCA_API_KEY_ID": "k", "APCA_API_SECRET_KEY": "s"}, clear=False):
+            with patch.object(ap.urllib.request, "urlopen", fake_urlopen):
+                ap.crypto_bars(["BTC/USD"], "1Day")
+        self.assertIn("/v1beta3/crypto/us/bars", captured["url"])

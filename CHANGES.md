@@ -159,6 +159,12 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · Alpaca crypto bars
+
+- **`crypto_bars()`** on `/v1beta3/crypto/us/bars`; CLI `cb bars --crypto --symbols BTC/USD`.
+  Verified live: 7 daily bars, last close **77,306.06** (2026-10-31).
+- **Tests**: 5 for the Alpaca module (crypto endpoint URL added). Suite: 93.
+
 ### 2026-10-30 · Alpaca adapter verified against the live paper account
 
 - **Keys present** (`APCA_API_KEY_ID`, `APCA_API_SECRET_KEY`), loaded without printing values.
