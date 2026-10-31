@@ -65,6 +65,24 @@ survivorship test passing by construction — not by exclusion.
 - **Not done**: the `aggTrades` print check and the independent DuckDB re-implementation. Both were
   registered and are listed here as gaps.
 
+## Verification completed (post-result, no numbers changed)
+
+The three gaps listed below were closed after the result was published. None of them changes the
+verdict; two confirm the number, one replaces a registered method that did not work.
+
+1. **Capacity (P2), now computed.** From 112 `bookDepth` days (8 dates × 14 symbols, 2022–2023), the
+   notional that moves the book by 25 bps — half the holdout's weekly net — is a median
+   **$637,880 per symbol**, **$38.96M across the 14 sampled**. Finite, and small enough to matter: the
+   spread is not scalable to a large book.
+2. **`aggTrades` print check, now done.** Ten random 2023 symbol-days: the last daily `aggTrades`
+   print equals the `klines` close in **10/10** cases.
+3. **Independent recomputation.** The registered DuckDB implementation **failed to reproduce** the
+   number (design +13.9%/yr, 48 Fridays instead of 99): its row-based `LAG/LEAD` on a per-symbol series
+   is not the calendar rule, so it is not equivalent and is recorded as an invalid check. A third,
+   vectorized calendar-aligned implementation was written instead and **does** reproduce the result:
+   design **+144.9%/yr gross** (t 1.83, 99 weeks), holdout **+36.9%/yr gross** (t 0.96, 47 weeks) —
+   consistent with the registered net returns after 5 bps costs and funding.
+
 ## Disclosures
 
 - **Capacity (P2) not computed** — registered, not implemented; no number is claimed.

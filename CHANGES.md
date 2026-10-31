@@ -159,6 +159,18 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · XS verification gaps closed
+
+- **Capacity computed**: 112 `bookDepth` days — median **$637,880/symbol** at 25 bps impact,
+  **$38.96M** across 14 symbols (the registered P2 gap, now filled; the failure verdict is unchanged).
+- **`aggTrades` print check**: 10/10 random 2023 symbol-days match the `klines` close exactly.
+- **Independent recomputation**: the registered DuckDB query is **not equivalent** (row-based
+  `LAG/LEAD`, 48 Fridays of 99) and is recorded as invalid; a third vectorized implementation
+  reproduces the number — design **+144.9%/yr gross** (t 1.83), holdout **+36.9%/yr gross** (t 0.96),
+  consistent with the net returns after costs.
+- **Files**: `research/xs_verify.py`, `xs_verify.json`, results doc updated by a new section (the
+  verdict and numbers are untouched).
+
 ### 2026-10-30 · deep cross-sectional momentum (#2/#7 rev 2) — sealed, FAIL on holdout
 
 - **Sealed** `research/PREREGISTRATION_XS_MOMENTUM.md` (**95005ac**) before any 2021-2023 price; universe

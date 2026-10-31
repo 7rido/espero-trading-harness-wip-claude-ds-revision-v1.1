@@ -1,0 +1,123 @@
+{
+ "capacity": {
+  "computed": true,
+  "symbols": 14,
+  "median_capacity_usd": 637880.4132228126,
+  "total_usd": 38959957.853598,
+  "per_symbol": {
+   "BTCUSDT": 21889674.34238,
+   "ETHUSDT": 10253882.584335,
+   "XRPUSDT": 1046454.9812699999,
+   "DOGEUSDT": 757041.815251875,
+   "SOLUSDT": 684859.2020625,
+   "BNBUSDT": 939870.5799875,
+   "ADAUSDT": 574240.51143125,
+   "1000SHIBUSDT": 332327.497243625,
+   "ETCUSDT": 301954.299646875,
+   "MATICUSDT": 616078.1489375001,
+   "DOTUSDT": 389666.44448125,
+   "AVAXUSDT": 262629.65431250003,
+   "LTCUSDT": 659682.6775081251,
+   "FTMUSDT": 251595.11475
+  }
+ },
+ "prints": {
+  "checked": 10,
+  "matched": 10,
+  "details": [
+   {
+    "symbol": "ETCUSDT",
+    "day": "2023-02-12",
+    "last_print": 21.045,
+    "kline_close": 21.045,
+    "match": true
+   },
+   {
+    "symbol": "XRPUSDT",
+    "day": "2023-03-22",
+    "last_print": 0.4212,
+    "kline_close": 0.4212,
+    "match": true
+   },
+   {
+    "symbol": "MATICUSDT",
+    "day": "2023-07-10",
+    "last_print": 0.7347,
+    "kline_close": 0.7347,
+    "match": true
+   },
+   {
+    "symbol": "ETHUSDT",
+    "day": "2023-04-16",
+    "last_print": 2118.09,
+    "kline_close": 2118.09,
+    "match": true
+   },
+   {
+    "symbol": "1000SHIBUSDT",
+    "day": "2023-06-14",
+    "last_print": 0.006555,
+    "kline_close": 0.006555,
+    "match": true
+   },
+   {
+    "symbol": "ETHUSDT",
+    "day": "2023-09-21",
+    "last_print": 1583.0,
+    "kline_close": 1583.0,
+    "match": true
+   },
+   {
+    "symbol": "BTCUSDT",
+    "day": "2023-02-17",
+    "last_print": 24581.5,
+    "kline_close": 24581.5,
+    "match": true
+   },
+   {
+    "symbol": "SOLUSDT",
+    "day": "2023-11-18",
+    "last_print": 58.581,
+    "kline_close": 58.581,
+    "match": true
+   },
+   {
+    "symbol": "BNBUSDT",
+    "day": "2023-06-20",
+    "last_print": 247.93,
+    "kline_close": 247.93,
+    "match": true
+   },
+   {
+    "symbol": "1000SHIBUSDT",
+    "day": "2023-03-21",
+    "last_print": 0.010936,
+    "kline_close": 0.010936,
+    "match": true
+   }
+  ]
+ },
+ "sql_gross": {
+  "weeks_design": 48,
+  "weeks_holdout": 51,
+  "design_ann_pct": 13.903556944380304,
+  "holdout_ann_pct": 51.059592886823566
+ },
+ "third_implementation": {
+  "design_gross_ann_pct": 144.9,
+  "design_t": 1.83,
+  "design_weeks": 99,
+  "holdout_gross_ann_pct": 36.9,
+  "holdout_t": 0.96,
+  "holdout_weeks": 47,
+  "note": "vectorized calendar-aligned recomputation; consistent with the registered net after costs"
+ },
+ "sql_attempt": {
+  "weeks_design": 48,
+  "weeks_holdout": 51,
+  "design_ann_pct": 13.903556944380304,
+  "holdout_ann_pct": 51.059592886823566,
+  "valid": false,
+  "why": "row-based LAG/LEAD and only 48 Fridays of 99: not equivalent to the calendar rule"
+ }
+}
