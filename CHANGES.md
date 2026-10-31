@@ -159,6 +159,17 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · queue-aware execution: the last registered gap
+
+- **Ingested** `bookTicker` + `aggTrades` for 2023-07-10, 11 depth-covered symbols (BTC/ETH excluded
+  for file size): **45,547,988 quote updates, 3,296,200 trades** into the substrate.
+- **Measured**: quoted and effective half-spreads coincide (0.21–3.82 bps); maker fill within 60 s
+  22–87% (median 3.8–24.9 s); 5 s markout −1.0 to −2.2 bps.
+- **Consequence**: the depth-band reprice was conservative at small size; measured spread+fee ≈ 6 bps
+  a side → holdout net at $1M/side ≈ +29%/yr (vs +26.4% modelled), still t 0.75. The answer stands:
+  decay, not execution. Capacity still binds at a few $M/side.
+- **Files**: `research/queue_sim.py`, `queue_sim.json`, `RESULTS_queue_execution.md`; ANSWER updated.
+
 ### 2026-10-30 · research substrate and the XS failure answer
 
 - **Substrate** (`research/substrate.py`): DuckDB with `valid_time` (venue date) and `known_time` (fetch

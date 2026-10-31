@@ -90,10 +90,19 @@ in-sample claim**, not a new one, so it does not consume the budget the way a di
 - **Vendor overlap: not available.** No Tardis/Kaiko access in this environment; stated as a gap, not
   faked.
 
+## Queue simulation — the registered gap, closed after the answer
+
+`research/queue_sim.py` ingests one day (2023-07-10) of `bookTicker` and `aggTrades` for 11 symbols:
+**45.5M quote updates, 3.3M trades**. Quoted and **effective half-spreads are identical** (0.21–3.82
+bps), so takers pay the touch; maker orders fill in a minute 22–87% of the time with a 5 s markout of
+−1.0 to −2.2 bps. That makes the earlier linear-impact reprice **conservative**: measured spread plus
+fee is ~6 bps a side, so the holdout net at $1M/side is closer to **+29%/yr** than +26.4% — better, and
+still t 0.75. See `research/RESULTS_queue_execution.md`.
+
 ## What the substrate cannot do, stated plainly
 
-- `bookTicker` was registered and **not ingested** (only `bookDepth` snapshots and sampled
-  `aggTrades`), so queue position is modelled linearly rather than simulated.
+- `bookTicker` is now ingested for **one day and eleven symbols** (45.5M rows); impact beyond the
+  touch still comes from depth snapshots, so large orders remain modelled.
 - Depth covers **15 symbols** out of 47; missing symbols fall back to the peer median and the coverage
   is reported with every number.
 - No live fills: the ultimate referee remains untested.

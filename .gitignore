@@ -35,3 +35,7 @@ data_carry/
 
 # raw xs archives (fetched, not committed)
 data_xs/
+
+# substrate database and raw event archives (large; built/fetched)
+data_substrate/
+data_exec/

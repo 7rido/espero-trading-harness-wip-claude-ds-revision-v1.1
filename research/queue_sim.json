@@ -1,0 +1,196 @@
+{
+ "day": "2023-07-10",
+ "spreads": [
+  {
+   "symbol": "ADAUSDT",
+   "updates": 1812547,
+   "trades": 91742,
+   "median_half_spread_bps": 1.7503938386134952,
+   "effective_half_spread_bps": 1.7497812773401396
+  },
+  {
+   "symbol": "ARBUSDT",
+   "updates": 1586522,
+   "trades": 93163,
+   "median_half_spread_bps": 0.4480889008378769,
+   "effective_half_spread_bps": 0.44728720311306974
+  },
+  {
+   "symbol": "AVAXUSDT",
+   "updates": 1745572,
+   "trades": 158790,
+   "median_half_spread_bps": 0.3750515695912771,
+   "effective_half_spread_bps": 0.3745739221639967
+  },
+  {
+   "symbol": "BNBUSDT",
+   "updates": 2522430,
+   "trades": 319375,
+   "median_half_spread_bps": 0.20631744001301666,
+   "effective_half_spread_bps": 0.20629190304261796
+  },
+  {
+   "symbol": "DOGEUSDT",
+   "updates": 1894882,
+   "trades": 107372,
+   "median_half_spread_bps": 0.7732158045318179,
+   "effective_half_spread_bps": 0.7728572532660948
+  },
+  {
+   "symbol": "FILUSDT",
+   "updates": 1679209,
+   "trades": 78822,
+   "median_half_spread_bps": 1.180498170227182,
+   "effective_half_spread_bps": 1.177995052421173
+  },
+  {
+   "symbol": "LINKUSDT",
+   "updates": 1629039,
+   "trades": 78316,
+   "median_half_spread_bps": 0.8177283506421898,
+   "effective_half_spread_bps": 0.8157272208169066
+  },
+  {
+   "symbol": "NEARUSDT",
+   "updates": 992202,
+   "trades": 49006,
+   "median_half_spread_bps": 3.818251240932081,
+   "effective_half_spread_bps": 3.8008361839600524
+  },
+  {
+   "symbol": "SOLUSDT",
+   "updates": 4316174,
+   "trades": 428519,
+   "median_half_spread_bps": 0.2378404090857943,
+   "effective_half_spread_bps": 0.23738308896280905
+  },
+  {
+   "symbol": "SUIUSDT",
+   "updates": 1807242,
+   "trades": 104013,
+   "median_half_spread_bps": 0.7735746886361026,
+   "effective_half_spread_bps": 0.7704753833114183
+  },
+  {
+   "symbol": "XRPUSDT",
+   "updates": 2788175,
+   "trades": 138982,
+   "median_half_spread_bps": 1.060782857748902,
+   "effective_half_spread_bps": 1.060557853430788
+  }
+ ],
+ "fills": [
+  {
+   "symbol": "ADAUSDT",
+   "trials": 200,
+   "fill_rate_60s": 0.37,
+   "median_fill_s": 24.916
+  },
+  {
+   "symbol": "ARBUSDT",
+   "trials": 200,
+   "fill_rate_60s": 0.695,
+   "median_fill_s": 13.458
+  },
+  {
+   "symbol": "AVAXUSDT",
+   "trials": 200,
+   "fill_rate_60s": 0.735,
+   "median_fill_s": 6.796
+  },
+  {
+   "symbol": "BNBUSDT",
+   "trials": 200,
+   "fill_rate_60s": 0.785,
+   "median_fill_s": 6.747
+  },
+  {
+   "symbol": "DOGEUSDT",
+   "trials": 200,
+   "fill_rate_60s": 0.555,
+   "median_fill_s": 18.382
+  },
+  {
+   "symbol": "FILUSDT",
+   "trials": 200,
+   "fill_rate_60s": 0.555,
+   "median_fill_s": 19.659
+  },
+  {
+   "symbol": "LINKUSDT",
+   "trials": 200,
+   "fill_rate_60s": 0.515,
+   "median_fill_s": 19.314
+  },
+  {
+   "symbol": "NEARUSDT",
+   "trials": 200,
+   "fill_rate_60s": 0.225,
+   "median_fill_s": 20.711
+  },
+  {
+   "symbol": "SOLUSDT",
+   "trials": 200,
+   "fill_rate_60s": 0.87,
+   "median_fill_s": 3.7515
+  },
+  {
+   "symbol": "SUIUSDT",
+   "trials": 200,
+   "fill_rate_60s": 0.655,
+   "median_fill_s": 15.128
+  },
+  {
+   "symbol": "XRPUSDT",
+   "trials": 200,
+   "fill_rate_60s": 0.26,
+   "median_fill_s": 21.613999999999997
+  }
+ ],
+ "markouts": [
+  {
+   "symbol": "ADAUSDT",
+   "median_markout_5s_bps": -2.186111410171814
+  },
+  {
+   "symbol": "ARBUSDT",
+   "median_markout_5s_bps": -1.4635684049361917
+  },
+  {
+   "symbol": "AVAXUSDT",
+   "median_markout_5s_bps": -1.129858391083032
+  },
+  {
+   "symbol": "BNBUSDT",
+   "median_markout_5s_bps": -0.9665610990022274
+  },
+  {
+   "symbol": "DOGEUSDT",
+   "median_markout_5s_bps": -1.284046692605048
+  },
+  {
+   "symbol": "FILUSDT",
+   "median_markout_5s_bps": -1.239084257728734
+  },
+  {
+   "symbol": "LINKUSDT",
+   "median_markout_5s_bps": -2.615233736514913
+  },
+  {
+   "symbol": "NEARUSDT",
+   "median_markout_5s_bps": -0.9659969088110724
+  },
+  {
+   "symbol": "SOLUSDT",
+   "median_markout_5s_bps": -1.192048818790247
+  },
+  {
+   "symbol": "SUIUSDT",
+   "median_markout_5s_bps": -2.3570081709596553
+  },
+  {
+   "symbol": "XRPUSDT",
+   "median_markout_5s_bps": -1.0518707832240193
+  }
+ ]
+}
