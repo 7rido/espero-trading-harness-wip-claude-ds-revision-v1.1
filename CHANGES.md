@@ -159,6 +159,16 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · measurement scorecard and positioning study
+
+- **`research/positioning_study.py`**: SOL open interest, taker flow and top-trader long/short ratios
+  against forward 1/5-day returns. Overlap is only **117 days** (prices end 2026-03); **12 cells, zero
+  with |t| ≥ 2** (0.6 expected by chance). No support.
+- **`research/MEASUREMENT_SCORECARD.md`**: every sign rated 1–10 for **prediction** and for **risk use**,
+  with the evidence behind each number.
+- **Result**: liquidation **9** (survives 121-cell correction), volatility **9 as risk / 1 as
+  prediction**, funding **3/6**, basis **4/6**, trend **1/3**, positioning **1–2/5**, OBI **unrated**.
+
 ### 2026-10-31 · live signal check (proxy) between feeds
 
 - **`research/live_signal.py`**: evaluates E1's conditions on live proxies — Coinbase 5m candles for the
