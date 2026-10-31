@@ -518,3 +518,29 @@ class TestLiveFeesAndMinimums(unittest.TestCase):
             self.assertEqual(s.get_state("BTC-USD")["qty"], 0.0)
             self.assertTrue(any("minimum" in a for a in r["actions"]), r["actions"])
             s.close()
+
+
+class TestRiskPrimitives(unittest.TestCase):
+    def test_atr_is_zero_without_enough_bars(self):
+        from espero2.risk import atr
+        self.assertEqual(atr([{"high": 1, "low": 0, "close": 0.5}] * 5), 0.0)
+
+    def test_atr_uses_the_true_range(self):
+        from espero2.risk import atr
+        bars = [{"high": 10, "low": 8, "close": 9}] * 20     # every true range is exactly 2
+        self.assertAlmostEqual(atr(bars, 14), 2.0, places=6)
+
+    def test_vol_target_shrinks_size_as_vol_rises(self):
+        from espero2.risk import vol_target_notional
+        low = vol_target_notional(10_000, 0.02, 0.5)
+        high = vol_target_notional(10_000, 0.02, 1.5)
+        self.assertGreater(low, high)
+        self.assertAlmostEqual(low, 10_000 * 0.02 / (2 * 0.5 / (365 ** 0.5)), places=2)
+
+    def test_funding_gate_blocks_a_long_paying_too_much(self):
+        from espero2.risk import funding_annual_pct, funding_gate
+        self.assertAlmostEqual(funding_annual_pct(1.0), 87.6, places=1)   # 1 bp/h ~ 87.6%/yr
+        self.assertTrue(funding_gate("long", 1.0, 20.0))
+        self.assertFalse(funding_gate("long", 0.1, 20.0))
+        self.assertTrue(funding_gate("short", -1.0, 20.0))
+        self.assertFalse(funding_gate("long", 1.0, None))

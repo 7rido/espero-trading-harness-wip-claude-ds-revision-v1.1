@@ -40,8 +40,11 @@ def _cmd_run(args: argparse.Namespace) -> int:
                               f"for the {int(gap)}s gap", flush=True)
             for coin in coins:
                 try:
+                    from .paper import Rules as PaperRules
                     r = tick(store, coin, notional=args.notional,
                              costs=Costs(args.taker_bps, args.slippage_bps),
+                             rules=PaperRules(vol_target_pct=args.vol_target,
+                                              max_funding_annual_pct=args.max_funding),
                              interval=args.interval, kill=Path(args.kill),
                              allow_short=not args.long_only)
                 except hl.Refused as exc:
@@ -370,6 +373,10 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--long-only", action="store_true", help="ignore short signals")
     r.add_argument("--dashboard", action="store_true",
                    help="rewrite dashboard.html after every cycle (the page reloads it)")
+    r.add_argument("--vol-target", type=float, default=None,
+                   help="risk %% of equity per position, sized by realised volatility")
+    r.add_argument("--max-funding", type=float, default=None,
+                   help="skip entries paying more than this annual funding %%")
     r.add_argument("--allow-plumbing", action="store_true",
                    help="permit a strategy whose ledger row is plumbing/trial")
     r.add_argument("--interval", default="1h", choices=["1m", "5m", "15m", "1h", "1d"])

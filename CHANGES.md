@@ -159,6 +159,22 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · risk sizing, funding gate, OI and order-book imbalance data
+
+- **`espero2/risk.py`**: Wilder ATR, realised vol, **volatility-target sizing** (`risk %` of equity per
+  position at kσ), and a **funding gate** (skip entries paying more than a cap). Pure functions, 4 tests.
+- **Wired into the paper engine**: `Rules(vol_target_pct=…, max_funding_annual_pct=…)`; `run` flags
+  `--vol-target` / `--max-funding`; both **default off** so the running loop is unchanged. Demo:
+  `--vol-target 2 --max-funding 25` → vol target 2% at 35%/yr → notional 100 (capped), long opened.
+- **Bug caught by the demo**: the gate first fired on the *constant fallback* (1 bp/h ≈ 87.6%/yr) and
+  blocked every long. It now gates only on **known venue funding** (fetches the last 3 h if flat).
+- **Metrics ingested**: `research/metrics_fetch.py` → **105,120 five-minute rows** for SOLUSDT,
+  2025-10-31 → 2026-10-30, mean OI **9.12M SOL** (OI, top-trader and taker ratios).
+- **Order-book imbalance**: `research/book_fetch.py` → **4,320 minute rows** for GALA/DOGE/SUI on
+  2024-01-02, median OBI ≈ 0, median spread 1.1–3.1 bps. bookTicker with sizes is ~20–130 MB/day and
+  mostly stops in 2024, so the sample is deliberately small.
+- **Catalog**: `metrics fetch` and `book fetch` added as write tools.
+
 ### 2026-10-31 · per-coin research tool (`coin report`)
 
 - **`research/coin_report.py`**: substrate snapshot for one coin — coverage and last close, 30d/90d

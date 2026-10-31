@@ -8,10 +8,11 @@ from __future__ import annotations
 
 import hashlib
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 from . import hl, ledger
+from .risk import funding_annual_pct, funding_gate, realized_vol, vol_target_notional
 from .store import Store
 from .strategy import Signal, sma_regime, stop_hit_long, stop_hit_short
 
@@ -31,6 +32,8 @@ class Rules:
     leverage: float = 1.0           # notional / margin; 1x = no borrowing
     maintenance: float = 0.01       # fraction of notional kept as maintenance margin
     max_notional: float = 100.0
+    vol_target_pct: float | None = None      # risk % of equity per position, sized by realised vol
+    max_funding_annual_pct: float | None = None  # skip entries that pay more than this in funding
 
 
 def _fill_px(px: float, side: str, costs: Costs) -> float:
@@ -93,9 +96,8 @@ def tick(store: Store, coin: str, *, notional: float = 100.0, costs: Costs = Cos
 
     # 0. funding accrual since the last cycle (capped at a day, so a long sleep is not free)
     last_f = int(float(st.get("last_funding", 0) or 0)) or now
-    fund, source = 0.0, "constant"
+    fund, source, points = 0.0, "constant", []
     if st["qty"] != 0:
-        points = []
         if rules.funding_source == "venue":
             try:
                 points = [(ts, rate) for ts, rate in
@@ -170,17 +172,41 @@ def tick(store: Store, coin: str, *, notional: float = 100.0, costs: Costs = Cos
         store.set_state(coin, blocked="")          # the regime changed: the block is lifted
 
     # 3. act only when the book is on the wrong side
-    if not kill.exists() and want and want != held and sig.side != st.get("blocked"):
+    rate_bps_hour = float(points[-1][1]) * 1e4 if points else rules.funding_bps_hour
+    funding_known = bool(points)
+    if rules.max_funding_annual_pct is not None and not funding_known:
+        try:                                     # a flat book still needs today's venue rate
+            recent = hl.funding_history(coin, now - 3 * 3600, venue=rules.funding_venue)
+            if recent:
+                rate_bps_hour = float(recent[-1][1]) * 1e4
+                funding_known = True
+        except Exception:                        # noqa: BLE001 - unknown funding must not block
+            funding_known = False
+    gated = bool(want and funding_known and funding_gate(sig.side or "", rate_bps_hour,
+                                                         rules.max_funding_annual_pct))
+    if gated:
+        actions.append(f"funding gate: {funding_annual_pct(rate_bps_hour):+.1f}%/yr vs cap "
+                       f"{rules.max_funding_annual_pct:+.1f}%")
+    effective_rules = rules
+    if rules.vol_target_pct:
+        equity = st["cash"] + st["qty"] * mid
+        ppy = 365 * 24 if interval.endswith("h") else (365 if interval.endswith("d") else 365 * 24 * 4)
+        vol = realized_vol(bars, ppy)
+        target = vol_target_notional(equity, rules.vol_target_pct / 100.0, vol)
+        effective_rules = replace(rules, max_notional=max(0.0, min(rules.max_notional, target)))
+        actions.append(f"vol target {rules.vol_target_pct:.1f}% at {vol*100:.0f}%/yr -> "
+                       f"notional {effective_rules.max_notional:.2f}")
+    if not kill.exists() and want and want != held and sig.side != st.get("blocked") and not gated:
         if held:                                   # flip: close first, then open
             closing_px = _fill_px(book.bid if held > 0 else book.ask,
                                   "sell" if held > 0 else "buy", costs)
             st = _close(store, coin, closing_px, st, costs, "flip")
             actions.append(f"closed {'long' if held > 0 else 'short'}")
         if want > 0:
-            st = _open(store, coin, "buy", _fill_px(book.ask, "buy", costs), st, rules, costs, sig.reason)
+            st = _open(store, coin, "buy", _fill_px(book.ask, "buy", costs), st, effective_rules, costs, sig.reason)
             actions.append(f"opened long {abs(st['qty']):.6f}")
         elif allow_short:
-            st = _open(store, coin, "sell", _fill_px(book.bid, "sell", costs), st, rules, costs, sig.reason)
+            st = _open(store, coin, "sell", _fill_px(book.bid, "sell", costs), st, effective_rules, costs, sig.reason)
             actions.append(f"opened short {abs(st['qty']):.6f}")
         else:
             actions.append("short signal ignored (long-only)")
