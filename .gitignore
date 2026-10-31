@@ -29,3 +29,6 @@ account.txt
 # recordings and archives: fetched, not committed (releases / scripts/fetch-data.sh)
 data/
 .DS_Store
+
+# raw carry archives (fetched, not committed)
+data_carry/
