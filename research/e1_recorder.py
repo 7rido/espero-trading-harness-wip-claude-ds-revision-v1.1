@@ -22,7 +22,8 @@ import numpy as np
 import pandas as pd
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-LEDGER = ROOT / "liqbreak_trades.csv"
+DEFAULT_LEDGER = ROOT / "liqbreak_trades.csv"
+LEDGER = DEFAULT_LEDGER
 BARS = ROOT / "data" / "lows" / "forward"
 FUNDING = ROOT / "data" / "funding"
 OUT = ROOT / "research" / "e1_status.json"
@@ -38,7 +39,11 @@ def load_events(path: pathlib.Path | None = None) -> pd.DataFrame:
     """Prefer the locally derived feed (raw aggr + 5m bars) over the maintainer's ledger, which can
     fail without anything being wrong in the market."""
     local = ROOT / "research" / "e1_events.csv"
-    path = path or (local if local.exists() and local.stat().st_size > 10 else LEDGER)
+    if path is None:
+        if LEDGER != DEFAULT_LEDGER:                 # a test or caller redirected the ledger
+            path = LEDGER
+        else:
+            path = local if local.exists() and local.stat().st_size > 10 else LEDGER
     empty = pd.DataFrame(columns=["coin", "day", "ts", "direction", "s"])
     if not path.exists() or path.stat().st_size < 2:
         return empty
