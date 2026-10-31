@@ -159,6 +159,22 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · research program phase 1: vol, pairs, factors — zero candidates pass
+
+- **Data**: `extend_substrate.py` aggregated the local 5m archive into `bars_daily` and `rv` —
+  **82,774 rows, 42 symbols, 2020-01 → 2026-03, zero duplicates**. Windows fixed: design 2020–2022,
+  validation 2023, holdout 2025-07 → 2026-03 (not read; disclosed).
+- **Volatility**: HAR-RV beats EWMA(0.94) and a trailing mean on **35/38** symbols
+  (QLIKE 0.393 vs 0.450 vs 0.516). A usable risk instrument for sizing; no signal.
+- **Pairs**: 231 tested, **0 survive BH FDR 10%**. Best FIL|XTZ, median ADF p 0.0043, half-life 5.2 d —
+  would pass uncorrected, which is exactly what the multiplicity control exists to reject.
+- **Factors**: PC1 explains 66% of variance; design +47.2%/yr (t 0.99) flips to **−10.9% (t −0.42)** on
+  validation; PC2/PC3 negative throughout. Risk decomposition only, no alpha.
+- **Gate**: zero candidates → **no policy fitted, no disproof run, no authorisation**. Fitting a policy
+  on a failed signal is the overfitting this project exists to refuse.
+- **Files**: `research/{extend_substrate,vol_model,pairs,factor_model}.py`,
+  `RESULTS_program_phase1.md`; ledger rows `R5` (pairs) and `R6` (factors), both retired.
+
 ### 2026-10-30 · Alpaca crypto bars
 
 - **`crypto_bars()`** on `/v1beta3/crypto/us/bars`; CLI `cb bars --crypto --symbols BTC/USD`.
