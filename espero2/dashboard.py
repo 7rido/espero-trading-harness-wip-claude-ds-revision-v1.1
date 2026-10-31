@@ -14,6 +14,8 @@ import os
 from . import hl, ledger
 from .store import Store
 
+OPTICS = Path(__file__).resolve().parents[1] / "research" / "optics.json"
+
 CSS = """
 :root{--bg:#0e1116;--card:#161b22;--ink:#e6edf3;--dim:#8b949e;--up:#3fb950;--down:#f85149;--line:#30363d}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);
@@ -184,6 +186,33 @@ def _alpaca_card(st: dict) -> str:
     </section>"""
 
 
+def _optics_card() -> str:
+    """Decision optics written by research/optics.py; empty when the snapshot is missing."""
+    try:
+        d = json.loads(OPTICS.read_text())
+    except (OSError, ValueError):
+        return ""
+    rows = []
+    for c in d.get("coins", []):
+        e1 = c.get("e1", {})
+        oi = c.get("oi_hl", 0) or 0
+        oi_s = f"{oi/1e6:,.2f}M" if oi >= 1e6 else f"{oi/1e3:,.1f}k"
+        rows.append(
+            f"<tr><td>{html.escape(c['coin'])}</td><td>${c['price']:,.2f}</td>"
+            f"<td>{html.escape(c['state'])}</td>"
+            f"<td>{c['funding_binance']:+.1f}% / {c['funding_hl']:+.1f}%</td>"
+            f"<td>{oi_s}</td>"
+            f"<td>L ${c['liq_long']/1e3:,.0f}k / S ${c['liq_short']/1e3:,.0f}k</td>"
+            f"<td>{'<b>BREAK</b>' if e1.get('down_break') else '—'}</td></tr>")
+    flags = " · ".join(d.get("flags", []))
+    return (f'<section class="card"><h1 style="margin-bottom:8px">operator optics</h1>'
+            f'<table><thead><tr><th>coin</th><th>px</th><th>state</th><th>funding B/HL</th>'
+            f'<th>OI</th><th>liq 6h L/S</th><th>E1</th></tr></thead>'
+            f'<tbody>{"".join(rows)}</tbody></table>'
+            f'<div class="muted" style="margin-top:8px">{html.escape(str(d.get("at", "")))}'
+            f' · {html.escape(flags)}</div></section>')
+
+
 def render(store: Store, out: Path, *, address: str | None = None,
            account_state: dict | None = None, alpaca_override: dict | None = None) -> Path:
     h = store.health()
@@ -258,6 +287,7 @@ def render(store: Store, out: Path, *, address: str | None = None,
 <table><thead><tr><th>time</th><th>coin</th><th>side</th><th>qty</th><th>px</th><th>fee</th><th>note</th></tr></thead>
 <tbody>{rows or '<tr><td colspan=7 class=muted>none yet</td></tr>'}</tbody></table></section>
 {_alpaca_card(alp)}
+{_optics_card()}
     <section class="card"><h1 style="margin-bottom:8px">research state</h1>
     <table>{research_rows}</table>
     </section>

@@ -67,3 +67,6 @@ data_funding/
 data_carry/
 data_xs/
 data_exec/
+
+# live optics snapshot
+research/optics.json

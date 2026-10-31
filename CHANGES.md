@@ -159,6 +159,18 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · operator optics on the dashboard
+
+- **`research/optics.py`**: one live snapshot — Coinbase price/spread, 60-day trend and vol percentile,
+  Binance 7-day funding + percentile, HL funding/OI/premium, OKX 6-hour liquidations, and the live E1
+  break check (48-bar low, volume z, burst). Writes `research/optics.json`; read-only.
+- **Dashboard**: new **operator optics** card showing per coin: px, state, funding B/HL, OI, liquidation
+  L/S, and **BREAK** when E1's condition is live. Data-quality flags render in the footer.
+- **Scheduled**: `io.espero2.optics` launchd agent, every **15 minutes** (`scripts/install-optics.sh`).
+- **Live values at install**: BTC `up/low/low` · funding B +2.7%/HL +10.9% · OI 41k · liq L $5.1M/S $39.9M;
+  ETH `down/low/high` · OI 977k; SOL `down/low/high` · OI 5.41M · liq L $167k/S $67k.
+- **Tests**: 3 for the card (render, missing snapshot, BREAK); suite 141.
+
 ### 2026-10-31 · measurement scorecard and positioning study
 
 - **`research/positioning_study.py`**: SOL open interest, taker flow and top-trader long/short ratios
