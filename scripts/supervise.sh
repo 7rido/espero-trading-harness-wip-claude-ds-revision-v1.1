@@ -5,7 +5,9 @@
 #   STATE=demo.db EVERY=10 ./scripts/supervise.sh
 set -u
 cd "$(dirname "$0")/.."
-PY="${PY:-python3}"
+if [ -z "${PY:-}" ]; then
+    [ -x "$(dirname "$0")/../.venv/bin/python" ] && PY="$(dirname "$0")/../.venv/bin/python" || PY="python3"
+fi
 STATE="${STATE:-paper.db}"
 EVERY="${EVERY:-60}"
 INTERVAL="${INTERVAL:-1h}"

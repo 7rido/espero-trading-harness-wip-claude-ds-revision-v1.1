@@ -159,6 +159,20 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · continuous paper run while E1 records
+
+- **Plumbing window extended** to **2026-12-31** (was 2026-11-02) with the purpose restated: continuous
+  mechanics run, books void, never read as evidence.
+- **Ledger**: `sma` returned to `plumbing` (not `retired`) for the duration of the window; the note
+  says exactly that and why.
+- **KILL lifted** (archived as `KILL.paused`); stop the loop again by `touch KILL`.
+- **Supervisor hardened**: `scripts/supervise.sh` prefers the project `.venv/bin/python`
+  (Python 3.12); a project `.venv` was created from `requirements.txt` because the system Python is
+  3.9 and cannot run the code.
+- **Running**: `io.espero2.paper` launchd agent, 60 s cadence, BTC/ETH/SOL, dashboard rewritten each
+  cycle. Verified: 3 positions opened, equity rows growing, log ticking.
+- **E1 is unaffected**: it is the daily recorder, not this loop.
+
 ### 2026-10-31 · liquidation anatomy (descriptive)
 
 - **Built** `research/liquidation_anatomy.py`: hourly liquidation spikes (99th percentile per coin,
