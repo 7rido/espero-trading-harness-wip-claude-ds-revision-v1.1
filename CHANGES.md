@@ -159,6 +159,22 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · RG1: nine regime families implemented and tested — none survives validation
+
+- **Implemented** `research/regimes.py`: trend (SMA20/50, 200d, 20d), HAR vol state, vol-of-vol,
+  breadth, average pairwise correlation, funding sign, drawdown, liquidity — plus a combined
+  `har_trend` state; written to `regimes.csv`.
+- **Validation 2023**: none passes BH FDR across eleven tests; best is trend_20d at t 1.27;
+  `har_trend` is −23 bps, t −0.27 — gating E1 on it would have been decoration.
+- **Holdout (sealed, read once for the test)**: `corr_high` +330 bps, t 3.26, both halves positive —
+  but flat in validation (t 0.32), so holdout-only and not actionable under the registration;
+  trend_20d passes FDR with the opposite sign to validation.
+- **Not testable**: `funding_pos` (positive on 2,221/2,282 days) and `liq_stress` (no design-window
+  liquidations).
+- **Disclosed**: two evaluation bugs fixed before the final numbers (NW covariance, state/NaN), so the
+  holdout was read three times, all within the registration and for code fixes only.
+- **Ledger `R9` retired**; result `research/RESULTS_regimes.md`.
+
 ### 2026-10-30 · dashboard fix: direction, headers, no bare tables
 
 - **Positions show direction explicitly** — a dedicated `direction` column renders **LONG** or
