@@ -109,11 +109,19 @@ def tick(store: Store, coin: str, *, notional: float = 100.0, costs: Costs = Cos
             fund += -st["qty"] * mid * rate
         if points:
             source = f"venue-{rules.funding_venue}"
+            store.set_state(coin, last_rate_bps=float(points[-1][1]) * 1e4)
         if fund == 0.0:                                      # no settled hour in this window yet
             hours = max(0.0, min(24.0, (now - last_f) / 3600))
-            fund = _funding(store, coin, st, mid, hours, rules.funding_bps_hour)
-            if points == [] and source == "constant":
-                source = "constant (no venue point)"
+            cached = st.get("last_rate_bps")
+            if cached not in (None, ""):
+                # a 60 s tick usually has no new settlement: charge the last observed venue rate,
+                # never the 1 bp/h constant, or the book drifts against the venue every minute
+                fund = _funding(store, coin, st, mid, hours, float(cached))
+                source = f"venue-{rules.funding_venue} (cached)"
+            else:
+                fund = _funding(store, coin, st, mid, hours, rules.funding_bps_hour)
+                if points == [] and source == "constant":
+                    source = "constant (no venue point)"
     if fund:
         st = dict(st, cash=st["cash"] + fund)
         store.set_state(coin, cash=st["cash"], last_funding=now)

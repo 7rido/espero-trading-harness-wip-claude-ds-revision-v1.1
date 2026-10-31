@@ -236,6 +236,18 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
 - **Unchanged by design**: ledger gate, paper engine, order paths, launchd plists; the running loop
   was not touched.
 
+### 2026-10-31 · funding fix in the running loop
+
+- **Bug**: `paper.tick` charged the 1 bp/h constant whenever no funding settlement fell inside the
+  60-second tick window — i.e. almost every tick — instead of the venue's observed rate.
+- **Fix**: cache the last venue rate per coin (`last_rate_bps`), expose it from `Store.get_state`, and
+  charge the cached venue rate between settlements; the constant is used only when no venue rate has
+  ever been seen. Verified in the log: `funding +0.0001 (venue-mainnet (cached))` with BTC at
+  +0.125 bp/h (≈11%/yr) instead of the 1 bp/h constant.
+- **Also observed**: vol targeting and the funding gate landed from the parallel session (6 commits:
+  spot tool, multi-venue funding ingest, OKX liquidations, OI/OBI ingest, vol targeting wired,
+  gitignore). The loop is sizing positions at 2% vol target.
+
 ### 2026-10-31 · continuous paper run while E1 records
 
 - **Plumbing window extended** to **2026-12-31** (was 2026-11-02) with the purpose restated: continuous

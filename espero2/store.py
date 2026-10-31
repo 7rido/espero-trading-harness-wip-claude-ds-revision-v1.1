@@ -112,7 +112,8 @@ class Store:
                 "entry_px": float(rows.get(f"{coin}:entry_px", 0.0)),
                 "entry_ts": int(float(rows.get(f"{coin}:entry_ts", 0))),
                 "last_funding": int(float(rows.get(f"{coin}:last_funding", 0))),
-                "blocked": rows.get(f"{coin}:blocked", "")}
+                "blocked": rows.get(f"{coin}:blocked", ""),
+                "last_rate_bps": rows.get(f"{coin}:last_rate_bps", "")}
 
     def set_state(self, coin: str = "BTC", **kw) -> None:
         self.db.executemany("INSERT OR REPLACE INTO state VALUES (?,?)",
