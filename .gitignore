@@ -32,3 +32,6 @@ data/
 
 # raw carry archives (fetched, not committed)
 data_carry/
+
+# raw xs archives (fetched, not committed)
+data_xs/
