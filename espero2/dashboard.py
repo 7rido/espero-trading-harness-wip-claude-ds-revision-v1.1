@@ -186,29 +186,58 @@ def _alpaca_card(st: dict) -> str:
     </section>"""
 
 
+def _px(v: float) -> str:
+    return f"${v:,.2f}" if v >= 1 else f"${v:,.5f}"
+
+
+def _big(v: float) -> str:
+    if v >= 1e9:
+        return f"{v/1e9:,.2f}B"
+    if v >= 1e6:
+        return f"{v/1e6:,.2f}M"
+    return f"{v/1e3:,.1f}k"
+
+
+def _num(v: float) -> str:
+    return "—" if v != v else f"{v:+.1f}%"
+
+
 def _optics_card() -> str:
-    """Decision optics written by research/optics.py; empty when the snapshot is missing."""
+    """Universal decision optics written by research/optics.py; empty when the snapshot is missing."""
     try:
         d = json.loads(OPTICS.read_text())
     except (OSError, ValueError):
         return ""
     rows = []
-    for c in d.get("coins", []):
-        e1 = c.get("e1", {})
-        oi = c.get("oi_hl", 0) or 0
-        oi_s = f"{oi/1e6:,.2f}M" if oi >= 1e6 else f"{oi/1e3:,.1f}k"
+    for m in d.get("markets", []):
+        e1 = m.get("e1", {})
         rows.append(
-            f"<tr><td>{html.escape(c['coin'])}</td><td>${c['price']:,.2f}</td>"
-            f"<td>{html.escape(c['state'])}</td>"
-            f"<td>{c['funding_binance']:+.1f}% / {c['funding_hl']:+.1f}%</td>"
-            f"<td>{oi_s}</td>"
-            f"<td>L ${c['liq_long']/1e3:,.0f}k / S ${c['liq_short']/1e3:,.0f}k</td>"
+            f"<tr><td><b>{html.escape(m['coin'])}</b><br><span class=muted>{html.escape(m.get('product',''))}</span></td>"
+            f"<td>{_px(m['price'])}</td><td>{html.escape(m['state'])}</td>"
+            f"<td>{_num(m['funding_binance'])} / {_num(m['funding_hl'])}</td>"
+            f"<td>{_big(m['oi_hl'])}</td>"
+            f"<td>L {_big(m['liq_long'])} / S {_big(m['liq_short'])}</td>"
             f"<td>{'<b>BREAK</b>' if e1.get('down_break') else '—'}</td></tr>")
+    conns = "".join(
+        f"<tr><td>{html.escape(c['name'])}</td><td class=muted>{html.escape(c.get('via',''))}</td>"
+        f"<td class={'' if c['ok'] else 'down'}>{'ok' if c['ok'] else 'fail'}</td>"
+        f"<td>{c.get('latency_ms','—')} ms</td><td class=muted>{html.escape(c.get('detail',''))}</td></tr>"
+        for c in d.get("connections", []))
+    srcs = "".join(
+        f"<tr><td>{html.escape(s['source'])}</td><td class={'' if s['ok'] else 'down'}>{'ok' if s['ok'] else 'fail'}</td>"
+        f"<td class=muted>{html.escape(s.get('detail',''))}</td></tr>"
+        for s in d.get("sources", []))
     flags = " · ".join(d.get("flags", []))
-    return (f'<section class="card"><h1 style="margin-bottom:8px">operator optics</h1>'
-            f'<table><thead><tr><th>coin</th><th>px</th><th>state</th><th>funding B/HL</th>'
-            f'<th>OI</th><th>liq 6h L/S</th><th>E1</th></tr></thead>'
-            f'<tbody>{"".join(rows)}</tbody></table>'
+    return (f'<section class="card" style="grid-column:1/-1"><h1 style="margin-bottom:8px">'
+            f'operator optics · markets</h1><table><thead><tr><th>coin / product</th><th>px</th>'
+            f'<th>state</th><th>funding B / HL</th><th>OI (HL)</th><th>liq 6h</th><th>E1</th></tr></thead>'
+            f'<tbody>{"".join(rows) or "<tr><td colspan=7 class=muted>no markets</td></tr>"}</tbody></table>'
+            f'<h1 style="margin:12px 0 8px">connections</h1>'
+            f'<table><thead><tr><th>source</th><th>via</th><th>status</th><th>latency</th><th>detail</th></tr></thead>'
+            f'<tbody>{conns}</tbody></table>'
+            f'<h1 style="margin:12px 0 8px">data sources</h1>'
+            f'<table><thead><tr><th>source</th><th>status</th><th>freshness</th></tr></thead>'
+            f'<tbody>{srcs}</tbody></table>'
             f'<div class="muted" style="margin-top:8px">{html.escape(str(d.get("at", "")))}'
             f' · {html.escape(flags)}</div></section>')
 

@@ -159,6 +159,23 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · universal optics: every market and every source
+
+- **Markets are discovered, not listed**: Hyperliquid perps ∩ Coinbase USD spot, ranked by open interest,
+  top 10 — currently BTC, ETH, HYPE, ZEC, SOL, NEAR, XRP, PUMP, ENA, XPL.
+- **Per market**: price/spread, state (trend/vol/funding), funding **per venue** (Binance 7-day vs HL
+  24-hour history, which now differs by coin: HYPE +33%, XPL +55%, XRP +9.8%), OI, 6 h liquidations,
+  and the live E1 break check.
+- **Connections block**: every endpoint with status, latency and detail — Coinbase products, HL perps,
+  HL spot book, OKX liquidations (4/4 up).
+- **Sources block**: freshness of `funding_multi`, `metrics`, `tardis_derivative`,
+  `tardis_liquidations`, `bars_daily`, the aggr feed and the paper marks.
+- **Dashboard** renders three tables (markets, connections, data sources) full-width; formatting is
+  adaptive for sub-dollar prices and OI in k/M/B.
+- **Funding coverage**: fetched for XRP/DOGE/ADA/AVAX/LINK/DOT/LTC; markets without Binance history show
+  `—` rather than a fake percentile (HYPE/ZEC/NEAR/PUMP/ENA/XPL).
+- Suite 141; optics job every 15 minutes.
+
 ### 2026-10-31 · operator optics on the dashboard
 
 - **`research/optics.py`**: one live snapshot — Coinbase price/spread, 60-day trend and vol percentile,
