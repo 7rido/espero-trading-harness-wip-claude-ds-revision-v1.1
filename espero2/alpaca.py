@@ -89,6 +89,19 @@ def crypto_bars(symbols: str | list[str], timeframe: str = "1Day", start: str | 
     return _call(DATA, "/v1beta3/crypto/us/bars", params)
 
 
+def place_crypto(symbol: str, qty: float, side: str, confirm: bool = False) -> dict:
+    """Crypto paper order (BTC/USD). Fractional qty, market, GTC; crypto cannot be shorted here."""
+    if not confirm:
+        raise Refused("pass confirm=True (--confirm-paper) to send a paper order")
+    if "/" not in symbol:
+        raise Refused("crypto symbols are pairs like BTC/USD")
+    if side.lower() == "sell":
+        raise Refused("Alpaca crypto is long-only in this adapter: no margin to open a short")
+    payload = {"symbol": symbol, "qty": str(qty), "side": side.lower(),
+               "type": "market", "time_in_force": "gtc"}
+    return _call(PAPER, "/v2/orders", method="POST", payload=payload)
+
+
 def place_order(symbol: str, qty: float, side: str, order_type: str = "market",
                 limit_price: float | None = None, confirm: bool = False) -> dict:
     """Paper only, and only with an explicit confirm. There is no live path in this module."""

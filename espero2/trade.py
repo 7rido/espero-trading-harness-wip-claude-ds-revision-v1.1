@@ -36,6 +36,12 @@ def place(venue: str, symbol: str, side: str, *, qty: float | None = None,
         raise Refused(f"side {side!r} is not buy or sell")
 
     if venue == "alpaca":
+        if "/" in symbol:                         # crypto pair: fractional qty, long-only
+            if qty is None:
+                raise Refused("crypto orders are sized in units: pass --qty")
+            out = alpaca.place_crypto(symbol, qty, side, confirm=confirm)
+            return {"venue": venue, "mode": "paper (crypto)", "symbol": symbol, "side": side,
+                    "qty": qty, "response": out}
         if qty is None:
             raise Refused("alpaca orders are sized in shares/units: pass --qty")
         out = alpaca.place_order(symbol, qty, side, order_type=order_type,

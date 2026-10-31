@@ -33,3 +33,19 @@ class TestTradeRouter(unittest.TestCase):
                                  confirm=True)
         self.assertEqual(out["venue"], "alpaca")
         self.assertEqual(out["mode"], "paper")
+
+
+class TestCryptoRoute(unittest.TestCase):
+    def test_crypto_needs_qty(self):
+        with self.assertRaises(trade.Refused):
+            trade.place("alpaca", "BTC/USD", "buy", notional=100, confirm=True)
+
+    def test_crypto_shorts_are_refused(self):
+        with self.assertRaises(trade.alpaca.Refused):
+            trade.place("alpaca", "BTC/USD", "sell", qty=0.001, confirm=True)
+
+    def test_crypto_routes_to_the_crypto_endpoint(self):
+        with patch.object(trade.alpaca, "place_crypto", return_value={"id": "x"}) as m:
+            out = trade.place("alpaca", "BTC/USD", "buy", qty=0.001, confirm=True)
+        m.assert_called_once_with("BTC/USD", 0.001, "buy", confirm=True)
+        self.assertIn("crypto", out["mode"])

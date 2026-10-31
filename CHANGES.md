@@ -159,6 +159,15 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · Alpaca crypto orders (the gap I left)
+
+- **`alpaca.place_crypto`**: crypto pairs (`BTC/USD`), fractional qty, market, `gtc`; **long-only** —
+  Alpaca crypto has no margin, so a crypto sell that would open a short is refused by the adapter.
+- **Router**: a `/` in the symbol routes to the crypto path; stock symbols keep the equity path.
+- **Placed and filled** (24/7 market): **BTC/USD 0.00129494 (~$100)** and **ETH/USD 0.02231441 (~$50)**,
+  both `filled`; positions now BTCUSD $99.78 (+$0.03) and ETHUSD $49.89 (−$0.02).
+- **Tests**: 3 (crypto needs qty, crypto shorts refused, crypto routing). Suite: 113.
+
 ### 2026-10-30 · Alpaca limit orders and a varied paper book
 
 - **Limit orders**: `alpaca.place_order(..., order_type="limit", limit_price=...)` with GTC; the trade
