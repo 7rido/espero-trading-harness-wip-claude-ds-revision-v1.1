@@ -159,6 +159,21 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · hardening: selection cost, E1 power, maker fills
+
+- **`research/selection_cost.py`** (+ `trials.csv`): exact two-sided tails, Monte-Carlo null maximum,
+  family-wise correction over the registered 9 and the full 121 cells. **The liquidation mechanism
+  survives** (liq26_D p 2.9e-7, family-wise 3.5e-5) and so does the executable variant (p 6.1e-5),
+  while carry (0.19), regimes (0.56), premium (0.68) and XS (0.96) do not.
+- **`research/e1_monitor.py`**: O'Brien-Fleming boundaries for six monthly looks (4.80 → 1.96) and a
+  power simulation: **70.4%** chance of detecting a true +32 bps effect by the final look, 30% false
+  negative. Current E1: 11 events, 0 forced trades.
+- **`research/maker_fill.py`**: Tardis SOL 2026-10-01 (11.3M book updates, 1.95M trades). Passive fills
+  within 60 s: **61.5% buy / 63.5% sell**, ranging 50–77% by spread quartile — tighter spreads fill
+  *less*. The 22–87% cost assumption is validated as a range but too wide to price a quiet regime.
+- **Bugs caught**: a tanh normal approximation that turned p=3e-7 into 0.006, and a power simulation
+  that under-diversified noise by `sqrt(n)`.
+
 ### 2026-10-31 · regime signs studied and applied to today's market
 
 - **`research/regime_signs.py`**: 8 states (trend × vol × funding), market-relative 5/20-day outcomes,

@@ -1,0 +1,24 @@
+[
+ {
+  "n":9,
+  "expected_max_abs_t":1.83,
+  "null_95pct":2.76,
+  "best_trial":"liq26_D",
+  "best_t":-5.13,
+  "best_p":0.0,
+  "familywise_p":0.0,
+  "bonferroni_p":0.0055555556,
+  "survives":true
+ },
+ {
+  "n":121,
+  "expected_max_abs_t":2.81,
+  "null_95pct":3.52,
+  "best_trial":"liq26_D",
+  "best_t":-5.13,
+  "best_p":0.0,
+  "familywise_p":0.0,
+  "bonferroni_p":0.0004132231,
+  "survives":true
+ }
+]
