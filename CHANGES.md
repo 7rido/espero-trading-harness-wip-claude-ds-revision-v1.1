@@ -159,6 +159,13 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · renamed
+
+- The project title is **Espero Trading Harness WIP-CLAUDE/DS Revision v1.1**. GitHub does not allow
+  spaces or a slash in a repository name, so the repo slug is
+  `espero-trading-harness-wip-claude-ds-revision-v1.1` and the literal title becomes its description.
+- The local folder stays `~/espero2`; the two launchd agents point at it.
+
 ### 2026-10-30 · silent-job health check, local CI, daily 08:30 agent
 
 - **Health check** (`scripts/health_check.py`): `sync` (07:45 copy ran within 30 h, source exists),

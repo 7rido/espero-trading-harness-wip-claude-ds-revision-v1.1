@@ -1,4 +1,4 @@
-# espero2
+# Espero Trading Harness WIP-CLAUDE/DS Revision v1.1
 
 Paper trading and testnet execution on Hyperliquid. Three rules, enforced in code:
 
