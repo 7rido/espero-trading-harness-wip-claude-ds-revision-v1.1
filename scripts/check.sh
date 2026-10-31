@@ -4,7 +4,16 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 PY="${PYTHON:-python3}"
 echo "== tests"
-"$PY" -m unittest discover -s tests -t . 2>&1 | tail -3
+LOG="$(mktemp)"
+if ! "$PY" -m unittest discover -s tests -t . > "$LOG" 2>&1; then
+    echo "tests failed:"
+    grep -E "^(FAIL|ERROR):" "$LOG" | head -20
+    tail -5 "$LOG"
+    rm -f "$LOG"
+    exit 1
+fi
+tail -2 "$LOG"
+rm -f "$LOG"
 echo "== audit"
 "$PY" research/audit_by_number.py --check
 echo "== ledger"

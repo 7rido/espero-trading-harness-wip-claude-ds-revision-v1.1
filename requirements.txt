@@ -1,0 +1,6 @@
+# runtime + test dependencies (stdlib covers everything else)
+pandas>=2.0
+rich>=13.0
+questionary>=2.0
+pyjwt>=2.8
+cryptography>=42.0
