@@ -359,7 +359,7 @@ def _cmd_book(args: argparse.Namespace) -> int:
     return 0
 
 
-def main(argv: list[str] | None = None) -> int:
+def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="espero2", description=__doc__)
     p.add_argument("--state", default="paper.db", help="sqlite journal (default paper.db)")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -463,6 +463,11 @@ def main(argv: list[str] | None = None) -> int:
     b.add_argument("--coin", default="BTC")
     b.set_defaults(func=_cmd_book)
 
+    return p
+
+
+def main(argv: list[str] | None = None) -> int:
+    p = build_parser()
     args = p.parse_args(argv)
     return args.func(args)
 

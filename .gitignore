@@ -43,3 +43,6 @@ data_exec/
 # venv and runtime kill switches
 .venv/
 KILL*
+
+# agent-generated briefings
+research/agent/

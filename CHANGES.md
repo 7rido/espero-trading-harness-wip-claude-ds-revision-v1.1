@@ -159,6 +159,22 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · agent layer: deterministic core, agent shell
+
+- **`agent/catalog.py`**: every operation classified (`read`, `research`, `write`, `privileged`) with
+  argv templates and argument guards; tests assert the catalog covers the CLI exactly
+  (`espero2.cli.build_parser()` was extracted for this) and that privileged verbs are never offered.
+- **`agent/tools.py`**: the only executor — subprocess, no shell, timeout, 256 KB output cap with
+  spill, `fcntl` lock, secrets stripped from the environment, one JSONL audit line per call, and
+  `--dry-run` that resolves argv without spawning. Refuses `run`, `order`, `trade`, `cb order`, `ui`.
+- **`agent/brief.py`**: deterministic daily briefing (E1 window/state, paper book, ledger statuses,
+  health); writes `research/agent/brief-YYYY-MM-DD.md`. No LLM, no key.
+- **`agent/loop.py`**: optional DeepSeek-compatible loop, **off by default**, only catalog tools,
+  12 calls / 3 turns cap; a model asking for `trade` raises instead of being obeyed.
+- **Tests**: 20 new (`test_catalog`, `test_agent_tools`, `test_brief`, `test_loop_guard`).
+- **Unchanged by design**: ledger gate, paper engine, order paths, launchd plists; the running loop
+  was not touched.
+
 ### 2026-10-31 · continuous paper run while E1 records
 
 - **Plumbing window extended** to **2026-12-31** (was 2026-11-02) with the purpose restated: continuous
