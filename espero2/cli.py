@@ -413,7 +413,7 @@ def main(argv: list[str] | None = None) -> int:
                     help="also send the order to the sandbox (shape check; it records nothing)")
     cb.add_argument("--sandbox-case", default=None,
                     help="X-Sandbox header, e.g. PostOrder_insufficient_fund")
-    cb.add_argument("--symbols", default="AAPL")
+    cb.add_argument("--symbols", nargs="+", default=["AAPL"])
     cb.add_argument("--symbol", default="AAPL")
     cb.add_argument("--qty", type=float, default=1.0)
     cb.add_argument("--timeframe", default="1Day")

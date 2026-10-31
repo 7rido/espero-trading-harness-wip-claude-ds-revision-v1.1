@@ -159,6 +159,16 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · Alpaca adapter verified against the live paper account
+
+- **Keys present** (`APCA_API_KEY_ID`, `APCA_API_SECRET_KEY`), loaded without printing values.
+- **Authenticated**: paper account `PA35L5ACZ`, status ACTIVE, cash **$100,000**, buying power
+  $400,000, options level 3, crypto ACTIVE; no positions, no orders.
+- **Market data**: `cb bars --symbols AAPL MSFT --timeframe 1Day` returns IEX bars (AAPL 344.77,
+  MSFT 521.97 at 2026-10-30).
+- **Fix**: `--symbols` now takes a list (`nargs="+"`); previously only one symbol parsed.
+- **Not wired**: crypto bars (Alpaca's `/v1beta3/crypto/us/bars`) — stocks only for now.
+
 ### 2026-10-30 · Alpaca paper API adapter
 
 - **`espero2/alpaca.py`**: paper account, positions, clock, bars, orders and paper-only order
