@@ -54,6 +54,9 @@ TOOLS: tuple[ToolSpec, ...] = (
              ("{python}", "-m", "espero2.cli", "cb", "orders", "--status", "{status}"), "read",
              args=("status",), timeout=60),
     # ---- research (writes only under research/) ----------------------------
+    ToolSpec("signals", "read-only SMA-regime snapshot for a coin list",
+             ("{python}", "research/signals.py", "--coins", "{coins}"), "read",
+             args=("coins",), required=("coins",), timeout=120),
     ToolSpec("audit check", "verify the 46-id audit citations",
              ("{python}", "research/audit_by_number.py", "--check"), "research",
              timeout=120, outputs=()),

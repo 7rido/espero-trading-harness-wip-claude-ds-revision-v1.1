@@ -159,6 +159,17 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · signals tool for the operator
+
+- **`research/signals.py`**: read-only snapshot — mid, spread, SMA20/50 and the regime flag for a coin
+  list on Hyperliquid. No orders, no writes; unavailable coins are reported, not fatal.
+- **Catalog**: `signals` added as a `read` tool, so the operator can answer "signals on the top 5?"
+  through the same audited executor as everything else.
+- **Live answer**: BTC long; ETH, SOL, DOGE, AVAX short (1h SMA 20/50).
+- **Label carried with it**: the `sma` ledger row is `plumbing` — these flags are mechanics data, not
+  evidence, and no position is authorised.
+- **Fix**: candle dicts use `close`, not `c`; script adds the repo root to `sys.path` when run as a file.
+
 ### 2026-10-31 · agent operator smoke test
 
 - **`agent/smoke.py`**: a scripted five-step operator session through the real executor — see the
