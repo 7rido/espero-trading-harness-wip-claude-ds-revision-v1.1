@@ -159,6 +159,16 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · public front page
+
+- **README rewritten** for the project as it is now: the evidence table (audit, both replications,
+  retired SMA), E1 and its window, the three enforced rules, quick start, the unattended jobs, the
+  layout, and an explicit "what is not claimed" section. The old page still said "19 tests" and
+  described only the paper harness.
+- **LICENSE** added: MIT with both notices (original © 2026 7ucky7, this revision © 2026 7rido),
+  because `reference/` reproduces the original's documents verbatim.
+- **Repository made public** at the owner's request.
+
 ### 2026-10-30 · renamed
 
 - The project title is **Espero Trading Harness WIP-CLAUDE/DS Revision v1.1**. GitHub does not allow

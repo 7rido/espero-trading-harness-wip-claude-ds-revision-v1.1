@@ -1,21 +1,50 @@
 # Espero Trading Harness WIP-CLAUDE/DS Revision v1.1
 
-Paper trading and testnet execution on Hyperliquid. Three rules, enforced in code:
+A research and paper-trading harness whose product is **evidence, not a bot**. Every claim here has a
+date, a document and a number; every rule that could make money is gated by a ledger row that says what
+was tested and on what bar.
 
-1. **A strategy cannot run without a ledger row** (`strategy_ledger.csv`), and `holds` needs a
-   valid statistic *and* a cost bar.
-2. **Fills are charged**: taker at the far touch plus slippage, fee from the venue table.
-3. **Signing is testnet-only** and needs three independent opt-ins.
+This is a **new project built from a read-only audit of the earlier `espero` repository**, not a fork.
+That repository's own research documents are in [`reference/`](reference) (87 files, verbatim) and its
+46 numbered tests are audited in [`research/AUDIT_BY_NUMBER.md`](research/AUDIT_BY_NUMBER.md) — what
+each claimed, what it decided, why it failed, and what would fix it.
+
+## What the evidence currently says
+
+| question | answer | document |
+|---|---|---|
+| Which of the original's 46 tests hold? | **one** (#26), with three asterisks | [`AUDIT_BY_NUMBER.md`](research/AUDIT_BY_NUMBER.md) |
+| Does #21 (liquidation spikes) replicate? | **no** — day-mean t 0.85; trade-weighted −19.7 bps | [`RESULTS …liqspike`](research/RESULTS_2026-10-30-liqspike.md) |
+| Does #26 (forced-liquidation bounce) replicate? | **yes** — D −20.3 bps (t −5.13) on 26 coins, 427 days | [`RESULTS …liq26`](research/RESULTS_2026-10-30-liq26-replication.md) |
+| Is #26's tag executable? | the within-day tag is not; the **prior-day** version keeps +32.0 bps at 4 h (t 4.01) | same |
+| Is the SMA strategy worth running? | **no** — it tracked an equal-weight hold; retired | `strategy_ledger.csv` (`P1`) |
+
+The only forward test this project owns is **E1** — the executable forced-liquidation bounce, window
+**2026-10-31 → 2027-04-30**, four pre-registered criteria, net of measured cost and realised funding.
+Its rules were committed before the first day of the window existed:
+[`PREREGISTRATION_2026-10-30-liq-executable.md`](research/PREREGISTRATION_2026-10-30-liq-executable.md).
+It is recorded daily and **not read** until the window closes: `research/e1_recorder.py --score`
+refuses before 2027-04-30.
+
+## The rules, enforced in code
+
+1. **A strategy cannot run without a ledger row** (`strategy_ledger.csv`); `holds` requires a valid
+   statistic *and* a cost bar. Plumbing work needs a dated `PLUMBING.md` window.
+2. **Fills are charged**: taker at the far touch plus slippage, the venue's measured fee, and funding
+   over the hold. Measured all-in round trip on the recorded books: **9.09 bps**.
+3. **Signing is testnet-only** and needs independent opt-ins. `EXECUTION` gates the Coinbase side, and
+   there is no authenticated order path at all.
+
+## Quick start
 
 ```bash
-python -m espero2.cli book   --coin BTC                 # testnet touch
-python -m espero2.cli ledger                            # what may run, and why
-python -m espero2.cli run    --coin BTC --once --allow-plumbing
-python -m espero2.cli run    --coin BTC --coin ETH --loop --every 60 --allow-plumbing
-python -m espero2.cli report                            # journal summary
-python -m espero2.cli state                             # testnet account (read-only)
-python -m espero2.cli order  --coin BTC --side buy --notional 12 --confirm-testnet
-python -m unittest discover -s tests -t .               # 19 tests
+python3 -m venv .venv && . .venv/bin/activate
+pip install -r requirements.txt
+
+python -m unittest discover -s tests -t .    # 94 tests
+bash scripts/check.sh                        # tests + audit citations + ledger validation
+python scripts/health_check.py               # are the unattended jobs alive?
+python -m espero2.cli ledger                 # what may run, and why
 ```
 
 ## Two front doors
@@ -25,11 +54,6 @@ python -m espero2.cli ui                     # terminal home screen (rich + ques
 python -m espero2.cli dashboard --open       # self-contained HTML page
 ```
 
-The TUI is the daily driver: a header with heartbeat and total, one row per coin (equity, change,
-position, mini curve), the strategy ledger, and four actions — run a cycle, open the dashboard,
-check health, quit. Every action is also a plain command; it is a front door, not a second
-implementation.
-
 ```
 ╭──────────────────────────────────────────────────────────────────────────────────────╮
 │ ▗▄▄▄▄▄▄▄▐▛██▜▌   espero2  paper accounts  $3,000.00                                  │
@@ -38,176 +62,36 @@ implementation.
 ╰──────────────────────────────────────────────────────────────────────────────────────╯
   account       equity      day       P&L    curve                               holds
   BTC        $1,000.00    +0.00    +0.00%    ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁    flat
-  ETH        $1,000.00    +0.00    +0.00%    ▁▁▁▁▁▁▁▁                            flat
-  SOL        $1,000.00    +0.00    +0.00%    ▁▁▁▁▁▁▁▁                            flat
-
-recent orders
-  time    coin    side    qty    price    fee    why
-  —                                              none yet
-
-strategy ledger
-  id    strategy    status      statistic    cost bar    note
-  P1    sma         plumbing    na           na          reference strategy; no claim to an edge
 ```
 
-## The dashboard
+## What runs unattended
 
-```bash
-python -m espero2.cli dashboard --open        # writes dashboard.html and opens it
-```
+| job | when | what it does |
+|---|---|---|
+| `io.espero2.sync` | 07:45 daily | one-way copy of the new data from the maintainer's folder |
+| `io.espero2.health` | 08:30 daily | fails loudly if the copy stalled or the E1 feed stopped |
+| GitHub Actions | every push | tests, audit citation check, ledger validation |
 
-A self-contained page (no server, no JS framework) with one card per coin — equity, change,
-position, sparkline — the order history, and the strategy ledger. It reloads itself every 30 s, and
-the supervised loop rewrites the file after every cycle (`--dashboard`), so the tab follows the book
-without being reopened. A fourth card shows the **real testnet account** (value, positions, uPnL)
-read by public address — no key — from `account.txt` or `HL_WALLET_ADDRESS`; the paper books are still
-`paper.db` only, and the account card is visibly separate from them.
-
-Each coin is its **own** paper book ($1,000 each), not a shared portfolio: a BTC fill cannot appear
-in ETH's account. That is asserted by a test.
-
-## The gate
-
-`strategy_ledger.csv` is the only door into `run`. Columns:
+## Layout
 
 ```
-id,strategy,status,estimator,estimator_matches_claim,economic_bar,basis,note
-P1,sma,plumbing,plain,na,na,,reference strategy; no claim to an edge
+espero2/        the harness: ledger gate, paper engine, HL testnet client, Coinbase adapter
+research/       the audit, both replications, E1's registration, the recorder and its run JSONs
+reference/      the original repository's research documents, verbatim (87 files)
+tests/          94 tests, including the ones that assert a test is *refused*
+scripts/        health check, local CI, the 07:45 copy, launchd installers
 ```
 
-- `plumbing` / `trial` → refused unless `--allow-plumbing` is passed **and** a dated window in
-  `PLUMBING.md` names that strategy with a future `expires:` date. No window, no run.
-- `holds` → refused at load time unless `estimator_matches_claim=yes` **and** `economic_bar=yes`.
-- `retired` → always refused.
-- a strategy with no row → refused, with the message telling you to add one.
+## What is not claimed
 
-## Long and short
+- **No mainnet order path exists.** The Hyperliquid client has a testnet host constant; the Coinbase
+  client is read-only by design.
+- **No strategy is running.** The paper loop is stopped; restarting it needs a new dated plumbing window
+  and a ledger row that earns it.
+- **In-sample numbers are not results.** The +32 bps at 4 h is a 2023–2024 reading; E1 exists precisely
+  because that is not the same thing as evidence about the future.
+- **Funding in the replication is approximate**; E1 charges it exactly.
 
-A position is a signed quantity: positive long, negative short. The strategy reads the 20/50 SMA
-pair as a **regime** (above = long, below = short) and flips on the cross — so the book is almost
-always in the market, in one direction.
+## Licence
 
-- **Mirrored stops**: long stops below entry − 3 %, short stops above entry + 3 %.
-- **A stop blocks re-entry** on the same regime; the block lifts only when the SMA regime flips.
-  Without that, a stop-out would re-open on the next tick and the stop would be decoration.
-- **Funding accrues** at a constant `funding_bps_hour` (default 1 bp/h ≈ 8.8 %/yr, positive = longs
-  pay shorts, shorts receive). It is charged from the state's `last_funding`, capped at 24 h per gap.
-- **Cash follows the signed position**: a long pays for the asset, a short receives the proceeds;
-  equity is `cash + qty × mark` in both cases.
-- `--long-only` on `run` ignores short signals; the signed testnet path has its own guard
-  (`reduce_only` when closing a long, `--allow-short` when opening a short).
-
-Paper only: no leverage, no margin call, no liquidation price. Notional per position is capped at
-cash, and funding is an assumption, not the venue's realised rate.
-
-## Signing (testnet only)
-
-`espero2/hl_signed.py` is the only module that reads a key. It refuses unless: the base URL is the
-testnet constant, `HL_NETWORK=testnet`, `ESPERO2_ALLOW_TESTNET=1`, `HL_PRIVATE_KEY` is set, and
-`--confirm-testnet` is passed. The key is read into the process and never printed.
-
-```bash
-ESPERO2_ALLOW_TESTNET=1 python -m espero2.cli order --coin BTC --side buy --notional 12 --confirm-testnet
-```
-
-## Sleeping, and catching up
-
-The loop is wall-clock scheduled, so a suspended laptop does not silently lose a cycle. On wake, if
-it is more than 1.5 intervals late it first **marks the equity series over every bar that closed
-while it slept** (no invented fills), then resumes. Proof, from `scripts/catchup_demo.sh` — a 1m loop
-SIGSTOPped for 140 s:
-
-```
-paused 17:42:58 · resumed 17:45:18
-17:45:18 catch-up BTC: 2 mark(s) for the 93s gap
-17:45:18 BTC mid=78706.50 spread=1.1bps signal=- | hold | equity=1000.00
-```
-
-A fresh journal is not backfilled, and a cross that happened during the gap is not traded after the
-fact: the next live tick sees the current touch, which is the price a person could get.
-
-## Execution policy
-
-`EXECUTION` holds one word:
-
-- `mock` (default) — Coinbase sandbox orders only.
-- `live` — recognised and refused: this project has no authenticated Coinbase order path.
-
-Hyperliquid **testnet** orders are not governed by this file — they are testnet money and keep their
-own five guards (`--confirm-testnet`, testnet host, explicit allow flag, key present, network check).
-
-## Coinbase spot paper book
-
-```bash
-python -m espero2.cli cb paper --product BTC-USD --quote 20 --once
-python -m espero2.cli cb paper --product BTC-USD --loop --every 60
-```
-
-Real prices from the public Exchange API; simulated taker fills at the far touch, 2 bps slippage,
-and the **account's actual taker rate** read from `/transaction_summary` (90 bps on the current
-"Intro" tier, 50 maker, falling back to 90); long-only (spot cannot short); 3% stop that blocks re-entry until the
-regime flips. Everything lands in our own `cb-paper.db`. `--send-mock` additionally sends the order
-to the sandbox to exercise the request shape — it records nothing, so the journal stays the truth.
-
-## Coinbase account (read-only)
-
-```bash
-python -m espero2.cli cb live        # authenticated GET /accounts, non-zero balances
-```
-
-The CDP key in `.env` signs a JWT and reads the live account. Only GETs exist in this project:
-there is no authenticated order path, and orders stay in the sandbox. The key is Ed25519; the docs
-say EdDSA is unsupported for Coinbase App APIs, but the brokerage endpoint accepted it on 2026-10-30.
-
-## Coinbase sandbox
-
-```bash
-python -m espero2.cli cb ticker --product BTC-USD     # real public price, no key
-python -m espero2.cli cb accounts                     # sandbox fixture accounts
-python -m espero2.cli cb order --quote 1 --confirm-sandbox
-python -m espero2.cli cb order --quote 1 --confirm-sandbox --sandbox-case PostOrder_insufficient_fund
-python -m espero2.cli cb portfolios                    # DEFAULT and INTX (perps)
-python -m espero2.cli cb fills
-```
-
-The documented `X-Sandbox:` header forces an error deterministically, so failure handling can be
-tested without inventing a mock: `PostOrder_insufficient_fund` makes the order come back
-`INSUFFICIENT_FUND`. The sandbox still serves **INTX** portfolio/positions fixtures, but INTX perpetuals were **retired
-on 2026-10-01**; US derivatives now go through **CFM futures** (`/cfm/*`, JWT required), which the
-sandbox does not implement. `cb futures` prints the live path and that gap.
-
-Prices are real (`api.exchange.coinbase.com`); orders go to the sandbox, which is a **mock** — it
-returns one canned success payload and ignores the request's side. The CLI says so when the reply
-does not echo our client id. Useful for validating the request shape, never for fills.
-
-## Supervision and heartbeat
-
-The loop writes a heartbeat after every cycle, so a silent death is visible:
-
-```bash
-python -m espero2.cli health        # exit 0 = alive, 1 = no heartbeat or older than 3 cycles
-```
-
-For multi-day running, start it under the supervisor, which restarts a dead loop with backoff
-(5 s doubling to 60 s) and exits when a `KILL` file exists:
-
-```bash
-./scripts/supervise.sh                       # 60 s cadence, BTC/ETH/SOL, journal paper.db
-STATE=demo.db EVERY=10 ./scripts/supervise.sh
-./scripts/install-launchd.sh                 # optional: launchd agent, KeepAlive, logs in logs/
-touch KILL                                   # stop everything, including the supervisor
-```
-
-Proof: a `kill -9` on the loop process —
-
-```
-17:47:29 loop exited 137 after 25s; restarting in 5s
-17:47:35 BTC mid=78720.50 ... equity=1000.00
-health: heartbeat 4s ago (every 10s) — ok
-```
-
-## What it is not
-
-- Not evidence. The SMA cross is plumbing; it has no claim and needs `--allow-plumbing` to run.
-- Not a venue simulator: testnet spreads (0.1 bps on BTC, 21 bps on SOL) are not mainnet's.
-- Not mainnet-reachable: the host is a constant and the exchange is built on it.
+MIT. Original work © 2026 7ucky7; this revision © 2026 7rido. See [`LICENSE`](LICENSE).
