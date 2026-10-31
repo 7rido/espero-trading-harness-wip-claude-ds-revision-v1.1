@@ -1,0 +1,22 @@
+panel: 1826 dates · 42 coins · 4.5+2.0 bps/side · long/short
+
+book                   total%    cagr%  sharpe   maxdd%
+portfolio                 6.3     1.23    0.39    -94.6
+BTC buy & hold           31.2     5.58    0.36    -76.6
+equal-weight hold       332.4    34.00    0.46    -99.5
+
+best coins:  INJ +64.3%, KSM +30.5%, XTZ +26.6%, BNB +20.6%, ZEC +14.8%
+worst coins: AAVE -47.7%, OP -64.5%, SUSHI -66.4%, TIA -99.0%, ARB -99.9%
+trades 3187 · fees $2,519 · liquidations 13 across 42 books
+wrote research/sma-panel.json
+panel: 1826 dates · 42 coins · 4.5+2.0 bps/side · long-only
+
+book                   total%    cagr%  sharpe   maxdd%
+portfolio               465.0    41.36    0.45    -84.6
+BTC buy & hold           31.2     5.58    0.36    -76.6
+equal-weight hold       332.4    34.00    0.46    -99.5
+
+best coins:  WLD +211.6%, INJ +58.0%, ZEC +52.0%, SEI +27.3%, TRX +19.2%
+worst coins: SUSHI -25.2%, ICP -26.3%, CRV -26.3%, TIA -76.1%, ARB -85.3%
+trades 1574 · fees $4,526 · liquidations 2 across 42 books
+wrote research/sma-panel-long.json

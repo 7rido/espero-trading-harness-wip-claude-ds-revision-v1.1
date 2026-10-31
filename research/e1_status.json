@@ -1,0 +1,22 @@
+{
+ "window": [
+  "2026-10-31",
+  "2027-04-30"
+ ],
+ "window_state": "not opened",
+ "ledger_exists": true,
+ "ledger_bytes": 1,
+ "events": 0,
+ "days_with_events": 0,
+ "first_day": null,
+ "last_day": null,
+ "forced_down_breaks": 0,
+ "complete_holds": {
+  "4h": 0,
+  "12h": 0,
+  "1d": 0
+ },
+ "missing_bars": 0,
+ "coins": [],
+ "trades_scored": false
+}

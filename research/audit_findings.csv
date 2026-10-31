@@ -1,0 +1,47 @@
+id,failure_layer,why,remedy,evidence
+1,estimator,"The holdout was examined before the selection period, and the z-threshold is venue-specific (Deribit's funding std is 8x Hyperliquid's).",Pre-register selection and holdout before any look; define the threshold on a robust scale per venue; test more than one independent asset class.,reference/FINDINGS.md
+2,selection,"The universe and venue are undocumented and the input CSVs are absent, so the result cannot be re-derived.","Commit the data with a manifest, define eligibility as of each date, and charge the venue that would trade it.",reference/RESULTS.md
+3,process,"A P&L arithmetic bug was fixed after the fact; totals did not change, but the number was wrong when published.",Re-derive the reward and cash accounting from venue statements and pin it with a test.,reference/LP_NOTES.md
+4,estimator,"Passed on a 0.06 Sharpe margin with no significance test, a lookback one bar short, and inputs that no longer exist.","Deflated Sharpe against an exposure-matched benchmark, and commit the input series with a hash manifest.",reference/RESULTS_TSMOM.md
+5,process,"Ran twice after seeing the first result, and two promised metrics were never reported.","One run, every registered metric reported, and a survivorship-free universe.",reference/RESULTS_PEAD.md
+6,process,"A pre-registered criterion (strategy Sharpe) was never implemented, and the design period was empty.",Implement every registered criterion or drop it before running; verify data coverage against the fixed window.,reference/RESULTS_ODDS.md
+7,process,"The pre-registered forward test was never started, and the live account later labelled its rule is a different rule.",Either run the registered test or retire the hypothesis; never attach a number to an unregistered account.,reference/RESULTS_XS20.md
+8,estimator,Criterion 4 is met by an IC t-stat inflated by overlapping labels while the mean Q5-Q1 spread is negative; an alphabetical no-signal book meets criteria 1-3.,"Pair every IC hurdle with a spread-or-P&L hurdle, and test against a construction-only control.",reference/RESULTS_MF.md
+9,process,"The criterion could not be met by the signal as written, and the test was graded FAIL before any data was fetched.",Keep as a documented negative; no remedy needed.,reference/RESULTS_LEADLAG.md
+9b,estimator,"The IC t of 13-17 assumes overlapping hourly labels are independent, inflating significance about twofold.",Newey-West or non-overlapping sampling for every overlapping-label statistic.,reference/RESULTS_LEADLAG2.md
+10,process,"A 1000x timestamp bug dropped two-thirds of bars; the published explanation (loss before fees, half the stops gapped) is retracted.","Fix the clock, re-run once, and correct the front page that still repeats the retracted claim.",reference/RESULTS_DEGEN.md
+11,selection,The window was cut after the fetch and the universe is today's top-20 open interest.,"Pre-register the window, and draw the universe from dated eligibility rather than today's list.",reference/RESULTS_CARRY.md
+12,execution,"The PASS exists only at 0 bps maker fills; at the venue whose prices define the universe it returns +0.5% a year, and 63% of the P&L is two coins.",Price the fills at the venue that holds the position and model the maker queue; re-issue the verdict.,reference/RESULTS_CARRY2.md
+13,process,"The forward half was never run, and one published criterion count moved.",Run the forward half or retire the test; freeze the criterion list before the run.,reference/RESULTS_DEGEN2.md
+14,selection,Six trades in a window stated without a power analysis.,"State the minimum detectable effect before the run, and refuse a verdict when the sample cannot carry it.",reference/RESULTS_CARRY3.md
+15,estimator,Criteria 2 and 3 can be met by lower exposure; a static vol-matched book already clears them.,"Benchmark against an exposure-matched book, and make each criterion discriminate.",reference/RESULTS_TREND.md
+16,none,A clean FAIL on the pre-registered unseen year.,Keep as negative evidence; no remedy.,reference/RESULTS_PEERS.md
+17,none,A clean FAIL on the pre-registered unseen year.,Keep as negative evidence; no remedy.,reference/RESULTS_PEERS.md
+18,estimator,The decision rests on a day-mean that its own later audit showed overweights quiet days.,"Trade-weighted, day-clustered statistics as the headline.",reference/RESULTS_LIQ.md
+19,estimator,"Criteria 1 and 2 are algebraically the same statistic, so the apparent confirmation is one test counted twice.","Make the second criterion independent, or drop it.",reference/RESULTS_SETTLE.md
+20,estimator,"The published +14.8 bps shrinks to +5.9 bps trade-weighted; the verdict survives, the magnitude does not.",Report trade-weighted as the headline and quote the shrink next to the claim.,reference/RESULTS_LOWS.md
+21,estimator,Replicated here: day-mean +14.0 bps (t 0.85) but trade-weighted -19.7 bps (t -0.67); the criterion fails on the registered estimator and changes sign under the stricter one.,New days and signal-time classification; the sealed months are exhausted for this rule.,reference/RESULTS_LIQSPIKE.md
+22,none,Running: window 2026-10-30 to 2027-03-31.,Judge on its date; do not read the live numbers as a result.,reference/FORWARD_LIQ.md
+23,none,Running: window 2026-10-30 to 2027-03-31.,Judge on its date; do not read the live numbers as a result.,reference/FORWARD_LIQSHORT.md
+24,none,"Running: window 2026-10-30 to 2027-03-31, with power stated in advance.",Judge on its date.,reference/FORWARD_LOWS.md
+25,estimator,"Criterion 3 is sign-only and passes at +0.2 bps, a technicality the doc itself names.","Give every criterion a magnitude floor, not just a sign.",reference/RESULTS_OI.md
+26,selection,"The window is the era where #18's effect appeared, the forced/organic tag uses the day's full terciles and is not executable at signal time, and the 1 h net is +5.4 bps (t 1.52) against an 18 bps gross bar.","Pre-register on days that do not exist yet, classify with prior-day tags, and judge net of measured cost and funding.",reference/RESULTS_LIQ2.md
+27,none,"Running: the #26 rule live, window 2026-10-30 to 2027-03-31.","Judge on its date; its criterion is day-mean, so print the trade-weighted value beside the verdict.",reference/FORWARD_LIQBREAK.md
+28,none,A clean FAIL on all four criteria.,Keep as negative evidence; no remedy.,reference/RESULTS_LEVETF.md
+29,none,Running: window fixed and power stated before the window opened.,Judge on its date.,reference/FORWARD_POSTCLOSE.md
+30,execution,The +1.7 bps day-mean becomes -3.6 bps trade-weighted: the sign of the result is an artefact of quiet-day weighting.,Measure fills at the back of the queue and judge trade-weighted.,reference/RESULTS_BIDS.md
+31,none,Running: the basis was not re-estimated after the day-mean audit.,Judge on its date with the trade-weighted value printed beside the frozen criterion.,reference/FORWARD_BIDS2.md
+32,none,Running: rests on #26.,Judge on its date.,reference/FORWARD_FUNDSPLIT.md
+33,estimator,"Criterion 3 has no t-threshold, and the headline rests on it.",Require a magnitude and a significance threshold for every criterion.,reference/RESULTS_FILLCOST.md
+34,none,"Running: part A flat, part B pending to 2027-03-31.",Judge on its date.,reference/RESULTS_LEVPUSH.md
+35,estimator,The reversal is +15.3 bps as a day-mean and +2.1 bps trade-weighted (t 0.79).,"Trade-weighted estimation, and withdraw the cross-reference built on the day-mean reading.",reference/RESULTS_SWEEPS.md
+36,process,One week of the window was silently dropped.,Reconcile the window against the data before computing anything.,reference/RESULTS_ETHENA.md
+37,process,The Brier score decided a 0.173 vs 0.170 comparison with no interval.,"Report an interval or a paired test, and keep information-only numbers out of the verdict.",reference/RESULTS_POLYHOUR.md
+38,none,Running: the basis is t -0.77 trade-weighted after the audit.,"Judge on its date, with the weakened basis stated.",reference/FORWARD_SHORTSPAY.md
+39,none,"A measurement, not a hypothesis: 288 cells, deflated bar fixed before data.",Keep as the cost reference for every other test.,reference/RESULTS_MARKOUT.md
+40,process,PASS was awarded while a pre-registered procedure step (session ends flat) failed.,Promote every checked procedure step to a numbered criterion.,reference/RESULTS_TESTNET.md
+41,none,"A measurement, not a hypothesis: 464 cells, ladder collated from #39.",Keep as the cost reference on thin coins.,reference/RESULTS_MARKOUT_SMALL.md
+42,process,The criteria count moved from five to eight between prereg and result.,Freeze the criterion list in the pre-registration and refuse post-hoc splits.,reference/RESULTS_REHEARSAL.md
+43,estimator,"CONFIRMED at t 2.12 while its own document prints a deflated bar of 4.09, and the trade-weighted reading is -9.6 bps per trade.","Judge against the bar the study computed, and make the trade-weighted number the verdict statistic.",reference/RESULTS_HORIZONS.md
+44,none,"An audit, not a hypothesis: 16 headlines reproduced, 5 conclusions changed.",Keep as the standard for new tests.,reference/RESULTS_DAYMEAN_AUDIT.md
+45,none,Running: window 2026-10-30 to 2027-03-31.,Judge on its date.,reference/FORWARD_LIQHOLD.md

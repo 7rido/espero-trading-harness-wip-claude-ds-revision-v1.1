@@ -1,0 +1,31 @@
+# secrets — never commit, never print
+.env
+.env.*
+
+# journals and books (state, not evidence)
+*.db
+*.db-wal
+*.db-shm
+books/
+
+# bulk data: 2.6 GB of archives and live recordings
+data_raw/
+recordings/
+
+# python
+__pycache__/
+*.pyc
+
+# runtime
+logs/
+*.log
+KILL
+sup.log
+dashboard.html
+dashboard.png
+.chrome-profile/
+account.txt
+
+# recordings and archives: fetched, not committed (releases / scripts/fetch-data.sh)
+data/
+.DS_Store

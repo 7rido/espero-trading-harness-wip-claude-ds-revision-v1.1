@@ -1,0 +1,10 @@
+{
+ "snapshots": 17266,
+ "products": [
+  "ETH-USD"
+ ],
+ "median_spread_bps": 0.08507850619151089,
+ "p90_spread_bps": 0.7727610322382639,
+ "fee_round_trip_bps": 9.0,
+ "all_in_round_trip_bps": 9.085078506191511
+}
