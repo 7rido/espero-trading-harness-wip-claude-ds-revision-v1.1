@@ -175,6 +175,51 @@ def _cmd_cb(args: argparse.Namespace) -> int:
     elif args.what == "portfolios":
         for p in cb.portfolios():
             print(f"{p['uuid']}  {p['type']:8s} {p['name']}")
+    elif args.what == "account":   # alpaca
+        from . import alpaca as ap
+        try:
+            print(json.dumps(ap.account(), indent=1)[:800])
+        except ap.Refused as exc:
+            print(f"refused: {exc}", file=sys.stderr); return 2
+    elif args.what == "positions":
+        from . import alpaca as ap
+        try:
+            for p in ap.positions():
+                print(f"{p.get('symbol'):8s} qty {p.get('qty'):>10s} "
+                      f"value ${p.get('market_value')} pnl {p.get('unrealized_pl')}")
+        except ap.Refused as exc:
+            print(f"refused: {exc}", file=sys.stderr); return 2
+    elif args.what == "clock":
+        from . import alpaca as ap
+        try:
+            c = ap.clock()
+            print(f"market open: {c.get('is_open')}  next open {c.get('next_open')}")
+        except ap.Refused as exc:
+            print(f"refused: {exc}", file=sys.stderr); return 2
+    elif args.what == "bars":
+        from . import alpaca as ap
+        try:
+            out = ap.bars(args.symbols, args.timeframe, args.start, args.end)
+            bars = (out.get("bars") or {})
+            for sym, rows in bars.items():
+                print(f"{sym}: {len(rows)} bars, last {rows[-1] if rows else None}")
+        except ap.Refused as exc:
+            print(f"refused: {exc}", file=sys.stderr); return 2
+    elif args.what == "orders":
+        from . import alpaca as ap
+        try:
+            for o in ap.orders(args.status):
+                print(f"{o.get('symbol'):8s} {o.get('side'):4s} {o.get('qty'):>8s} "
+                      f"{o.get('type'):6s} {o.get('status')}")
+        except ap.Refused as exc:
+            print(f"refused: {exc}", file=sys.stderr); return 2
+    elif args.what == "order":
+        from . import alpaca as ap
+        try:
+            out = ap.place_order(args.symbol, args.qty, args.side, confirm=args.confirm_paper)
+            print(f"paper order {out.get('id')} {out.get('symbol')} {out.get('side')} {out.get('qty')}")
+        except ap.Refused as exc:
+            print(f"refused: {exc}", file=sys.stderr); return 2
     elif args.what == "paper":
         from . import cbpaper
         store = Store(args.state)
@@ -354,7 +399,8 @@ def main(argv: list[str] | None = None) -> int:
     cb = sub.add_parser("cb", help="Coinbase: real public prices, sandbox (mock) orders")
     cb.add_argument("what", choices=["ticker", "products", "accounts", "orders", "order",
                                      "portfolios", "perps", "fills", "futures", "live", "paper",
-                                     "fees", "product"])
+                                     "fees", "product", "account", "positions", "clock", "bars",
+                                     "orders"])
     cb.add_argument("--product", default="BTC-USD")
     cb.add_argument("--side", choices=["BUY", "SELL"], default="BUY")
     cb.add_argument("--quote", type=float, default="1")
@@ -367,6 +413,14 @@ def main(argv: list[str] | None = None) -> int:
                     help="also send the order to the sandbox (shape check; it records nothing)")
     cb.add_argument("--sandbox-case", default=None,
                     help="X-Sandbox header, e.g. PostOrder_insufficient_fund")
+    cb.add_argument("--symbols", default="AAPL")
+    cb.add_argument("--symbol", default="AAPL")
+    cb.add_argument("--qty", type=float, default=1.0)
+    cb.add_argument("--timeframe", default="1Day")
+    cb.add_argument("--start", default=None)
+    cb.add_argument("--end", default=None)
+    cb.add_argument("--status", default="open")
+    cb.add_argument("--confirm-paper", action="store_true")
     cb.set_defaults(func=_cmd_cb)
 
     h = sub.add_parser("health", help="is the loop alive? (exit 1 if stale)")

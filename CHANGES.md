@@ -159,6 +159,20 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · Alpaca paper API adapter
+
+- **`espero2/alpaca.py`**: paper account, positions, clock, bars, orders and paper-only order
+  placement. Hosts allowed are exactly `paper-api.alpaca.markets` and `data.alpaca.markets`; the live
+  host `api.alpaca.markets` is recognised and **refused at the URL level**. Orders need
+  `--confirm-paper`, and keys are required before any call leaves the process.
+- **CLI**: `cb account | positions | clock | bars | orders | order` (the `cb` group is now the venue
+  group; Hyperliquid's `order` is unchanged).
+- **`.env`**: two empty placeholders added (`APCA_API_KEY_ID=`, `APCA_API_SECRET_KEY=`). Values are the
+  account holder's to paste; the file is never printed by this project.
+- **Verified**: both endpoints reachable; without keys every command refuses with exit 2 and a clear
+  message; 4 tests (live host refused, missing keys refused, confirm required, bars query built).
+- **Tests**: suite 92.
+
 ### 2026-10-30 · queue-aware execution: the last registered gap
 
 - **Ingested** `bookTicker` + `aggTrades` for 2023-07-10, 11 depth-covered symbols (BTC/ETH excluded
