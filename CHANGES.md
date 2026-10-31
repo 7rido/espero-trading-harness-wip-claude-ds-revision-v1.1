@@ -159,6 +159,18 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · erratum: the carry P2 ratio used the wrong denominator
+
+- **Found by testing the "fix"**: the intercept formulation does not identify alpha (t = -734: basis
+  P&L in the error term), but it exposed a measurement error in the result.
+- **The error**: `gross_funding_annual_pct` (11.3%) is the universe average including flat days; funding
+  collected while the harvest was open is **21.2%/yr**. Against net **15.4%**, P2 as written is
+  **0.73 < 1 — met**, and the basis-plus-cost contribution was **-5.8%/yr**, not positive.
+- **The sealed FAIL stands** (the registration is the contract and is not rewritten); the result doc is
+  corrected by `research/ERRATUM_2026-10-30-carry-p2.md`, not edited.
+- **Process fix**: every future registration must name the denominator of each ratio explicitly.
+- **Unchanged**: holdout 4 signals in 4,307 symbol-days — the threshold is a regime bet.
+
 ### 2026-10-30 · deep carry test (#12 rev 2) — sealed, run, inconclusive on holdout
 
 - **Registered before the holdout existed** (`research/PREREGISTRATION_CARRY_DEEP.md`, seal commit
