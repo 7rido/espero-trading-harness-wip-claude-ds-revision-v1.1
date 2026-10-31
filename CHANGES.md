@@ -159,6 +159,18 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · per-coin research tool (`coin report`)
+
+- **`research/coin_report.py`**: substrate snapshot for one coin — coverage and last close, 30d/90d
+  returns, annualised vol, median realised variance, funding profile, COIN-M liquidation totals, and
+  the next-hour distribution after that coin's own top-1% long-liquidation hours. Descriptive only.
+- **Catalog**: `coin report` added as a read tool, so "run research on SOL" is one audited call.
+- **Observed for SOL**: 2,020 days from 2020-09; 90d −33.3%; annualised vol 118%; funding +0.544 bp/8h
+  positive 75% of intervals; 25,658 COIN-M fills / $35.9M; after 26 top-1% long-liq hours the next hour
+  averages +73.5 bp (median +68.3, 58% up, p10 −149 / p90 +360) — a small-n descriptive cell.
+- **Dependencies**: `duckdb` and `statsmodels` added to `requirements.txt` and installed in the
+  project venv (the agent tools run with it).
+
 ### 2026-10-31 · signals tool for the operator
 
 - **`research/signals.py`**: read-only snapshot — mid, spread, SMA20/50 and the regime flag for a coin
