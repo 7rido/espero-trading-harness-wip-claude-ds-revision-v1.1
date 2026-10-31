@@ -159,6 +159,25 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · Tardis.dev data: funding, OI and liquidations for two years
+
+- **What it is**: Tardis.dev publishes normalized historical exchange data. Its CSV datasets are free
+  for the **first day of each month**, no API key:
+  `https://datasets.tardis.dev/v1/binance-futures/{channel}/{Y}/{M}/01/{SYMBOL}.csv.gz`.
+- **Channels that close our gaps**: `derivative_ticker` (funding, predicted funding, **open interest**,
+  mark/index), `liquidations` (Binance forceOrder), `book_ticker` (with amounts), `trades`,
+  `book_snapshot_25`. Also available: bybit (`allLiquidation`), okex (`liquidations`), deribit
+  (options/IV), hyperliquid since 2024-10-29 (no liquidation channel).
+- **`research/tardis_fetch.py`** ingests monthly samples into `tardis_derivative`, `tardis_liquidations`
+  and `tardis_book`. Ran for SOLUSDT/BTCUSDT, 2025-01 → 2026-10: **4.42M derivative rows**, **44,353
+  liquidation fills**, plus 1,440 book minutes for SOL.
+- **Findings (SOL)**: funding flips sign month to month — sampled-day annualised values range from
+  **−29.6%** (2026-02) to **+7.9%** (2025-10), and **−0.23%** on the 2026-10 sample, so "SOL funding is
+  positive" is not a property of SOL. OI 6.8M–10.9M SOL (mean 8.72M). Sampled liquidation totals are
+  similar in 2025 ($51.9M) and 2026 ($47.6M) but the **average fill grew from $4.4k to $7.4k**.
+- **Book 2026-10-01**: median OBI **+0.009** (balanced), median spread **0.85 bps**.
+- **Cost**: samples are one day per month; full daily history needs a paid key (tardis.dev/#order).
+
 ### 2026-10-31 · E1 records itself (local feed) and refreshes daily
 
 - **Problem**: the maintainer's `liqbreak` step failed on the first window day, so

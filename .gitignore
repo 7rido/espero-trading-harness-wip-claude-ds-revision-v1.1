@@ -55,3 +55,6 @@ liqhold_trades.csv
 lows_fwd_trades.csv
 postclose_days.csv
 settle_fwd.csv
+
+# tardis downloads (large)
+data_tardis/
