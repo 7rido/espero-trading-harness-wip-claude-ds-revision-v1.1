@@ -54,6 +54,10 @@ TOOLS: tuple[ToolSpec, ...] = (
              ("{python}", "-m", "espero2.cli", "cb", "orders", "--status", "{status}"), "read",
              args=("status",), timeout=60),
     # ---- research (writes only under research/) ----------------------------
+    ToolSpec("funding fetch", "fetch perp funding (Binance archive, Hyperliquid, OKX) into the substrate",
+             ("{python}", "research/funding_fetch.py", "--coin", "{coin}"), "write",
+             args=("coin",), required=("coin",), timeout=600,
+             outputs=("data_substrate/substrate.duckdb",)),
     ToolSpec("spot", "fresh keyless spot snapshot (Coinbase Exchange): price, spread, depth at size",
              ("{python}", "research/spot.py", "--product", "{product}", "--notional", "{notional}"),
              "read", args=("product", "notional"), required=("product",), timeout=120),
