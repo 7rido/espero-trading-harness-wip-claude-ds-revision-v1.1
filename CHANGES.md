@@ -159,6 +159,15 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · RP2: residual pairs — discovery works, the half-life floor kills it
+
+- **Sealed** `PREREGISTRATION_RESIDUAL_PAIRS.md` (`c1ec15b`) before any residual statistic.
+- **Discovery 2020-2022**: 435 pairs on market residuals, BH FDR 10% -> **3 pass** (raw prices: 0/231).
+  FIL|THETA p 0.00021, FIL|ATOM 0.00113, FIL|AAVE 0.00119 — residualisation is the right diagnosis.
+- **But** every survivor has a half-life of **2.8-4.4 days**, below the registered **5-30 day** floor:
+  **0 frozen**, validation not executed, **holdout unread**.
+- **Ledger `R7` retired**; result `research/RESULTS_rp2.md`. The gate held again.
+
 ### 2026-10-30 · research program phase 1: vol, pairs, factors — zero candidates pass
 
 - **Data**: `extend_substrate.py` aggregated the local 5m archive into `bars_daily` and `rv` —
