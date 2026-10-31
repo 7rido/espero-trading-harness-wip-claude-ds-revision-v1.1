@@ -44,7 +44,8 @@ def _cmd_run(args: argparse.Namespace) -> int:
                     r = tick(store, coin, notional=args.notional,
                              costs=Costs(args.taker_bps, args.slippage_bps),
                              rules=PaperRules(vol_target_pct=args.vol_target,
-                                              max_funding_annual_pct=args.max_funding),
+                                              max_funding_annual_pct=args.max_funding,
+                                              max_notional=args.max_notional),
                              interval=args.interval, kill=Path(args.kill),
                              allow_short=not args.long_only)
                 except hl.Refused as exc:
@@ -373,6 +374,8 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--long-only", action="store_true", help="ignore short signals")
     r.add_argument("--dashboard", action="store_true",
                    help="rewrite dashboard.html after every cycle (the page reloads it)")
+    r.add_argument("--max-notional", type=float, default=100.0,
+                   help="hard cap per position (default 100)")
     r.add_argument("--vol-target", type=float, default=None,
                    help="risk %% of equity per position, sized by realised volatility")
     r.add_argument("--max-funding", type=float, default=None,

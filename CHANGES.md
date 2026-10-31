@@ -159,6 +159,17 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · risk sizing live in the paper loop
+
+- **Enabled** in the supervisor: `--vol-target 2 --max-funding 25 --max-notional 500` for the running
+  BTC/ETH/SOL loop (was fixed $100 notional, no gate).
+- **`--max-notional` exposed** on `run`; the old hard-coded $100 cap was silently binding the vol-target
+  size, so every coin got exactly $100. With the cap at $500 the sizing now operates.
+- **Observed**: BTC 35%/yr vol → notional **500** (still capped), ETH 47% → **403.96**, SOL 63% →
+  **302.30** — inverse to volatility, which is the point.
+- **Funding gate**: active but not binding today (HL funding ~3.9%/yr vs the 25% cap).
+- Loop restarted via `launchctl kickstart`; 138 tests green.
+
 ### 2026-10-31 · risk sizing, funding gate, OI and order-book imbalance data
 
 - **`espero2/risk.py`**: Wilder ATR, realised vol, **volatility-target sizing** (`risk %` of equity per
