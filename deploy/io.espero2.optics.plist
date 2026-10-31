@@ -7,7 +7,7 @@
     <array>
         <string>/bin/bash</string>
         <string>-lc</string>
-        <string>cd __DIR__ &amp;&amp; .venv/bin/python research/optics.py</string>
+        <string>cd __DIR__ &amp;&amp; .venv/bin/python research/optics.py &amp;&amp; .venv/bin/python research/forecast.py</string>
     </array>
     <key>WorkingDirectory</key><string>__DIR__</string>
     <key>StartInterval</key><integer>900</integer>

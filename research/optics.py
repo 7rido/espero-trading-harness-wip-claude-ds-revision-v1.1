@@ -14,6 +14,7 @@ import json
 import pathlib
 import sys
 import time
+import urllib.error
 import urllib.request
 
 import duckdb
@@ -32,6 +33,20 @@ TOP_N = 10
 
 def get(url: str):
     return json.loads(urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=25).read())
+
+
+def retry(fn, attempts: int = 3, delays: tuple[float, ...] = (1.0, 3.0)):
+    """Retry rate limits and transient 5xx; anything else fails immediately."""
+    for i in range(attempts):
+        try:
+            return fn()
+        except urllib.error.HTTPError as exc:
+            if exc.code != 429 and exc.code < 500:
+                raise
+            if i == attempts - 1:
+                raise
+            time.sleep(delays[min(i, len(delays) - 1)])
+    return fn()
 
 
 def timed(name: str, via: str, fn) -> tuple[dict, object]:
@@ -158,16 +173,18 @@ def main() -> int:
     out: dict = {"at": pd.Timestamp.now("UTC").isoformat(timespec="seconds"),
                  "markets": [], "connections": [], "sources": [], "flags": []}
 
-    conn, products = timed("coinbase products", "GET /products", coinbase_markets)
+    conn, products = timed("coinbase products", "GET /products", lambda: retry(coinbase_markets))
     out["connections"].append(conn)
     conn, hl_data = timed("hyperliquid perps", "POST /info metaAndAssetCtxs",
-                          lambda: hl._post("/info", {"type": "metaAndAssetCtxs"}, base=hl.MAINNET))  # noqa: SLF001
+                          lambda: retry(lambda: hl._post("/info", {"type": "metaAndAssetCtxs"},
+                                                         base=hl.MAINNET)))  # noqa: SLF001
     out["connections"].append(conn)
     conn, spot_book = timed("hyperliquid spot UBTC/USDC", "POST /info l2Book @142",
-                            lambda: hl._post("/info", {"type": "l2Book", "coin": "@142"}, base=hl.MAINNET))  # noqa: SLF001
+                            lambda: retry(lambda: hl._post("/info", {"type": "l2Book", "coin": "@142"},
+                                                           base=hl.MAINNET)))  # noqa: SLF001
     out["connections"].append(conn)
     conn, _ = timed("okx liquidations", "GET /public/liquidation-orders",
-                    lambda: okx_liq("BTC"))
+                    lambda: retry(lambda: okx_liq("BTC")))
     out["connections"].append(conn)
 
     perps: list[tuple[str, float, float]] = []
@@ -182,45 +199,65 @@ def main() -> int:
 
     for coin, oi, mark in picked:
         product = products[coin]
-        t = coinbase_ticker(product)
-        px = candles(product, 86400)
-        ret60 = float(px[-1] / px[-61] - 1) if len(px) > 61 else float("nan")
-        r = np.diff(np.log(px[-300:]))
-        vol20 = float(pd.Series(r).rolling(20).std().iloc[-1])
-        vol_pct = float((pd.Series(r).rolling(20).std().dropna() <= vol20).mean())
-        fr = funding_series(con, f"{coin}USDT")
-        if len(fr):
-            roll = fr.rolling("7D").mean().dropna()
-            fund_ann = float(100 * roll.iloc[-1] * 1095)
-            fund_pct = float((roll <= roll.iloc[-1]).mean())
-            f_state = "high" if fund_pct > 0.5 else "low"
-        else:
-            fund_ann = fund_pct = float("nan")
-            f_state = "n/a"
-        ctx = next((c for u, c in zip(hl_data[0]["universe"], hl_data[1]) if u["name"] == coin), {}) if hl_data else {}
-        hl_fund = hl_funding_rate(coin) or float(ctx.get("funding", 0) or 0) * 8760 * 100
-        premium = 1e4 * float(ctx.get("premium", 0) or 0)
-        long_liq, short_liq = okx_liq(coin)
-        e1 = e1_check(five_min(product))
-        out["markets"].append({
-            "coin": coin, "product": product, "price": t["price"], "spread_bps": t["spread_bps"],
-            "ret60": ret60, "vol_pct": vol_pct, "fund_pct": fund_pct,
-            "funding_binance": fund_ann, "funding_hl": hl_fund, "oi_hl": oi, "premium_bp": premium,
-            "state": f"{'up' if ret60 > 0 else 'down'}/{'high' if vol_pct > .5 else 'low'}/{f_state}",
-            "liq_long": long_liq, "liq_short": short_liq, "e1": e1})
+        try:
+            t = coinbase_ticker(product)
+            px = candles(product, 86400)
+            ret60 = float(px[-1] / px[-61] - 1) if len(px) > 61 else float("nan")
+            r = np.diff(np.log(px[-300:]))
+            vol20 = float(pd.Series(r).rolling(20).std().iloc[-1])
+            vol_pct = float((pd.Series(r).rolling(20).std().dropna() <= vol20).mean())
+            fr = funding_series(con, f"{coin}USDT")
+            if len(fr):
+                roll = fr.rolling("7D").mean().dropna()
+                fund_ann = float(100 * roll.iloc[-1] * 1095)
+                fund_pct = float((roll <= roll.iloc[-1]).mean())
+                f_state = "high" if fund_pct > 0.5 else "low"
+            else:
+                fund_ann = fund_pct = float("nan")
+                f_state = "n/a"
+            ctx = next((c for u, c in zip(hl_data[0]["universe"], hl_data[1])
+                        if u["name"] == coin), {}) if hl_data else {}
+            hl_fund = hl_funding_rate(coin) or float(ctx.get("funding", 0) or 0) * 8760 * 100
+            premium = 1e4 * float(ctx.get("premium", 0) or 0)
+            long_liq, short_liq = okx_liq(coin)
+            e1 = e1_check(five_min(product))
+            out["markets"].append({
+                "coin": coin, "product": product, "price": t["price"], "spread_bps": t["spread_bps"],
+                "ret60": ret60, "vol_pct": vol_pct, "fund_pct": fund_pct,
+                "funding_binance": fund_ann, "funding_hl": hl_fund, "oi_hl": oi, "premium_bp": premium,
+                "state": f"{'up' if ret60 > 0 else 'down'}/{'high' if vol_pct > .5 else 'low'}/{f_state}",
+                "liq_long": long_liq, "liq_short": short_liq, "e1": e1})
+        except Exception as exc:                   # noqa: BLE001 - one dead market is partial data
+            out["markets"].append({"coin": coin, "product": product, "partial": True,
+                                   "error": f"{type(exc).__name__}: {exc}"[:120], "price": float("nan"),
+                                   "spread_bps": float("nan"), "state": "n/a",
+                                   "funding_binance": float("nan"), "funding_hl": float("nan"),
+                                   "oi_hl": oi, "premium_bp": float("nan"),
+                                   "liq_long": float("nan"), "liq_short": float("nan"),
+                                   "e1": {"down_break": False}})
 
     if spot_book and spot_book.get("levels") and spot_book["levels"][0]:
         mid = (float(spot_book["levels"][0][0]["px"]) + float(spot_book["levels"][1][0]["px"])) / 2
         out["flags"].append(f"HL spot UBTC/USDC mid {mid:,.2f}; book-only, spot ctx reports wrong px")
     if len(out["markets"]) == 0:
         out["flags"].append("no markets discovered — check the connections block")
+        out["sources"] = freshness(con)
+        con.close()
+        failed = ROOT / "research" / "optics.failed.json"
+        failed.parent.mkdir(parents=True, exist_ok=True)
+        failed.write_text(json.dumps(out, indent=1))
+        print(f"optics failed: 0 markets · {sum(c['ok'] for c in out['connections'])}/"
+              f"{len(out['connections'])} connections up · kept previous {OUT.name}")
+        return 2
     out["sources"] = freshness(con)
     con.close()
     OUT.write_text(json.dumps(out, indent=1))
     print(f"wrote {OUT.relative_to(ROOT)} · {len(out['markets'])} markets · "
           f"{sum(c['ok'] for c in out['connections'])}/{len(out['connections'])} connections up")
     for m in out["markets"]:
-        print(f"  {m['coin']:5s} ${m['price']:>10,.2f} {m['state']:>14s} "
+        price = m.get("price", float("nan"))
+        pxs = f"${price:>10,.2f}" if price == price else "       n/a"
+        print(f"  {m['coin']:5s} {pxs} {m['state']:>14s} "
               f"B {m['funding_binance']:+6.1f}% HL {m['funding_hl']:+6.1f}% OI {m['oi_hl']:>12,.0f}")
     return 0
 

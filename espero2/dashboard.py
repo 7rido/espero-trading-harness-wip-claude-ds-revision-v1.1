@@ -15,6 +15,7 @@ from . import hl, ledger
 from .store import Store
 
 OPTICS = Path(__file__).resolve().parents[1] / "research" / "optics.json"
+FORECAST = Path(__file__).resolve().parents[1] / "research" / "forecast.json"
 
 CSS = """
 :root{--bg:#0e1116;--card:#161b22;--ink:#e6edf3;--dim:#8b949e;--up:#3fb950;--down:#f85149;--line:#30363d}
@@ -242,6 +243,56 @@ def _optics_card() -> str:
             f' · {html.escape(flags)}</div></section>')
 
 
+def _age_min(ts) -> float:
+    try:
+        from datetime import datetime, timezone
+        stamp = datetime.fromisoformat(str(ts).replace("Z", "+00:00"))
+        return (datetime.now(timezone.utc) - stamp).total_seconds() / 60
+    except (TypeError, ValueError):
+        return float("inf")
+
+
+def _forecast_card() -> str:
+    """Forecasts and gated labels; the banner states the cap, the rows never exceed it."""
+    try:
+        d = json.loads(FORECAST.read_text())
+    except (OSError, ValueError):
+        return ""
+    rows = []
+    for r in d.get("rows", []):
+        label = str(r.get("label", ""))
+        muted = ' class="muted"' if label in ("UNMAPPED", "CONTEXT ONLY") else ""
+        e1style = ' style="color:#d29922"' if label == "E1-FORWARD" else ""
+        share = "—" if r["share_up"] != r["share_up"] else f"{r['share_up']:.0%}"
+        ci = "" if r["ci_lo"] != r["ci_lo"] else f" ({r['ci_lo']:.0%}–{r['ci_hi']:.0%})"
+
+        def num(v: float) -> str:
+            return "—" if v != v else f"{v:+.0f}"
+
+        rows.append(
+            f"<tr><td><b>{html.escape(str(r.get('coin')))}</b></td>"
+            f"<td>{html.escape(str(r.get('state')))}</td><td>{int(r.get('n', 0)):,}</td>"
+            f"<td>{num(r.get('median5', float('nan')))}</td>"
+            f"<td>{num(r.get('median20', float('nan')))}</td>"
+            f"<td>{share}{ci}</td><td>{num(r.get('net_median20', float('nan')))}</td>"
+            f"<td{muted}{e1style}>{html.escape(label)}</td>"
+            f"<td class=muted>{html.escape(str(r.get('reason', '')))}</td></tr>")
+    g = d.get("guardrails", {})
+    stale = _age_min(d.get("at")) > 30 or _age_min(d.get("optics_at")) > 20
+    banner = (f'no strategy in holds ({g.get("holds", "?")}) · labels capped at '
+              f'<b>{html.escape(str(g.get("max_label", "WATCH")))}</b> · forecasts are conditional '
+              f'historical frequencies, market-relative, not advice')
+    stale_line = ('<div class="down"><b>stale</b> — snapshot or optics older than the refresh '
+                  'window</div>' if stale else "")
+    return (f'<section class="card" style="grid-column:1/-1">'
+            f'<h1 style="margin-bottom:8px">forecasts &amp; recommendations</h1>'
+            f'<div class="muted" style="margin-bottom:8px">{banner}</div>{stale_line}'
+            f'<table><thead><tr><th>coin</th><th>state</th><th>n</th><th>med 5d</th><th>med 20d</th>'
+            f'<th>P(up) 20d</th><th>net 20d</th><th>label</th><th>reason</th></tr></thead>'
+            f'<tbody>{"".join(rows) or "<tr><td colspan=9 class=muted>no rows</td></tr>"}</tbody>'
+            f'</table></section>')
+
+
 def render(store: Store, out: Path, *, address: str | None = None,
            account_state: dict | None = None, alpaca_override: dict | None = None) -> Path:
     h = store.health()
@@ -317,6 +368,7 @@ def render(store: Store, out: Path, *, address: str | None = None,
 <tbody>{rows or '<tr><td colspan=7 class=muted>none yet</td></tr>'}</tbody></table></section>
 {_alpaca_card(alp)}
 {_optics_card()}
+{_forecast_card()}
     <section class="card"><h1 style="margin-bottom:8px">research state</h1>
     <table>{research_rows}</table>
     </section>

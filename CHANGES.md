@@ -159,6 +159,24 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · forecasts & recommendations on the dashboard (gated)
+
+- **`research/forecast.py`**: for every market in the optics snapshot, look up its regime state in
+  `regime_signs` and report the 5/20-day distribution (median, 10-90, P(up) with Wilson CI) minus the
+  cost hurdle (9 bps + spread).
+- **Fixed rubric, hard-capped**: `UNMAPPED` < `CONTEXT ONLY` < `E1-FORWARD` < `WATCH`; while no strategy
+  is in `holds`, the strongest label is **WATCH**. Unknown labels are treated as the strongest claim and
+  capped — a test asserts no BUY/SELL/TRADE can ever be emitted.
+- **Current output**: 10 markets — 4 `CONTEXT ONLY` (BTC −9 bps/20d, ETH −205, SOL −205, XRP −214, all
+  39-50% up), 6 `UNMAPPED` (states with no historical cell, mostly `n/a` funding).
+- **Dashboard**: full-width card with the banner ("no strategy in holds · capped at WATCH · not advice"),
+  per-market distribution, cost and reason; **stale** flag if the snapshot or optics is older than the
+  refresh window.
+- **Optics hardened** (the 22:48Z 429 incident): retries with backoff, per-market isolation, and an empty
+  run **no longer overwrites** a good snapshot — it writes `optics.failed.json` and exits 2.
+- **Scheduled**: the 15-minute optics job now runs `optics.py && forecast.py`.
+- **Tests**: 14 new (rubric, cap, Wilson, card, stale, 429 guard); suite **154**.
+
 ### 2026-10-31 · universal optics: every market and every source
 
 - **Markets are discovered, not listed**: Hyperliquid perps ∩ Coinbase USD spot, ranked by open interest,
