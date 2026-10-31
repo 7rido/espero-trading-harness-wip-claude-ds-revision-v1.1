@@ -159,6 +159,22 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · E1 records itself (local feed) and refreshes daily
+
+- **Problem**: the maintainer's `liqbreak` step failed on the first window day, so
+  `liqbreak_trades.csv` was empty while the raw 5m aggr feed (10,368 rows) had arrived — E1 would have
+  recorded "0 events" for a reason unrelated to the market.
+- **Fix**: `research/e1_feed.py` recomputes the #26/#27 rule locally from `data/aggr/forward5m` +
+  `lows/forward` (48-bar down-break, volume z ≥ 2, forced share = prior-hour long liquidations /
+  quote volume, one per coin/direction/hour, entries after 01:00 UTC) and writes `research/e1_events.csv`
+  with prior-day tercile tags. `e1_recorder.py` prefers that file over the upstream ledger.
+- **Day 1 (2026-10-30)**: **11 down-break events** across 9 coins, all tagged `middle` (no prior day
+  yet, so no trades — correct); the tag distribution is seeded for 2026-10-31's events.
+- **Daily refresh**: `io.espero2.sync` now runs sync → `e1_feed.py` → `e1_recorder.py` at 07:45, so E1
+  keeps recording even when the upstream job is broken.
+- **Repo hygiene**: `health.json` and the forward ledgers were tracked and dirtied by every sync —
+  now gitignored and untracked.
+
 ### 2026-10-31 · risk sizing live in the paper loop
 
 - **Enabled** in the supervisor: `--vol-target 2 --max-funding 25 --max-notional 500` for the running
