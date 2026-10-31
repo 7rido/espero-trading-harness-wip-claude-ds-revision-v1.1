@@ -159,6 +159,19 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · liquidation anatomy (descriptive)
+
+- **Built** `research/liquidation_anatomy.py`: hourly liquidation spikes (99th percentile per coin,
+  2023-01 → 2024-11, ten coins) conditioned on the shape of the preceding 1h/2h/4h and on consecutive
+  down hours, with day-clustered bootstrap intervals.
+- **Long side (246 events)**: aligned-bear n=216 → next 1h +12.8 bps mean, +23.5 median, 56% up,
+  CI −30…+57. Four consecutive down hours → **60% up, median +40 bps, mean −3.4** (fat left tail).
+- **Short side (244 events)**: aligned-bull n=197 → next 1h −7.7 bps, 47% up — no continuation or
+  reversal; the one negative small cell is multiplicity noise.
+- **Conclusion**: liquidations produce a positively skewed bounce, not a reliable reversal; useful for
+  risk sizing, not as a signal. Descriptive only — no trading claim.
+- **Ledger `R10` (audit)**; result `research/RESULTS_liquidation_anatomy.md`.
+
 ### 2026-10-30 · RG1: nine regime families implemented and tested — none survives validation
 
 - **Implemented** `research/regimes.py`: trend (SMA20/50, 200d, 20d), HAR vol state, vol-of-vol,

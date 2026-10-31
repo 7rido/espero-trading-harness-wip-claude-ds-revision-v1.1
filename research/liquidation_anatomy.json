@@ -1,0 +1,360 @@
+{
+ "events": {
+  "long": 246,
+  "short": 244
+ },
+ "table": [
+  {
+   "side": "long liquidations",
+   "pattern": "aligned_bear (1h,2h,4h down)",
+   "horizon_h": 1,
+   "n": 216,
+   "mean_bps": 12.824146226516856,
+   "median_bps": 23.493797174415356,
+   "share_up": 0.5648148148148148,
+   "ci_lo_bps": -29.786292484797187,
+   "ci_hi_bps": 57.14953922271738
+  },
+  {
+   "side": "long liquidations",
+   "pattern": "aligned_bear (1h,2h,4h down)",
+   "horizon_h": 4,
+   "n": 216,
+   "mean_bps": 22.896459120519737,
+   "median_bps": 17.027436075764957,
+   "share_up": 0.5277777777777778,
+   "ci_lo_bps": -55.73650775221575,
+   "ci_hi_bps": 113.0601337124708
+  },
+  {
+   "side": "long liquidations",
+   "pattern": "aligned_bear (1h,2h,4h down)",
+   "horizon_h": 24,
+   "n": 216,
+   "mean_bps": 159.52434112802086,
+   "median_bps": 98.91612452118449,
+   "share_up": 0.5601851851851852,
+   "ci_lo_bps": -143.31589072809692,
+   "ci_hi_bps": 437.34421786969347
+  },
+  {
+   "side": "long liquidations",
+   "pattern": "1h down only",
+   "horizon_h": 1,
+   "n": 6,
+   "mean_bps": 150.85813569211848,
+   "median_bps": 128.47818319817296,
+   "share_up": 0.6666666666666666,
+   "ci_lo_bps": NaN,
+   "ci_hi_bps": NaN
+  },
+  {
+   "side": "long liquidations",
+   "pattern": "1h down only",
+   "horizon_h": 4,
+   "n": 6,
+   "mean_bps": 221.5170777222314,
+   "median_bps": 292.4755268901036,
+   "share_up": 0.6666666666666666,
+   "ci_lo_bps": NaN,
+   "ci_hi_bps": NaN
+  },
+  {
+   "side": "long liquidations",
+   "pattern": "1h down only",
+   "horizon_h": 24,
+   "n": 6,
+   "mean_bps": 1032.9708538930004,
+   "median_bps": 380.71689662641626,
+   "share_up": 0.8333333333333334,
+   "ci_lo_bps": NaN,
+   "ci_hi_bps": NaN
+  },
+  {
+   "side": "long liquidations",
+   "pattern": "mixed",
+   "horizon_h": 1,
+   "n": 26,
+   "mean_bps": 19.556175420188648,
+   "median_bps": 33.917395198257424,
+   "share_up": 0.5769230769230769,
+   "ci_lo_bps": -52.42815885456828,
+   "ci_hi_bps": 92.46169860836244
+  },
+  {
+   "side": "long liquidations",
+   "pattern": "mixed",
+   "horizon_h": 4,
+   "n": 26,
+   "mean_bps": 37.230343790440706,
+   "median_bps": 47.55280636859926,
+   "share_up": 0.5769230769230769,
+   "ci_lo_bps": -91.44002079600162,
+   "ci_hi_bps": 155.79571677669045
+  },
+  {
+   "side": "long liquidations",
+   "pattern": "mixed",
+   "horizon_h": 24,
+   "n": 26,
+   "mean_bps": 261.3005225950395,
+   "median_bps": 52.05371328535602,
+   "share_up": 0.5384615384615384,
+   "ci_lo_bps": -198.41387482885258,
+   "ci_hi_bps": 780.4570176018449
+  },
+  {
+   "side": "long liquidations",
+   "pattern": "aligned_bull (1h,2h,4h up)",
+   "horizon_h": 1,
+   "n": 4,
+   "mean_bps": 204.71391928941568,
+   "median_bps": 257.8823435476041,
+   "share_up": 0.75,
+   "ci_lo_bps": NaN,
+   "ci_hi_bps": NaN
+  },
+  {
+   "side": "long liquidations",
+   "pattern": "aligned_bull (1h,2h,4h up)",
+   "horizon_h": 4,
+   "n": 4,
+   "mean_bps": 1231.0906381240882,
+   "median_bps": 499.8771167600336,
+   "share_up": 1.0,
+   "ci_lo_bps": NaN,
+   "ci_hi_bps": NaN
+  },
+  {
+   "side": "long liquidations",
+   "pattern": "aligned_bull (1h,2h,4h up)",
+   "horizon_h": 24,
+   "n": 4,
+   "mean_bps": 213.7580149919574,
+   "median_bps": -231.78920767012835,
+   "share_up": 0.5,
+   "ci_lo_bps": NaN,
+   "ci_hi_bps": NaN
+  },
+  {
+   "side": "long liquidations",
+   "pattern": "1 consecutive down hours",
+   "horizon_h": 1,
+   "n": 44,
+   "mean_bps": -3.4131832610042903,
+   "median_bps": 33.15440676662229,
+   "share_up": 0.5909090909090909,
+   "ci_lo_bps": -167.54544588410317,
+   "ci_hi_bps": 136.3623202903555
+  },
+  {
+   "side": "long liquidations",
+   "pattern": "2 consecutive down hours",
+   "horizon_h": 1,
+   "n": 68,
+   "mean_bps": 52.555194091334876,
+   "median_bps": 16.902824832036867,
+   "share_up": 0.5441176470588235,
+   "ci_lo_bps": -25.511127184652434,
+   "ci_hi_bps": 131.75943405643912
+  },
+  {
+   "side": "long liquidations",
+   "pattern": "3 consecutive down hours",
+   "horizon_h": 1,
+   "n": 38,
+   "mean_bps": 24.562462545720546,
+   "median_bps": 4.200437284860303,
+   "share_up": 0.5263157894736842,
+   "ci_lo_bps": -31.658741389224225,
+   "ci_hi_bps": 88.62702418709983
+  },
+  {
+   "side": "long liquidations",
+   "pattern": "4 consecutive down hours",
+   "horizon_h": 1,
+   "n": 75,
+   "mean_bps": -3.4053276499894647,
+   "median_bps": 40.12716095755708,
+   "share_up": 0.6,
+   "ci_lo_bps": -74.30213966225139,
+   "ci_hi_bps": 78.91571039707071
+  },
+  {
+   "side": "short liquidations",
+   "pattern": "aligned_bear (1h,2h,4h down)",
+   "horizon_h": 1,
+   "n": 16,
+   "mean_bps": 80.73788105836546,
+   "median_bps": 51.645397193420536,
+   "share_up": 0.625,
+   "ci_lo_bps": -27.76316951034935,
+   "ci_hi_bps": 223.69024839049408
+  },
+  {
+   "side": "short liquidations",
+   "pattern": "aligned_bear (1h,2h,4h down)",
+   "horizon_h": 4,
+   "n": 16,
+   "mean_bps": -11.589995068081171,
+   "median_bps": 96.85651692334596,
+   "share_up": 0.5625,
+   "ci_lo_bps": -203.65439525246362,
+   "ci_hi_bps": 186.31876697867537
+  },
+  {
+   "side": "short liquidations",
+   "pattern": "aligned_bear (1h,2h,4h down)",
+   "horizon_h": 24,
+   "n": 16,
+   "mean_bps": 209.18794666716576,
+   "median_bps": 265.2156870202682,
+   "share_up": 0.6875,
+   "ci_lo_bps": -315.37250082749534,
+   "ci_hi_bps": 708.5028533970514
+  },
+  {
+   "side": "short liquidations",
+   "pattern": "1h down only",
+   "horizon_h": 1,
+   "n": 14,
+   "mean_bps": -47.37017587991753,
+   "median_bps": -37.33219513287034,
+   "share_up": 0.14285714285714285,
+   "ci_lo_bps": -85.70649242307414,
+   "ci_hi_bps": -16.066049169050025
+  },
+  {
+   "side": "short liquidations",
+   "pattern": "1h down only",
+   "horizon_h": 4,
+   "n": 14,
+   "mean_bps": 31.923556156694794,
+   "median_bps": -136.8928649996476,
+   "share_up": 0.35714285714285715,
+   "ci_lo_bps": -168.46367187597582,
+   "ci_hi_bps": 238.26402564989428
+  },
+  {
+   "side": "short liquidations",
+   "pattern": "1h down only",
+   "horizon_h": 24,
+   "n": 14,
+   "mean_bps": 282.6578602920673,
+   "median_bps": -97.79491261532436,
+   "share_up": 0.42857142857142855,
+   "ci_lo_bps": -530.5786253179022,
+   "ci_hi_bps": 983.9166224526642
+  },
+  {
+   "side": "short liquidations",
+   "pattern": "mixed",
+   "horizon_h": 1,
+   "n": 31,
+   "mean_bps": -30.93687079486429,
+   "median_bps": -24.973207316151267,
+   "share_up": 0.2903225806451613,
+   "ci_lo_bps": -56.57965468191321,
+   "ci_hi_bps": -3.987492979498662
+  },
+  {
+   "side": "short liquidations",
+   "pattern": "mixed",
+   "horizon_h": 4,
+   "n": 31,
+   "mean_bps": -1.9439912755232993,
+   "median_bps": -46.665677069803735,
+   "share_up": 0.41935483870967744,
+   "ci_lo_bps": -108.3603251475475,
+   "ci_hi_bps": 110.94483718420175
+  },
+  {
+   "side": "short liquidations",
+   "pattern": "mixed",
+   "horizon_h": 24,
+   "n": 31,
+   "mean_bps": 191.0833000736637,
+   "median_bps": -15.142858340235765,
+   "share_up": 0.4838709677419355,
+   "ci_lo_bps": -178.91770177272184,
+   "ci_hi_bps": 577.7660884259733
+  },
+  {
+   "side": "short liquidations",
+   "pattern": "aligned_bull (1h,2h,4h up)",
+   "horizon_h": 1,
+   "n": 197,
+   "mean_bps": -7.678503788436188,
+   "median_bps": -11.052823052078997,
+   "share_up": 0.467005076142132,
+   "ci_lo_bps": -44.52251984908398,
+   "ci_hi_bps": 33.64014630781391
+  },
+  {
+   "side": "short liquidations",
+   "pattern": "aligned_bull (1h,2h,4h up)",
+   "horizon_h": 4,
+   "n": 197,
+   "mean_bps": 14.025071987626612,
+   "median_bps": -4.029188288210417,
+   "share_up": 0.49746192893401014,
+   "ci_lo_bps": -77.94958803526133,
+   "ci_hi_bps": 128.2083253772423
+  },
+  {
+   "side": "short liquidations",
+   "pattern": "aligned_bull (1h,2h,4h up)",
+   "horizon_h": 24,
+   "n": 197,
+   "mean_bps": -2.5688352796486122,
+   "median_bps": -6.393129770991823,
+   "share_up": 0.48223350253807107,
+   "ci_lo_bps": -146.75273779087573,
+   "ci_hi_bps": 141.61961685027262
+  },
+  {
+   "side": "short liquidations",
+   "pattern": "1 consecutive down hours",
+   "horizon_h": 1,
+   "n": 22,
+   "mean_bps": -15.509051368676046,
+   "median_bps": -27.959814956644014,
+   "share_up": 0.2727272727272727,
+   "ci_lo_bps": -63.81788849723439,
+   "ci_hi_bps": 44.34532518703505
+  },
+  {
+   "side": "short liquidations",
+   "pattern": "2 consecutive down hours",
+   "horizon_h": 1,
+   "n": 2,
+   "mean_bps": 190.95904894143368,
+   "median_bps": 190.95904894143368,
+   "share_up": 1.0,
+   "ci_lo_bps": NaN,
+   "ci_hi_bps": NaN
+  },
+  {
+   "side": "short liquidations",
+   "pattern": "3 consecutive down hours",
+   "horizon_h": 1,
+   "n": 2,
+   "mean_bps": 262.1783047187964,
+   "median_bps": 262.1783047187964,
+   "share_up": 1.0,
+   "ci_lo_bps": NaN,
+   "ci_hi_bps": NaN
+  },
+  {
+   "side": "short liquidations",
+   "pattern": "4 consecutive down hours",
+   "horizon_h": 1,
+   "n": 8,
+   "mean_bps": 30.204865798122288,
+   "median_bps": 17.705007905545745,
+   "share_up": 0.5,
+   "ci_lo_bps": NaN,
+   "ci_hi_bps": NaN
+  }
+ ]
+}
