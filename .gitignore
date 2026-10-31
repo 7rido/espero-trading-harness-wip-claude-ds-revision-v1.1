@@ -46,3 +46,12 @@ KILL*
 
 # agent-generated briefings
 research/agent/
+
+# synced data files the maintainer job updates
+health.json
+liqfwd_trades.csv
+liqbreak_trades.csv
+liqhold_trades.csv
+lows_fwd_trades.csv
+postclose_days.csv
+settle_fwd.csv
