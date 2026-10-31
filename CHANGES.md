@@ -159,6 +159,26 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · deep carry test (#12 rev 2) — sealed, run, inconclusive on holdout
+
+- **Registered before the holdout existed** (`research/PREREGISTRATION_CARRY_DEEP.md`, seal commit
+  **ac0bc24**): mechanism, universe (25 symbols frozen from 2024 volume), signal (trailing 20%
+  annualised funding + positive basis, 30-day max, 30 bps round trip), estimator (stationary
+  bootstrap, NW, deflated Sharpe, SPA family of 3), decay, capacity, placebo, reconciliation, outcomes.
+- **Design (2024)**: **+15.4%/yr net** (95% CI +6.0…+26.2), NW t 3.13, 176 active days, 15.5 average
+  positions; variants 15.4 / 10.6 / 9.1 (registered is best); deflated Sharpe p 1.000; placebo p 0.000;
+  funding half-life **6.7 days**; capacity **$0.86M per symbol / $98.4M across 15**.
+- **Holdout (2025 H1)**: **4 entry signals in 4,307 symbol-days — the rule stayed flat.** Not a pass,
+  not a fail: an absolute 20% threshold is a **bet on a funding regime**, and 2025 H1 averaged 4.4%.
+- **P2 failed as written** (net/funding 1.36 > 1): my criterion mis-specified carry, which earns
+  funding *and* basis convergence. Disclosed, not repaired.
+- **Reconciliation**: funding vs premium index over 6,153 intervals — corr **0.75**, sign agreement
+  83.5% where |premium| > 5 bps, median gap **−4.6 bps** = Binance's −5 bps clamp.
+- **Disclosure**: the holdout was partially read during a crash debug (signal counts, no P&L).
+- **Files**: `research/carry_fetch.py`, `carry_deep.py`, `carry_deep.json`,
+  `RESULTS_2026-10-30-carry-deep.md`; ledger row `R3`.
+- **Tests**: 88 still green (the new scripts are research code, not imported by the suite).
+
 ### 2026-10-30 · public front page
 
 - **README rewritten** for the project as it is now: the evidence table (audit, both replications,

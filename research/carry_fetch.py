@@ -39,6 +39,12 @@ def url_for(kind: str, sym: str, month: str) -> str:
         return f"{BASE}/futures/um/monthly/klines/{sym}/1d/{sym}-1d-{month}.zip"
     if kind == "spot":
         return f"{BASE}/spot/monthly/klines/{sym}/1d/{sym}-1d-{month}.zip"
+    if kind == "premium":
+        return f"{BASE}/futures/um/monthly/premiumIndexKlines/{sym}/1d/{sym}-1d-{month}.zip"
+    if kind == "premium1h":
+        return f"{BASE}/futures/um/monthly/premiumIndexKlines/{sym}/1h/{sym}-1h-{month}.zip"
+    if kind == "depth":
+        return f"{BASE}/futures/um/daily/bookDepth/{sym}/{sym}-bookDepth-{month}.zip"
     raise ValueError(kind)
 
 
@@ -78,18 +84,25 @@ def manifest() -> None:
     print(f"manifest: {len(lines)} files")
 
 
+def universe() -> list[str]:
+    path = ROOT / "research" / "carry_universe.csv"
+    if not path.exists():
+        return CANDIDATES
+    return [line.split(",")[0] for line in path.read_text().splitlines()[1:] if line.strip()]
+
+
 def main(argv: list[str]) -> int:
     what = argv[0] if argv else "design"
     if what == "design":
         jobs = [(k, s, m) for s in CANDIDATES for m in months(2024, 12) for k in ("funding", "perp", "spot")]
         run(jobs)
     elif what == "holdout":
-        jobs = [(k, s, f"2025-{m:02d}") for s in CANDIDATES for m in range(1, 7) for k in ("funding", "perp", "spot")]
+        jobs = [(k, s, f"2025-{m:02d}") for s in universe() for m in range(1, 7) for k in ("funding", "perp", "spot")]
         run(jobs)
     elif what == "depth":
         jobs = []
         for day in ("2024-03-15", "2024-06-15", "2024-09-15", "2024-12-15"):
-            for sym in CANDIDATES[:15]:
+            for sym in universe()[:15]:
                 jobs.append(("depth", sym, day))
         run([j for j in jobs], workers=8)
     else:

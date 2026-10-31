@@ -1,0 +1,75 @@
+{
+ "design": {
+  "label": "2024 (design)",
+  "symbols": 25,
+  "days": 176,
+  "entries": 2728,
+  "annualised_net_pct": 15.366094430410563,
+  "ci95_annualised_pct": [
+   6.007433686997412,
+   26.208634853728224
+  ],
+  "nw_t": 3.126984691741636,
+  "sharpe": 9.925136161631958,
+  "avg_active_positions": 15.5,
+  "funding_half_life_days": 6.676785672208129,
+  "gross_funding_annual_pct": 11.308102218032785,
+  "variants": {
+   "registered": {
+    "annualised_net_pct": 15.366094430410563,
+    "sharpe": 9.925136161631958,
+    "days": 176
+   },
+   "loose": {
+    "annualised_net_pct": 10.614181972063438,
+    "sharpe": 8.238242294400933,
+    "days": 327
+   },
+   "always": {
+    "annualised_net_pct": 9.077342379358385,
+    "sharpe": 8.106824341557255,
+    "days": 364
+   }
+  },
+  "deflated_sharpe_p": 0.9999999999990736,
+  "placebo": {
+   "mean": NaN,
+   "p_value": 0.0,
+   "draws": 1000
+  }
+ },
+ "holdout": {
+  "label": "2025H1 (holdout)",
+  "symbols": 24,
+  "days": 0,
+  "entries": 0,
+  "annualised_net_pct": 0.0,
+  "ci95_annualised_pct": null,
+  "nw_t": null,
+  "sharpe": null,
+  "avg_active_positions": 0.0,
+  "funding_half_life_days": null,
+  "gross_funding_annual_pct": null,
+  "variants": {},
+  "deflated_sharpe_p": null,
+  "placebo": {
+   "mean": null,
+   "p_value": null,
+   "draws": 0
+  },
+  "note": "no entry signals in this window: the rule stayed flat"
+ },
+ "seal": "ac0bc24",
+ "capacity": {
+  "symbols": 15,
+  "median_capacity_usd": 862637.0606685001,
+  "total_usd": 98373443.39377947
+ },
+ "reconciliation": {
+  "intervals": 6153,
+  "correlation": 0.754692608901861,
+  "sign_agreement_large_premium": 0.8354175070592981,
+  "large_premium_intervals": 2479,
+  "median_funding_minus_premium_bps": -4.568188888888889
+ }
+}
