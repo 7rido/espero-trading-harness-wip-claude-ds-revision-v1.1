@@ -35,7 +35,10 @@ COIN_SYMBOL = {"SHIB": "1000SHIBUSDT"}
 
 
 def load_events(path: pathlib.Path | None = None) -> pd.DataFrame:
-    path = path or LEDGER                     # module attribute, so tests can point it at a fixture
+    """Prefer the locally derived feed (raw aggr + 5m bars) over the maintainer's ledger, which can
+    fail without anything being wrong in the market."""
+    local = ROOT / "research" / "e1_events.csv"
+    path = path or (local if local.exists() and local.stat().st_size > 10 else LEDGER)
     empty = pd.DataFrame(columns=["coin", "day", "ts", "direction", "s"])
     if not path.exists() or path.stat().st_size < 2:
         return empty
