@@ -159,6 +159,17 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · agent operator smoke test
+
+- **`agent/smoke.py`**: a scripted five-step operator session through the real executor — see the
+  surface, `health`, `ledger`, `e1 status`, `report`, deterministic briefing — then attempt `trade`
+  and `run` and confirm both are refused. 8 audited calls, exit 0.
+- **Observed** in the run: loop heartbeat 46 s, ledger `sma` in `plumbing`, E1 window open with
+  0 days recorded, paper book BTC 999.41 / ETH 999.82, trading refused by privilege.
+- **`duration_s`** exposed on tool results so a session can show timing.
+- **Test**: `tests/test_smoke.py` runs the session (0.6 s, no network beyond local reads).
+- Suite: 134.
+
 ### 2026-10-31 · agent layer: deterministic core, agent shell
 
 - **`agent/catalog.py`**: every operation classified (`read`, `research`, `write`, `privileged`) with

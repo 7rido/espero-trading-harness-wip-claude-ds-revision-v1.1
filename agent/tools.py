@@ -95,7 +95,8 @@ def run_tool(name: str, args: dict[str, str] | None = None, *, mode: str = "agen
     with LOG.open("a") as f:
         f.write(json.dumps(record) + "\n")
     return {"tool": name, "argv": argv, "exit": code, "timed_out": timed_out,
-            "stdout": out, "stderr": err, "ok": code == 0 and not timed_out, "spill": str(spill) if spill else None}
+            "duration_s": record["duration_s"], "stdout": out, "stderr": err,
+            "ok": code == 0 and not timed_out, "spill": str(spill) if spill else None}
 
 
 def main(argv: list[str]) -> int:
