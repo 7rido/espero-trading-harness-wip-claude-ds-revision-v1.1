@@ -159,6 +159,15 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · dashboard shows the Alpaca paper account
+
+- **New card**: cash, buying power, portfolio value, status; positions with qty, market value and
+  unrealised P&L; open orders with side, qty, type and status.
+- **Live render**: BTCUSD $99.78 and ETHUSD $49.89 positions, plus AAPL/AMZN/META/TSLA queued orders.
+- **Degrades safely**: a venue outage renders "unavailable" instead of crashing the page; fetch failure
+  is unit-tested.
+- **Tests**: 3 (`test_meta.py`: card renders positions/orders, unavailable message, fetch failure).
+
 ### 2026-10-30 · Alpaca crypto orders (the gap I left)
 
 - **`alpaca.place_crypto`**: crypto pairs (`BTC/USD`), fractional qty, market, `gtc`; **long-only** —

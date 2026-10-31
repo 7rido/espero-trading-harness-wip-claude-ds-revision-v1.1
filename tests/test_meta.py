@@ -45,3 +45,27 @@ class TestResearchCard(unittest.TestCase):
             st = research_state(root)
         self.assertEqual(st["e1"]["window_state"], "open")
         self.assertIn("counts", st["ledger"])
+
+
+class TestAlpacaCard(unittest.TestCase):
+    def test_a_card_with_positions_and_orders_renders(self):
+        from espero2.dashboard import _alpaca_card
+        html = _alpaca_card({"account": {"cash": "100000", "buying_power": "394587",
+                                         "portfolio_value": "100000", "status": "ACTIVE"},
+                             "positions": [{"symbol": "BTCUSD", "qty": "0.001", "market_value": "99.8",
+                                            "unrealized_pl": "0.03"}],
+                             "orders": [{"symbol": "AAPL", "side": "buy", "qty": "1",
+                                         "type": "market", "status": "accepted"}]})
+        self.assertIn("BTCUSD", html)
+        self.assertIn("AAPL", html)
+        self.assertIn("394587", html)
+
+    def test_unavailable_is_a_sentence_not_a_crash(self):
+        from espero2.dashboard import _alpaca_card
+        self.assertIn("unavailable", _alpaca_card({}))
+
+    def test_fetch_failure_returns_empty(self):
+        from unittest.mock import patch
+        from espero2 import dashboard, alpaca
+        with patch.object(alpaca, "account", side_effect=RuntimeError("down")):
+            self.assertEqual(dashboard.alpaca_state(), {})

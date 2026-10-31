@@ -126,8 +126,49 @@ def research_state(root: Path | None = None) -> dict:
     return state
 
 
+def alpaca_state() -> dict:
+    """Paper account, positions and open orders. A dashboard must never crash on a venue outage."""
+    try:
+        from . import alpaca
+        acct = alpaca.account()
+        return {"account": {"cash": acct.get("cash"), "buying_power": acct.get("buying_power"),
+                            "portfolio_value": acct.get("portfolio_value"),
+                            "status": acct.get("status")},
+                "positions": alpaca.positions(), "orders": alpaca.orders("open")}
+    except Exception:                              # noqa: BLE001
+        return {}
+
+
+def _alpaca_card(st: dict) -> str:
+    if not st:
+        return "<section class=\"card\"><h1>alpaca</h1><p class=muted>unavailable</p></section>"
+    a = st.get("account", {})
+    pos = "".join(
+        f"<tr><td>{html.escape(str(p.get('symbol')))}</td><td>{html.escape(str(p.get('qty')))}</td>"
+        f"<td>${html.escape(str(p.get('market_value')))}</td>"
+        f"<td class=\"{'up' if float(p.get('unrealized_pl') or 0) >= 0 else 'down'}\">"
+        f"{html.escape(str(p.get('unrealized_pl')))}</td></tr>"
+        for p in st.get("positions", []))
+    orders = "".join(
+        f"<tr><td>{html.escape(str(o.get('symbol')))}</td><td>{html.escape(str(o.get('side')))}</td>"
+        f"<td>{html.escape(str(o.get('qty')))}</td><td>{html.escape(str(o.get('type')))}</td>"
+        f"<td>{html.escape(str(o.get('status')))}</td></tr>"
+        for o in st.get("orders", []))
+    return f"""
+    <section class="card"><h1 style="margin-bottom:8px">alpaca · paper</h1>
+      <table>
+        <tr><td>cash</td><td>${html.escape(str(a.get('cash')))}</td></tr>
+        <tr><td>buying power</td><td>${html.escape(str(a.get('buying_power')))}</td></tr>
+        <tr><td>portfolio value</td><td>${html.escape(str(a.get('portfolio_value')))}</td></tr>
+        <tr><td>status</td><td>{html.escape(str(a.get('status')))}</td></tr>
+      </table>
+      <h2>positions</h2><table>{pos or '<tr><td class=muted>none</td></tr>'}</table>
+      <h2>open orders</h2><table>{orders or '<tr><td class=muted>none</td></tr>'}</table>
+    </section>"""
+
+
 def render(store: Store, out: Path, *, address: str | None = None,
-           account_state: dict | None = None) -> Path:
+           account_state: dict | None = None, alpaca_override: dict | None = None) -> Path:
     h = store.health()
     coins = store.coins()
     cards = []
@@ -163,6 +204,7 @@ def render(store: Store, out: Path, *, address: str | None = None,
         f"<td>{f:.4f}</td><td class=muted>{html.escape(n or '')}</td></tr>"
         for t, c, s, q, p, f, n in _orders(store))
 
+    alp = alpaca_override if alpaca_override is not None else alpaca_state()
     rs = research_state()
     e1 = rs.get("e1", {})
     counts = ", ".join(f"{k} {v}" for k, v in sorted(rs.get("ledger", {}).get("counts", {}).items()))
@@ -197,7 +239,8 @@ def render(store: Store, out: Path, *, address: str | None = None,
 <section class="card"><h1 style="margin-bottom:8px">orders</h1>
 <table><thead><tr><th>time</th><th>coin</th><th>side</th><th>qty</th><th>px</th><th>fee</th><th>note</th></tr></thead>
 <tbody>{rows or '<tr><td colspan=7 class=muted>none yet</td></tr>'}</tbody></table></section>
-<section class="card"><h1 style="margin-bottom:8px">research state</h1>
+{_alpaca_card(alp)}
+    <section class="card"><h1 style="margin-bottom:8px">research state</h1>
     <table>{research_rows}</table>
     </section>
     <section class="card"><h1 style="margin-bottom:8px">strategy ledger</h1>
