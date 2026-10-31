@@ -159,6 +159,16 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · RP3: cost-aware residual pairs — zero selected, the edge was never there
+
+- **Sealed** `PREREGISTRATION_RESIDUAL_PAIRS_COST.md` (`9942469`): RP2's fixed half-life floor replaced
+  by a direct design-window backtest of the rule (net > 0, t >= 2, >= 30 round trips).
+- **Result**: the 3 FDR-passing pairs all **lose on their own design window** — FIL|THETA -8.2 bps/day
+  (t -0.76), FIL|EOS -17.0 (t -1.58), FIL|XTZ -9.3 (t -1.03), each 174-229 round trips.
+- **0 selected**; validation not run; **holdout still unread**. Ledger `R8` retired.
+- **What it proves**: residualisation is the right discovery tool (3/435 vs 0/231), but the reversion is
+  smaller than the cost of harvesting it. The half-life floor was not the binding constraint.
+
 ### 2026-10-30 · RP2: residual pairs — discovery works, the half-life floor kills it
 
 - **Sealed** `PREREGISTRATION_RESIDUAL_PAIRS.md` (`c1ec15b`) before any residual statistic.

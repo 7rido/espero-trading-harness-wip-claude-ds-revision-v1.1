@@ -17,6 +17,7 @@ from statsmodels.tsa.stattools import adfuller
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 DB = ROOT / "data_substrate" / "substrate.duckdb"
 FROZEN = ROOT / "research" / "pair_regime_frozen.csv"
+FROZEN_COST = ROOT / "research" / "pair_cost_frozen.csv"
 OUT = ROOT / "research" / "residual_pairs.json"
 DESIGN = ("2020-01-01", "2022-12-31")
 VALID = ("2023-01-01", "2023-12-31")
@@ -150,32 +151,74 @@ def backtest_pair(px: pd.DataFrame, mkt: pd.Series, a: str, b: str, beta: float,
     for i in range(1, len(z)):
         t = z.index[i]
         g = bool(gate.reindex([t]).fillna(False).iloc[0])
-        if leg == 0:
-            if g and z.iloc[i] > 2:
-                leg, held = -1, 0
-            elif g and z.iloc[i] < -2:
-                leg, held = 1, 0
-            else:
-                pnl.append(0.0)
-                continue
-            pnl.append(-2 * FEE)
+        step = 0.0
+        exited = False
         if leg != 0:
-            daily = leg * (r_a.iloc[i] - beta * r_b.iloc[i])
             held += 1
-            exit_now = abs(z.iloc[i]) < 0.5 or held >= 30
-            pnl.append(float(daily) - (2 * FEE if exit_now else 0.0))
-            if exit_now:
-                leg = 0
-        else:
-            pnl.append(0.0)
+            step += leg * (r_a.iloc[i] - beta * r_b.iloc[i])
+            if abs(z.iloc[i]) < 0.5 or held >= 30:
+                step -= 2 * FEE
+                leg, exited = 0, True
+        if leg == 0 and not exited and g:
+            if z.iloc[i] > 2:
+                leg, held = -1, 0
+                step -= 2 * FEE
+            elif z.iloc[i] < -2:
+                leg, held = 1, 0
+                step -= 2 * FEE
+        pnl.append(step)
     return pd.Series(pnl, index=z.index[1:])
 
 
+def select() -> None:
+    """RP3: from the FDR-passing pairs, keep those whose design backtest earns after costs."""
+    allf = pd.read_csv(ROOT / "research" / "residual_pairs_all.csv")
+    agg = (allf.groupby(["a", "b"])
+           .agg(median_adf_p=("adf_p", "median"), median_half_life=("half_life", "median"),
+                share_sig=("adf_p", lambda s: float(np.mean(np.asarray(s) < 0.05))),
+                last_beta=("pair_beta", "last"), last_alpha=("pair_alpha", "last"))
+           .reset_index().sort_values("median_adf_p"))
+    m = len(agg)
+    agg["fdr_pass"] = agg["median_adf_p"] <= 0.10 * np.arange(1, m + 1) / m
+    cand = agg[agg["fdr_pass"] & agg["median_half_life"].between(2, 30) & (agg["share_sig"] >= 0.6)]
+    df = load()
+    px = df.pivot_table(index="date", columns="symbol", values="close", aggfunc="last").sort_index()
+    px = px.replace([np.inf, -np.inf], np.nan).where(lambda x: x > 0)
+    vol = df[(df["date"] >= DESIGN[0]) & (df["date"] <= DESIGN[1])].groupby("symbol")["qvol"].median()
+    names = [s for s in vol.sort_values(ascending=False).head(N_UNIVERSE).index if s in px.columns]
+    mkt = np.exp(np.log(px[names]).mean(axis=1)).rename("M")
+    thr = float(mkt.loc[DESIGN[0]:DESIGN[1]].pct_change(20).abs().median())
+    gate = regime(mkt, thr)
+    rows = []
+    for _, r in cand.iterrows():
+        s = backtest_pair(px, mkt, r["a"], r["b"], float(r["last_beta"]), float(r["last_alpha"]),
+                          DESIGN[0], DESIGN[1], gate)
+        if len(s) < 60:
+            continue
+        mean, t = float(s.mean()), float(s.mean() / (s.std(ddof=1) / np.sqrt(len(s))))
+        trades = int((s.abs() > 1e-12).sum())
+        rows.append({**r.to_dict(), "design_net_bps": 1e4 * mean, "design_t": t, "design_trades": trades})
+    sel = pd.DataFrame(rows)
+    if len(sel):
+        sel.to_csv(ROOT / "research" / "residual_pairs_select_rows.csv", index=False)
+    if len(sel):
+        sel = sel[(sel["design_net_bps"] > 0) & (sel["design_t"] >= 2) & (sel["design_trades"] >= 30)]
+    cols = ["a", "b", "median_adf_p", "median_half_life", "last_beta", "last_alpha"]
+    out = sel[cols] if len(sel) else pd.DataFrame(columns=cols)
+    out.to_csv(FROZEN_COST, index=False)
+    (ROOT / "research" / "residual_pairs_select.json").write_text(json.dumps(
+        {"candidates": int(len(cand)), "tested": int(len(rows)), "selected": int(len(sel))}, indent=1))
+    print(f"{len(cand)} FDR candidates, {len(rows)} backtested on design, {len(sel)} selected")
+    if len(sel):
+        print(sel[["a", "b", "design_net_bps", "design_t", "design_trades"]].to_string(index=False))
+
+
 def validate() -> None:
-    if not FROZEN.exists() or FROZEN.stat().st_size < 10:
+    src = FROZEN_COST if FROZEN_COST.exists() else FROZEN
+    if not src.exists() or src.stat().st_size < 10:
         print("no frozen pairs")
         return
-    frozen = pd.read_csv(FROZEN)
+    frozen = pd.read_csv(src)
     df = load()
     px = df.pivot_table(index="date", columns="symbol", values="close", aggfunc="last").sort_index()
     px = px.replace([np.inf, -np.inf], np.nan).where(lambda x: x > 0)
@@ -209,6 +252,8 @@ def main(argv: list[str]) -> int:
     what = argv[0] if argv else "scan"
     if what == "scan":
         scan()
+    elif what == "select":
+        select()
     elif what == "validate":
         validate()
     else:
