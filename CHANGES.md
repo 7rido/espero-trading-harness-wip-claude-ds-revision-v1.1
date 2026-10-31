@@ -159,6 +159,16 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · plumbing mechanics run (books void)
+
+- Ran the paper loop for one cycle on BTC and ETH inside the dated `PLUMBING.md` window, with the
+  ledger row temporarily `plumbing` and `KILL` lifted; **no venue order and no signing** — the paper
+  engine fills locally at the touch with 4.5 bps taker cost and venue funding.
+- **Result**: BTC short −0.001270 (equity 999.22), ETH short −0.044816 (equity 999.66), fees 0.04 each;
+  journal, stops, funding and equity marks all wrote correctly. Dashboard rendered with the research card.
+- **Restored immediately**: `KILL` back in place, ledger row back to `retired`. `paper.db` keeps the demo
+  positions and is gitignored; the books are void for any performance claim.
+
 ### 2026-10-30 · signal provenance and a research-state card
 
 - **Per-signal metadata** (from the article's audit-trail idea): the `signals` table now carries
