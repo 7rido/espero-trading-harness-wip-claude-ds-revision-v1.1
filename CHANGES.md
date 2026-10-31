@@ -159,6 +159,19 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-30 · one trade command across the three paper venues
+
+- **`espero2/trade.py` + `cli trade`**: `--venue alpaca|coinbase|hyperliquid`, `--symbol`, `--side`,
+  `--qty` (Alpaca) or `--notional` (Coinbase/HL), `--confirm`.
+- **Guards unchanged and verified**: every venue refuses without `--confirm`
+  (`pass confirm=True (--confirm-paper)` / `--confirm-sandbox` / `--confirm-testnet`); Coinbase also
+  passes `policy.require_sandbox()`; Alpaca's live host does not exist in its module; Hyperliquid
+  builds a testnet exchange only.
+- **Tests**: 5 (`tests/test_trade.py`: unknown venue, qty/notional validation, per-venue confirm
+  refusals, routing arguments). Suite: 107.
+- **Not opened**: live order paths. Alpaca has paper keys only, Coinbase's key is read-only
+  (`can_trade: false`), and Hyperliquid mainnet remains unreachable by construction.
+
 ### 2026-10-30 · plumbing mechanics run (books void)
 
 - Ran the paper loop for one cycle on BTC and ETH inside the dated `PLUMBING.md` window, with the

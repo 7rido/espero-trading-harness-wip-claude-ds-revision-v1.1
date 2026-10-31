@@ -130,6 +130,22 @@ def _cmd_state(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_trade(args: argparse.Namespace) -> int:
+    from . import trade
+    try:
+        out = trade.place(args.venue, args.symbol, args.side, qty=args.qty,
+                          notional=args.notional, confirm=args.confirm)
+    except (trade.Refused, trade.alpaca.Refused, trade.cb.Refused, trade.hl_signed.Refused) as exc:
+        print(f"refused: {exc}", file=sys.stderr)
+        return 2
+    print(f"{out['venue']} [{out['mode']}] {out['side'].upper()} {out['symbol']} "
+          f"{('qty ' + str(out['qty'])) if 'qty' in out else ('$' + str(out['notional']))}")
+    if out.get("mock"):
+        print("  reply flagged MOCK (sandbox does not echo our client id)")
+    print(f"  {str(out.get('response'))[:200]}")
+    return 0
+
+
 def _cmd_order(args: argparse.Namespace) -> int:
     from . import hl_signed
     hl_signed.load_env()
@@ -376,6 +392,15 @@ def main(argv: list[str] | None = None) -> int:
     o.add_argument("--allow-short", action="store_true",
                    help="permit a sell that opens a short (off by default)")
     o.set_defaults(func=_cmd_order)
+
+    t = sub.add_parser("trade", help="one paper/testnet order across venues")
+    t.add_argument("--venue", choices=["alpaca", "coinbase", "hyperliquid"], required=True)
+    t.add_argument("--symbol", required=True, help="AAPL, BTC-USD or BTC")
+    t.add_argument("--side", choices=["buy", "sell"], required=True)
+    t.add_argument("--qty", type=float, default=None)
+    t.add_argument("--notional", type=float, default=None)
+    t.add_argument("--confirm", action="store_true")
+    t.set_defaults(func=_cmd_trade)
 
     s = sub.add_parser("state", help="testnet account state (read-only)")
     s.set_defaults(func=_cmd_state)
