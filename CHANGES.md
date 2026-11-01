@@ -159,6 +159,16 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · ops: dashboard changes need a loop restart
+
+- **Observed**: the forecast and tape cards were committed and rendered manually, but the running
+  paper loop kept overwriting `dashboard.html` with the **old** renderer — it had imported
+  `espero2/dashboard.py` at 01:11, before the cards existed.
+- **Fix**: `launchctl kickstart -k gui/$UID/io.espero2.paper`. Verified the loop-written page now
+  contains both cards (grep counts 1 each, file written 21:41).
+- **Rule**: after changing `dashboard.py` or anything imported by the loop, restart
+  `io.espero2.paper`; a manual `dashboard --out` only holds until the next 60 s cycle.
+
 ### 2026-10-31 · BTC tape: research note, metrics, dashboard card
 
 - **`research/TAPE_READING.md`**: what tape reading is (aggressor flow, CVD, blocks, sweeps, volume
