@@ -33,6 +33,17 @@ at the top.
 
 ## Changelog
 
+### 2026-11-01 · bug: manual buy on a short corrupted the BTC book
+
+- **Root cause**: `buy_manual` refused only when already *long*. Buying while short replaced the position
+  with a long without covering it, so the short's proceeds stayed in cash and the new long was counted on
+  top — BTC equity jumped from $985 to $1,428 in one cycle.
+- **Fix**: manual buy refuses **any** open position; `close_manual` now covers shorts (buys back at the
+  ask, signed cash accounting) as well as selling longs.
+- **Repair**: BTC paper book reset to $1,000 (plumbing books are void); the loop will re-enter from here.
+- **Tests**: 3 regression tests (refuse-while-short, cover-short cash sign, sell-long cash sign); suite **191**.
+- **Snapshot**: `research/ui_snapshot.txt` (gitignored) renders the TUI screen for review.
+
 ### 2026-11-01 · TUI updated with the research state
 
 - **`espero2/ui.py`**: new menu item **"Market optics & research state"** renders E1 progress (counts

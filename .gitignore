@@ -86,3 +86,6 @@ research/forecast.json
 # carry sleeve live state
 research/carry_sleeve.json
 research/carry_sleeve_curve.csv
+
+# rendered TUI snapshots
+research/ui_snapshot.txt

@@ -220,8 +220,8 @@ def buy_manual(console, store: Store, coin: str, usd: float,
     book = hl.book(coin)
     px = book.ask * (1 + costs.slippage_bps / 1e4)
     st = store.get_state(coin)
-    if st["qty"] > 0:
-        console.print(f"[yellow]{coin}: already long, close it first[/]")
+    if st["qty"] != 0:
+        console.print(f"[yellow]{coin}: a position is open — close it first[/]")
         return
     if usd > st["cash"]:
         console.print(f"[yellow]{coin}: only ${st['cash']:,.2f} in cash[/]")
@@ -237,15 +237,23 @@ def buy_manual(console, store: Store, coin: str, usd: float,
 
 def close_manual(console, store: Store, coin: str, costs: Costs = Costs()) -> None:
     st = store.get_state(coin)
-    if st["qty"] <= 0:
+    if st["qty"] == 0:
         console.print(f"[yellow]{coin}: no position[/]")
         return
     book = hl.book(coin)
-    px = book.bid * (1 - costs.slippage_bps / 1e4)
-    fee = st["qty"] * px * costs.taker_bps / 1e4
-    pnl = (px - st["entry_px"]) * st["qty"] - fee
-    store.order(int(time.time()), coin, "sell", st["qty"], px, fee, "taker", "manual close")
-    store.set_state(coin, cash=st["cash"] + st["qty"] * px - fee, qty=0.0, entry_px=0.0, entry_ts=0)
+    qty = st["qty"]
+    if qty > 0:                                  # sell a long at the bid
+        px = book.bid * (1 - costs.slippage_bps / 1e4)
+        fee = qty * px * costs.taker_bps / 1e4
+        pnl = (px - st["entry_px"]) * qty - fee
+        side = "sell"
+    else:                                        # buy back a short at the ask
+        px = book.ask * (1 + costs.slippage_bps / 1e4)
+        fee = abs(qty) * px * costs.taker_bps / 1e4
+        pnl = (st["entry_px"] - px) * abs(qty) - fee
+        side = "buy"
+    store.order(int(time.time()), coin, side, abs(qty), px, fee, "taker", "manual close")
+    store.set_state(coin, cash=st["cash"] + qty * px - fee, qty=0.0, entry_px=0.0, entry_ts=0)
     store.mark(coin, int(time.time()), store.get_state(coin)["cash"], 0.0, 0.0, book.mid)
     console.print(f"closed {coin} @ {px:,.2f} (fee ${fee:.4f}, P&L ${pnl:+,.2f})")
 
