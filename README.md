@@ -13,7 +13,7 @@ research documents are in [`reference/`](reference), and its 46 numbered tests a
 
 | | |
 |---|---|
-| tests | **171** green; `scripts/check.sh` also validates audit citations and the ledger |
+| tests | **202** green; `scripts/check.sh` also validates audit citations and the ledger |
 | paper loop | **running** (`io.espero2.paper`, 60 s): BTC/ETH/SOL, vol-target 2 %, 25 %/yr funding gate, $500 cap |
 | books | **void** — `sma` runs as `plumbing` under the window to 2026-12-31; never read as evidence |
 | E1 | recording; **11 seed events, 0 forced trades**; window 2026-10-31 → 2027-04-30, 70 % power |
@@ -33,6 +33,7 @@ research documents are in [`reference/`](reference), and its 46 numbered tests a
 | Tape edges (sweeps, absorption, blocks, divergence)? | **no** — 8 cells, 0 BH, holdout never opened | [`RESULTS_tape_edges_design.md`](research/RESULTS_tape_edges_design.md) |
 | Tape OFI at seconds? | **yes but sub-cost** — +0.22 bps at 30 s vs 9 bps cost | [`RESULTS_tape_study_2.md`](research/RESULTS_tape_study_2.md) |
 | Tape as volatility instrument? | **yes** — intensity→RV 1.74×, VPIN→variance (BH) | [`RESULTS_vpin.md`](research/RESULTS_vpin.md) |
+| Can the #45 bounce be forecast? | **rank yes, size no** — 4 h IC 0.18, mostly volatility; top-quintile mean CI includes 0 | [`RESULTS …liq45`](research/RESULTS_2026-11-01-liq45-forecast.md) |
 | Does vol-target sizing help? | **no on this signal** — Sharpe 0.49 vs 0.84 fixed at matched exposure | [`RESULTS_sizing.md`](research/RESULTS_sizing.md) |
 | SMA strategy? | retired — tracked an equal-weight hold | `strategy_ledger.csv` (`P1`) |
 
@@ -56,7 +57,7 @@ It is recorded daily and not read until 2027-04-30.
 python3 -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt
 
-python -m unittest discover -s tests -t .     # 171 tests
+python -m unittest discover -s tests -t .     # 202 tests
 bash scripts/check.sh                         # tests + audit citations + ledger
 python scripts/health_check.py                # unattended jobs alive?
 python -m espero2.cli ledger                  # what may run, and why
@@ -80,7 +81,7 @@ python -m espero2.cli run --coin BTC --once --allow-plumbing   # one paper cycle
 espero2/     ledger gate, paper engine, risk, dashboard, venue clients (HL testnet, Coinbase, Alpaca)
 agent/       tool catalog, sandboxed executor, briefing, smoke test — no trading tools
 research/    audit, replications, E1, tape/VPIN/maker studies, registrations, scorecard, data inventory
-tests/       171 tests, including those that assert a test is *refused*
+tests/       202 tests, including those that assert a test is *refused*
 scripts/     CI, health, sync, E1 refresh, launchd installers
 reference/   the original repository's research documents, verbatim (87 files)
 ```
@@ -107,6 +108,7 @@ the build if a ledger row or a result document is missing from the map.
 - **The testnet venue is not a market.** HL testnet SOL trades ~8 % above spot on a 21 bps spread; fills there are fictional.
 - **In-sample numbers are not results.** The +32 bps at 4 h is a 2023–2024 reading; E1 exists because that is not evidence about the future.
 - **Risk instruments are not edges.** Volatility, VPIN and maker fills improve sizing and execution; they do not predict direction.
+- **The #45 forecast score is not an edge.** It ranks trades (4 h IC 0.18) but the selected-trade mean is not established; the forward test is still the only clean test.
 - **Venue matters.** Funding differs up to 4× between HL, OKX and Binance; any carry read must name its venue.
 
 ## Licence

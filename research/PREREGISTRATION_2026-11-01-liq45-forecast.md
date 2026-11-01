@@ -27,7 +27,7 @@ validation window is read. A null result is a valid outcome.
     direction;
   - one event per coin per direction per hour;
   - entries only for break bars closing 01:00–24:00 UTC;
-  - the #26 day filter (drop the first three days and the last day of each month), and days with
+  - the #26 day filter (drop the first two days and the last day of each month), and days with
     fewer than 6 events.
   - 28,029 events over 427 days before tagging.
 - **Tag.** Prior-observed-day forced tag, as E1: today's forced share `s` (liquidation USD on the
@@ -110,7 +110,8 @@ top-quintile mean), to show which layers carry the forecast.
 
 1. **Monthly archive, 2020-01 → 2026-10** (`data_raw/liq/`): 39 coins, three days at the start of
    each month, multi-venue liquidations. This is not the #26 day sample: #26 deliberately drops the
-   first three days of each month, and the archive has no continuous post-2024 history. It is a
+   first two days and the last day of each month, and the archive has no continuous post-2024
+   history. It is a
    breadth check, not a confirmation. Train the same F1 CDFs on 2020-01 → 2023-12 and score
    2024-01 → 2026-10; report IC and top-quintile net, labelled exploratory. The month-start bias and
    the sparse days are stated beside the numbers.
