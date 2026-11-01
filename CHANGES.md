@@ -67,6 +67,20 @@ at the top.
   keeps it clean and turns the E1 feed into a dated audit trail of exactly what the recorder saw.
 - **Scheduled**: appended to the sync chain after the progress step.
 - Verified by running it now: `e1 commit: no changes`, exit 0.
+### 2026-11-01 · research: retest the remaining audit findings
+
+- **`research/RESULTS_2026-11-01-remaining-findings.md`**: six open audit rows retested out of time —
+  #1 funding, #4 TSMOM, #8 multi-factor, #9b lead-lag, #15 trend, #43 horizon map. **No tradeable
+  forecast.** #9b is the only significant IC (0.035, t 5.30) and its 4.0 bps spread is below the 9 bps
+  cost; #4's nominal pass fails a significance test (alpha t 1.10); #43's 12-hour confirmation fails
+  its own deflated bar (−9.6 bps, t −0.97); #1/#8/#15 do not forecast out of time.
+- **`research/remaining_forecasts.py`**, `research/remaining_forecasts.json`, 18 helper tests.
+- The other 39 ids are dispositioned in the result: 6 local retests, 8 re-estimates by #44, 3 clean
+  fails, 9 running forward tests, 8 without data or needing a process fix, 5 not hypotheses.
+- Data-quality amendment before the verdict: ARB/TIA/WLD/OP ticker collisions and |forward return|
+  > 50% are dropped from the daily cross-section (reference/ERRATA.md).
+- No data fetched; no forward window read; no ledger row or order written.
+
 ### 2026-11-01 · pre-registration: retest the remaining audit findings
 
 - **`research/PREREGISTRATION_2026-11-01-remaining-findings.md`**: six fresh retests (#1, #4, #8, #9b,
