@@ -16,7 +16,7 @@ Registration: [PREREGISTRATION_2026-11-01-remaining-findings.md](PREREGISTRATION
 **Owner follow-up:** #20 and #21 were asked for by name after this retest. They are retested
 separately in [RESULTS_2026-11-01-lows21-forecast.md](RESULTS_2026-11-01-lows21-forecast.md): #21's
 spike cross-section is not forecastable; #20's bounce is forecastable by prior volatility (IC 0.028,
-t 5.03) but the top-vs-all spread is 1.1 bps, below the 9 bps cost. The original verdicts stand.
+t 5.03) but the top-vs-all spread is 1.9 bps, below the 9 bps cost. The original verdicts stand.
 
 ## The six fresh retests
 
