@@ -13,11 +13,13 @@ tests: [`tests/test_retest_20_21.py`](../tests/test_retest_20_21.py).
 ## #21 — liquidation spikes reverse
 
 - **Data.** 1,240 spikes (631 long, 609 short) on 119 days, 2026-07 → 2026-10, 14 coins. Design
-  July–August (640 events), validation September–October (600).
+  July–August (640 events), validation September–October (600 events; 563 with both fields on 47
+  evaluable days).
 - **Primary.** `share` (the liquidation share of the spike hour) vs signed 24-hour excess:
-  validation rank IC **+0.052** (95% day-block −0.057 … +0.165), t 1.02, q 0.310; top quintile
-  **+25.0 bps** vs all events, CI −35.8 … +98.3. The CI is too wide to call a forecast, and the
-  design IC is +0.021 — the sign is not stable enough to trust.
+  validation rank IC **+0.052** (95% day-block −0.057 … +0.165), t 1.02, q 0.310; the pooled top
+  quintile is **+35.2 bps** vs all **+2.2 bps**, a **+33.0 bps** spread (CI −53.9 … +111.8). The
+  day-weighted average is +25.0 bps. The CI is too wide to call a forecast, and the design IC is
+  +0.021 — the sign is not stable enough to trust.
 - **Secondary.**
   - `abs_r0` (size of the forced move): IC +0.116 (−0.010 … +0.236), t 1.71; 4 h IC +0.187.
   - `log_usd`: IC +0.059 (−0.048 … +0.162).
@@ -33,9 +35,10 @@ tests: [`tests/test_retest_20_21.py`](../tests/test_retest_20_21.py).
   (50,490 events), validation 2024-01 → 2026-03 (56,350 events over 740 days). Features are read
   from the previous day's close.
 - **Primary.** `vol_30` (30-day realised volatility) vs the 1-hour bounce: validation rank IC
-  **+0.0285** (95% day-block 0.0172 … 0.0394), t 5.03, q 9.7e-7; top quintile **+11.2 bps** vs all
-  events **+10.1 bps** — a spread of **+1.1 bps** (CI −1.2 … +3.3), **−7.9 bps after the 9 bps
-  round trip**. The IC is stable (design +0.039), the money is not.
+  **+0.0285** (95% day-block 0.0172 … 0.0394), t 5.03, q 9.7e-7; the pooled top quintile is
+  **+5.5 bps** vs all **+3.7 bps** — a spread of **+1.9 bps** (CI −4.9 … +8.1), **−7.1 bps after the
+  9 bps round trip**. The day-weighted average is +1.1 bps. The IC is stable (design +0.039), the
+  money is not.
 - **Secondary.**
   - `ret_1`: IC −0.015 (−0.026 … −0.004), t −2.73; `ret_5`: −0.016 (−0.027 … −0.004), t −2.74.
     Prior weakness predicts a slightly smaller bounce, not a larger one.
@@ -62,9 +65,9 @@ No forward window was read, no ledger row or order was written, and no rule was 
 
 ## Limits
 
-- **#21 is four months.** 600 validation events, 60 days; the confidence interval on the IC is wide
-  and the design IC is half the validation IC. A null here is weak evidence against a small effect,
-  but it cannot support a positive one.
+- **#21 is four months.** 563 evaluable validation events over 47 days; the confidence interval on
+  the IC is wide and the design IC is half the validation IC. A null here is weak evidence against a
+  small effect, but it cannot support a positive one.
 - **#20's features are daily.** The 5-minute break depth and the event bar's own volume z are not in
   the published event file; `vol_30` is a coarse proxy for #45's ATR/break-depth layer. The result is
   a floor on what a 5-minute feature set might do, not a ceiling.

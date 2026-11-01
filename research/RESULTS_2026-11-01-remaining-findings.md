@@ -134,8 +134,8 @@ spread must also clear cost, which is why #9b is "forecast, not tradeable" rathe
 | 17 | ETH leads ecosystem | FAIL | clean fail, no remedy | same |
 | 18 | liquidation sort | FAIL | re-estimated by #44 | leg +22.9 bps t 2.98; D −14.4 t −2.68 |
 | 19 | settlement moves prices | REAL-NOT-TRADABLE | re-estimated by #44 | +15.0 bps t 3.15 |
-| 20 | new 4h lows bounce | REAL-NOT-TRADABLE | #44 re-estimate + follow-up forecast | +5.9 bps t 3.50 (0.40× published); prior volatility IC 0.028, spread 1.1 bps < 9 bps |
-| 21 | liquidation spikes | FAIL | local replication + follow-up forecast | `RESULTS_2026-10-30-liqspike.md`: trade-weighted −19.7 bps t −0.67; spike size IC 0.05, CI includes 0 |
+| 20 | new 4h lows bounce | REAL-NOT-TRADABLE | #44 re-estimate + follow-up forecast | +5.9 bps t 3.50 (0.40× published); prior volatility IC 0.028, spread 1.9 bps < 9 bps |
+| 21 | liquidation spikes | FAIL | local replication + follow-up forecast | `RESULTS_2026-10-30-liqspike.md`: trade-weighted −19.7 bps t −0.67; spike size IC 0.05, CI includes 0; pooled spread 33.0 bps, CI includes 0 |
 | 22 | forward: spike decay | RUNNING | not judged | window to 2027-03-31; not read |
 | 23 | forward: spike short | RUNNING | not judged | same |
 | 24 | forward: low bounce | RUNNING | not judged | same |

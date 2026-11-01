@@ -66,26 +66,55 @@ def evaluate_events(df: pd.DataFrame, date_col: str, signal: str, target: str,
     if len(ics) < 5:
         return {"verdict": "NO DATA", "n_days": len(ics)}
     ic_s = pd.Series(ics, index=pd.Index(dates))
-    sp_s = pd.Series(np.asarray(tops) - np.asarray(alls), index=pd.Index(dates))
     ic_boot = block_bootstrap(ic_s)
-    sp_boot = block_bootstrap(sp_s)
-    top_boot = block_bootstrap(tops)
     t_ic = nw_t(ic_s, lags=1)
+    # primary spread: the pre-registration's pooled top quintile across validation events
+    d = df[[date_col, signal, target]].dropna()
+    d = d[d.groupby(date_col)[target].transform("count") >= min_n]
+    thr = d[signal].quantile(0.8)
+    top = d.loc[d[signal] >= thr, target]
+    allv = d[target]
+    g = d.groupby(date_col)
+    top_day = d[d[signal] >= thr].groupby(date_col)[target].agg(["sum", "count"]).reindex(
+        g.size().index, fill_value=0)
+    all_day = g[target].agg(["sum", "count"])
+    days = all_day.index.to_numpy()
+    rng = np.random.default_rng(7)
+    idx = rng.integers(0, len(days), (1000, len(days)))
+    ts = top_day["sum"].to_numpy()[idx].sum(axis=1)
+    tn = top_day["count"].to_numpy()[idx].sum(axis=1)
+    asu = all_day["sum"].to_numpy()[idx].sum(axis=1)
+    acn = all_day["count"].to_numpy()[idx].sum(axis=1)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        top_means = ts / tn
+        all_means = asu / acn
+    spread_means = top_means - all_means
+    pooled_top = float(top.mean())
+    pooled_all = float(allv.mean())
+    pooled_spread = pooled_top - pooled_all
+    top_lo, top_hi = np.percentile(top_means * 1e4, [2.5, 97.5])
+    sp_lo, sp_hi = np.percentile(spread_means * 1e4, [2.5, 97.5])
+    # information only: the old within-day top-versus-all average
+    day_sp = pd.Series(np.asarray(tops) - np.asarray(alls), index=pd.Index(dates))
+    day_boot = block_bootstrap(day_sp)
     return {
         "n_days": int(len(ic_s)),
         "n_events": int(n_events),
         "ic": ic_boot["mean"], "ic_lo": ic_boot["lo"], "ic_hi": ic_boot["hi"],
         "ic_t": float(t_ic), "ic_p": normal_p(float(t_ic)),
         "ic_hit": float((ic_s > 0).mean()),
-        "spread_bps": sp_boot["mean"] * 1e4,
-        "spread_lo_bps": sp_boot["lo"] * 1e4,
-        "spread_hi_bps": sp_boot["hi"] * 1e4,
-        "spread_net_bps": sp_boot["mean"] * 1e4 - COST_BPS,
-        "top_bps": top_boot["mean"] * 1e4,
-        "top_lo_bps": top_boot["lo"] * 1e4,
-        "top_hi_bps": top_boot["hi"] * 1e4,
-        "all_bps": float(pd.Series(alls).mean() * 1e4),
+        "spread_bps": pooled_spread * 1e4,
+        "spread_lo_bps": float(sp_lo),
+        "spread_hi_bps": float(sp_hi),
+        "spread_net_bps": pooled_spread * 1e4 - COST_BPS,
+        "top_bps": pooled_top * 1e4,
+        "top_lo_bps": float(top_lo),
+        "top_hi_bps": float(top_hi),
+        "all_bps": pooled_all * 1e4,
         "top_hit": float(pd.Series(top_hits).mean()),
+        "day_spread_bps": day_boot["mean"] * 1e4,
+        "day_spread_lo_bps": day_boot["lo"] * 1e4,
+        "day_spread_hi_bps": day_boot["hi"] * 1e4,
     }
 
 

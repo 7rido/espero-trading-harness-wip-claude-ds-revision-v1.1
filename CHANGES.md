@@ -71,7 +71,7 @@ at the top.
 
 - **`research/RESULTS_2026-11-01-lows21-forecast.md`**: #21's spike cross-section is **not
   forecastable** from `share` (IC +0.05, 95% CI −0.06 … +0.17); #20's bounce **is** forecastable by
-  prior volatility (IC +0.028, CI 0.017 … 0.039, t 5.03) but the top-vs-all spread is **+1.1 bps**,
+  prior volatility (IC +0.028, CI 0.017 … 0.039, t 5.03) but the pooled top-vs-all spread is **+1.9 bps**,
   below the 9 bps round trip. The original #21 FAIL and #20 real-not-tradable stand.
 - **`research/retest_20_21.py`**, `research/retest_20_21.json`, 8 tests.
 - No data fetched; no forward window read.
