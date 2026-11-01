@@ -76,3 +76,6 @@ research/tape.json
 research/tape_live.json
 research/tape_series.csv.gz
 data_tape/
+
+# oi snapshots for the cascade detector
+research/oi_history.csv

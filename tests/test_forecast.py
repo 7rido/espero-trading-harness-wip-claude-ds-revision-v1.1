@@ -40,8 +40,15 @@ class TestRubric(unittest.TestCase):
     def test_fdr_pass_without_holds_is_watch(self):
         self.assertEqual(self.build(fdr=True)["label"], "WATCH")
 
-    def test_e1_break_is_forward_test(self):
-        self.assertEqual(self.build(break_=True)["label"], "E1-FORWARD")
+    def test_e1_break_without_confirmation_is_break_only(self):
+        self.assertEqual(self.build(break_=True)["label"], "E1-BREAK")
+
+    def test_e1_break_with_confirmed_forced_trade_is_forward_test(self):
+        import datetime as dt
+        e1 = {"window_state": "open", "forced_down_breaks": 5,
+              "last_day": dt.date.today().isoformat()}
+        row = fc.build_rows([market(True)], states(), e1, holds=0)[0]
+        self.assertEqual(row["label"], "E1-FORWARD")
 
     def test_missing_cell_is_unmapped(self):
         row = fc.build_rows([market()], {}, E1_OPEN, holds=0)[0]

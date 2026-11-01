@@ -214,13 +214,15 @@ def _optics_card() -> str:
     rows = []
     for m in d.get("markets", []):
         e1 = m.get("e1", {})
+        pct = m.get("oi_pct")
+        pct_s = "—" if pct is None else f"{pct:.0%}"
         rows.append(
             f"<tr><td><b>{html.escape(m['coin'])}</b><br><span class=muted>{html.escape(m.get('product',''))}</span></td>"
             f"<td>{_px(m['price'])}</td><td>{html.escape(m['state'])}</td>"
             f"<td>{_num(m['funding_binance'])} / {_num(m['funding_hl'])}</td>"
             f"<td>{_big(m['oi_hl'])}</td>"
-            f"<td>L {_big(m['liq_long'])} / S {_big(m['liq_short'])}</td>"
-            f"<td>{'<b>BREAK</b>' if e1.get('down_break') else '—'}</td></tr>")
+            f"<td>{pct_s}</td>"
+            f"<td>{'<b>CASCADE</b>' if m.get('cascade') else ('BREAK' if e1.get('down_break') else '—')}</td></tr>")
     conns = "".join(
         f"<tr><td>{html.escape(c['name'])}</td><td class=muted>{html.escape(c.get('via',''))}</td>"
         f"<td class={'' if c['ok'] else 'down'}>{'ok' if c['ok'] else 'fail'}</td>"
@@ -233,7 +235,7 @@ def _optics_card() -> str:
     flags = " · ".join(d.get("flags", []))
     return (f'<section class="card" style="grid-column:1/-1"><h1 style="margin-bottom:8px">'
             f'operator optics · markets</h1><table><thead><tr><th>coin / product</th><th>px</th>'
-            f'<th>state</th><th>funding B / HL</th><th>OI (HL)</th><th>liq 6h</th><th>E1</th></tr></thead>'
+            f'<th>state</th><th>funding B / HL</th><th>OI (HL)</th><th>OI %ile</th><th>risk</th></tr></thead>'
             f'<tbody>{"".join(rows) or "<tr><td colspan=7 class=muted>no markets</td></tr>"}</tbody></table>'
             f'<h1 style="margin:12px 0 8px">connections</h1>'
             f'<table><thead><tr><th>source</th><th>via</th><th>status</th><th>latency</th><th>detail</th></tr></thead>'

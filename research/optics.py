@@ -26,6 +26,7 @@ sys.path.insert(0, str(ROOT))
 from espero2 import hl  # noqa: E402
 
 OUT = ROOT / "research" / "optics.json"
+OHIST = ROOT / "research" / "oi_history.csv"
 DB = ROOT / "data_substrate" / "substrate.duckdb"
 UA = {"User-Agent": "espero2/0.1"}
 TOP_N = 10
@@ -129,6 +130,30 @@ def hl_funding_rate(coin: str) -> float:
         return 0.0
 
 
+def cascade_risk(funding_hl: float, oi_pct: float | None, rollover: bool, armed: bool) -> bool:
+    """The cascade-fuel condition: expensive funding, crowded OI, price rolling over."""
+    return bool(armed and oi_pct is not None and funding_hl > 10 and oi_pct >= 0.9 and rollover)
+
+
+def oi_history(con, coin: str, current_oi: float, at: str, funding_hl: float, premium: float,
+               price: float) -> tuple[float | None, bool, str]:
+    """Append the snapshot and return (percentile in the last 30 days, armed, note)."""
+    row = pd.DataFrame([{"at": at, "coin": coin, "oi": current_oi, "funding_hl": funding_hl,
+                         "premium": premium, "price": price}])
+    header = not OHIST.exists()
+    row.to_csv(OHIST, mode="a", header=header, index=False)
+    try:
+        hist = pd.read_csv(OHIST, parse_dates=["at"])
+    except Exception:                              # noqa: BLE001
+        return None, False, "history unreadable"
+    h = hist[(hist["coin"] == coin) & (hist["at"] >= hist["at"].max() - pd.Timedelta(days=30))]
+    days = (h["at"].max() - h["at"].min()).total_seconds() / 86400 if len(h) else 0.0
+    pct = float((h["oi"] <= current_oi).mean()) if len(h) >= 20 else None
+    armed = days >= 7                             # "30-day high" needs history; 7 days is the floor
+    note = f"{len(h)} snaps / {days:.1f}d" if len(h) else "no history"
+    return pct, armed, note
+
+
 def funding_series(con, symbol: str) -> pd.Series:
     df = con.execute("SELECT ts, rate FROM funding_multi WHERE venue='binance' AND symbol=? ORDER BY ts",
                      [symbol]).df()
@@ -221,12 +246,17 @@ def main() -> int:
             premium = 1e4 * float(ctx.get("premium", 0) or 0)
             long_liq, short_liq = okx_liq(coin)
             e1 = e1_check(five_min(product))
+            rollover = float(px[-1]) < float(min(px[-21:-1])) if len(px) > 21 else False
+            oi_pct, armed, hist_note = oi_history(con, coin, oi, out["at"], hl_fund, premium, t["price"])
+            cascade = cascade_risk(hl_fund, oi_pct, rollover, armed)
             out["markets"].append({
                 "coin": coin, "product": product, "price": t["price"], "spread_bps": t["spread_bps"],
                 "ret60": ret60, "vol_pct": vol_pct, "fund_pct": fund_pct,
                 "funding_binance": fund_ann, "funding_hl": hl_fund, "oi_hl": oi, "premium_bp": premium,
                 "state": f"{'up' if ret60 > 0 else 'down'}/{'high' if vol_pct > .5 else 'low'}/{f_state}",
-                "liq_long": long_liq, "liq_short": short_liq, "e1": e1})
+                "liq_long": long_liq, "liq_short": short_liq, "e1": e1,
+                "oi_pct": oi_pct, "oi_armed": armed, "oi_history": hist_note,
+                "rollover": rollover, "cascade": cascade})
         except Exception as exc:                   # noqa: BLE001 - one dead market is partial data
             out["markets"].append({"coin": coin, "product": product, "partial": True,
                                    "error": f"{type(exc).__name__}: {exc}"[:120], "price": float("nan"),

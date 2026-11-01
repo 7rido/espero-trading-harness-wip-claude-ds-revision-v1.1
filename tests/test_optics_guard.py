@@ -23,6 +23,15 @@ def http429(*a, **k):
     raise urllib.error.HTTPError("https://api.hyperliquid.xyz/info", 429, "Too Many Requests", None, None)
 
 
+class TestCascade(unittest.TestCase):
+    def test_requires_all_four_conditions(self):
+        self.assertTrue(optics.cascade_risk(11.0, 0.95, True, True))
+        self.assertFalse(optics.cascade_risk(5.0, 0.95, True, True))     # funding cheap
+        self.assertFalse(optics.cascade_risk(11.0, 0.50, True, True))    # OI not extreme
+        self.assertFalse(optics.cascade_risk(11.0, 0.95, False, True))   # price not rolling over
+        self.assertFalse(optics.cascade_risk(11.0, 0.95, True, False))   # history not armed
+
+
 class TestOpticsGuard(unittest.TestCase):
     def test_rate_limited_run_keeps_the_snapshot(self):
         with tempfile.TemporaryDirectory() as d:

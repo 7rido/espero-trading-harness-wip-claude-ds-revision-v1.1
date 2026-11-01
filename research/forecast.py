@@ -12,6 +12,7 @@ Exit codes: 0 ok · 3 optics snapshot missing or empty (previous forecast is kep
 from __future__ import annotations
 
 import csv
+import datetime as dt
 import json
 import math
 import pathlib
@@ -25,7 +26,7 @@ LEDGER = ROOT / "strategy_ledger.csv"
 OUT = ROOT / "research" / "forecast.json"
 
 COST_BPS = 9.0                 # measured round-trip cost, Binance books
-RANK = {"UNMAPPED": 0, "CONTEXT ONLY": 1, "E1-FORWARD": 2, "WATCH": 3}
+RANK = {"UNMAPPED": 0, "CONTEXT ONLY": 1, "E1-BREAK": 2, "E1-FORWARD": 2.5, "WATCH": 3}
 STALE_MIN = 20
 
 
@@ -58,6 +59,8 @@ def build_rows(markets: list[dict], states: dict, e1: dict, holds: int) -> list[
     """Rubric in one place: every label passes through cap() before it is emitted."""
     window_open = e1.get("window_state") == "open"
     forced = int(e1.get("forced_down_breaks", 0) or 0)
+    last_day = str(e1.get("last_day") or "")
+    confirmed = forced > 0 and last_day >= (dt.date.today() - dt.timedelta(days=2)).isoformat()
     rows = []
     for m in markets:
         state = m.get("state", "n/a")
@@ -74,10 +77,14 @@ def build_rows(markets: list[dict], states: dict, e1: dict, holds: int) -> list[
 
         if not c20:
             label, reason = "UNMAPPED", f"no historical cell for state {state!r}; no forecast"
-        elif e1_break and window_open:
+        elif e1_break and window_open and confirmed:
             label = "E1-FORWARD"
-            reason = (f"E1 down-break live (forward test, {forced} scored trades so far); NOT authorised. "
+            reason = (f"E1 confirmed forced trade recorded ({last_day}); forward test, NOT authorised. "
                       f"cell: {med20:+.0f} bps median 20d, {share:.0%} up (n={n:,})")
+        elif e1_break and window_open:
+            label = "E1-BREAK"
+            reason = (f"down-break on the live proxy, forced tag NOT yet confirmed "
+                      f"({forced} forced trades recorded; last {last_day or 'n/a'})")
         elif not c20.get("fdr_pass"):
             label = "CONTEXT ONLY"
             reason = (f"{med20:+.0f} bps median 20d, {share:.0%} up (n={n:,}, CI {lo:.0%}-{hi:.0%}); "

@@ -159,6 +159,21 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-11-01 · E1 label semantics and cascade-fuel detector
+
+- **E1 labels corrected**: a live down-break on the proxy is now **`E1-BREAK`** (unconfirmed — the forced
+  tag needs the prior-day liquidation distribution). **`E1-FORWARD`** only when the recorder has a
+  confirmed forced trade within the last two days. Previously the live break alone was labelled
+  E1-FORWARD, which overstated the setup.
+- **Cascade fuel implemented**: `cascade_risk = armed and HL funding > 10%/yr and OI percentile ≥ 0.9
+  and price rolling over` (close below the prior 20-day low). `research/optics.py` appends an OI snapshot
+  every 15 minutes to `research/oi_history.csv` (gitignored) and computes the percentile over the last
+  30 days; **armed only after 7 days** of history.
+- **Dashboard**: optics table gains **OI %ile** and a **risk** column that shows `CASCADE` (or `BREAK`).
+- **Current state**: 1 snapshot per coin → `oi_pct` is `—`, `armed false`, `cascade false`; the detector is
+  warming up by construction.
+- Tests: E1-BREAK/E1-FORWARD cases and four cascade conditions; suite **171**.
+
 ### 2026-10-31 · VPIN and maker-execution pilots
 
 - **`PREREGISTRATION_vpin.md` + `vpin_study.py`**: VPIN (500 equal-volume buckets/day, 50-bucket window)
