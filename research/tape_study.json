@@ -1,0 +1,118 @@
+{
+ "prereg": "research/PREREGISTRATION_tape.md",
+ "days": 29,
+ "minutes": 39993,
+ "cost_bps": 9.0,
+ "cells": [
+  {
+   "feature": "ofi",
+   "h": 5,
+   "days": 29,
+   "spread_bps": -0.2990804962541068,
+   "t": -1.5193278828542298,
+   "p": 0.1286799846557891,
+   "bh_pass": false
+  },
+  {
+   "feature": "ofi",
+   "h": 15,
+   "days": 29,
+   "spread_bps": -0.304509196438549,
+   "t": -0.9515664951136734,
+   "p": 0.34131688037278063,
+   "bh_pass": false
+  },
+  {
+   "feature": "ofi",
+   "h": 60,
+   "days": 29,
+   "spread_bps": 0.7358983588273611,
+   "t": 0.8408632119210808,
+   "p": 0.40042456977043933,
+   "bh_pass": false
+  },
+  {
+   "feature": "absorption",
+   "h": 5,
+   "days": 29,
+   "spread_bps": 0.3983463402960692,
+   "t": 0.4993337381072434,
+   "p": 0.617544290989666,
+   "bh_pass": false
+  },
+  {
+   "feature": "absorption",
+   "h": 15,
+   "days": 29,
+   "spread_bps": 0.7666075469218445,
+   "t": 0.579523875124527,
+   "p": 0.5622357416400494,
+   "bh_pass": false
+  },
+  {
+   "feature": "absorption",
+   "h": 60,
+   "days": 29,
+   "spread_bps": -0.20208825895968904,
+   "t": -0.08331701354993476,
+   "p": 0.9335994724723333,
+   "bh_pass": false
+  },
+  {
+   "feature": "sweep_flag",
+   "h": 5,
+   "days": 29,
+   "spread_bps": -0.06172273309293506,
+   "t": -0.2159173124524443,
+   "p": 0.8290522020033322,
+   "bh_pass": false
+  },
+  {
+   "feature": "sweep_flag",
+   "h": 15,
+   "days": 29,
+   "spread_bps": 0.6639680316173286,
+   "t": 1.1845745748076144,
+   "p": 0.2361856946101143,
+   "bh_pass": false
+  },
+  {
+   "feature": "sweep_flag",
+   "h": 60,
+   "days": 29,
+   "spread_bps": 1.147501143465915,
+   "t": 0.7447805757497773,
+   "p": 0.45640437928480093,
+   "bh_pass": false
+  },
+  {
+   "feature": "block_flag",
+   "h": 5,
+   "days": 9,
+   "spread_bps": 0.024550993903272953,
+   "t": 0.18979342500819205,
+   "p": 0.8494710083366026,
+   "bh_pass": false
+  },
+  {
+   "feature": "block_flag",
+   "h": 15,
+   "days": 9,
+   "spread_bps": 0.44589664187826666,
+   "t": 1.2835019694328664,
+   "p": 0.19931627003804642,
+   "bh_pass": false
+  },
+  {
+   "feature": "block_flag",
+   "h": 60,
+   "days": 9,
+   "spread_bps": 2.5547642317950934,
+   "t": 1.514673675499396,
+   "p": 0.12985506410051748,
+   "bh_pass": false
+  }
+ ],
+ "h4_rv_top_over_bottom": 1.7427781331776437,
+ "h4_days": 29
+}

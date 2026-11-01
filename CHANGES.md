@@ -159,6 +159,18 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · pre-registered tape study: direction fails, volatility survives
+
+- **`research/PREREGISTRATION_tape.md`** written before the fetch: 4 features × 3 horizons (5/15/60 min),
+  daily quintile spreads, BH 10%, 9 bps cost bar, one run, every cell reported.
+- **`research/tape_study.py`**: Binance UM `BTCUSDT` aggTrades, 29 days (one archive 404), **39,993
+  minutes**. **0 of 12 directional cells pass BH**; spreads −0.3 to +2.6 bps, all far below the 9 bps
+  cost. Block cells are sparse (9 usable days).
+- **H4 survives**: trade intensity predicts next-hour realised variance — **top quintile 1.74× the
+  bottom**, 29 days. Tape is a volatility instrument, not a direction instrument.
+- **Scorecard updated** (tape flow prediction 1, risk 5; intensity→vol risk 7); result in
+  `research/RESULTS_tape_study.md`.
+
 ### 2026-10-31 · ops: dashboard changes need a loop restart
 
 - **Observed**: the forecast and tape cards were committed and rendered manually, but the running

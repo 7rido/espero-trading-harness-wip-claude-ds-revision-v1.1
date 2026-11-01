@@ -22,6 +22,8 @@ Every number below is from this repo. No new tests were run for the ratings exce
 | **Order-book imbalance** | 2 days, 4,320 min | median OBI +0.009; no relationship tested at scale | 1 | 4 |
 | **Breadth / correlation** | regimes.csv | regime families all fail validation | 2 | 6 |
 | **Drawdown from high** | 42.9k obs | 7d median −108 bps, 41% up; fails FDR | 2 | 5 |
+| **Tape flow (OFI/CVD/blocks/sweeps)** | BTC, 40k minutes, 29 days | 12 cells, 0 BH pass; spreads < 1.3 bps vs 9 bps cost | **1** | 5 |
+| **Trade intensity → volatility** | same sample | top/bottom quintile next-60m RV ratio **1.74×** | 1 | **7** |
 | **Implied vol / VRP** | — | no data | n/a | n/a |
 
 ## What the ratings say
