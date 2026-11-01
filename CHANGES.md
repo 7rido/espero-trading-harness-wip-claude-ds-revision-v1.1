@@ -159,6 +159,17 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-11-01 · tape-edge design: no forced-flow analogue survives
+
+- **`PREREGISTRATION_tape_edges.md`** before any holdout fetch: four mechanisms (sweep exhaustion,
+  absorption, block continuation, divergence), eight cells, BH 10%, 9 bps bar, sealed 61-day holdout.
+- **`tape_edges.py --design`** on the 29 cached October days: 703 sweep events, 85 absorption,
+  1,135 block, 1,328 divergence. **Every cell fails**: means +0.8 to −4.5 bps, t ≤ 1.1, all net far
+  below −8 bps. Absorption has the *wrong* sign (−3.2/−4.5 bps).
+- **Holdout never opened**: the registration only unseals if a design cell passes BH and the cost bar.
+  The seal file was not written; 2026-08-01 → 2026-09-30 remains unread.
+- **Result**: `research/RESULTS_tape_edges_design.md`.
+
 ### 2026-11-01 · E1 label semantics and cascade-fuel detector
 
 - **E1 labels corrected**: a live down-break on the proxy is now **`E1-BREAK`** (unconfirmed — the forced
