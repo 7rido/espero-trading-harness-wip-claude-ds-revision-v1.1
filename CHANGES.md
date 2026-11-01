@@ -159,6 +159,19 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · tape study 2: seconds OFI and block markout
+
+- **`research/PREREGISTRATION_tape_2.md`** written before running: H5 seconds OFI (30/60/180 s), H6
+  markout by print size (10/60 s, 4 buckets), H7 session structure (descriptive).
+- **H5 passes BH at all three horizons**: +0.22 bps (t 6.16) at 30 s, +0.13 (2.40) at 60 s, **−0.49
+  (−2.09) at 180 s** — continuation at seconds, reversal at minutes. The edge is 40–70× below the 9 bps
+  cost bar, so it is a mechanism, not a trade.
+- **H6**: raw markout is drift-contaminated; the drift-adjusted version shows **>$1M prints at +0.78 bps
+  and $10–100k prints at −0.08/−0.13 bps** — block aggressors are informed, mid-size are not.
+- **H7**: flow peaks 13:00–16:00 UTC (81–96k prints/hour vs ~30k at 06:00).
+- Bugs caught: pandas 3 non-ns timestamps (OFI returned NaN) and drift contamination in markout.
+- Scorecard updated; result in `research/RESULTS_tape_study_2.md`.
+
 ### 2026-10-31 · pre-registered tape study: direction fails, volatility survives
 
 - **`research/PREREGISTRATION_tape.md`** written before the fetch: 4 features × 3 horizons (5/15/60 min),
