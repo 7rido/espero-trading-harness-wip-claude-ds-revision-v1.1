@@ -33,6 +33,16 @@ at the top.
 
 ## Changelog
 
+### 2026-11-01 · E1 event log auto-committed daily
+
+- **`scripts/e1_commit.sh`**: after the 07:45 recorder runs, commits `e1_events.csv`, `e1_status.json`,
+  `e1_progress.json` and `e1_feed_status.json` with a dated message (`data: E1 events for YYYY-MM-DD`)
+  and pushes. No changes → no commit.
+- **Why**: those files are rewritten every morning and were tracked, so the tree went dirty daily; this
+  keeps it clean and turns the E1 feed into a dated audit trail of exactly what the recorder saw.
+- **Scheduled**: appended to the sync chain after the progress step.
+- Verified by running it now: `e1 commit: no changes`, exit 0.
+
 ### 2026-11-01 · TUI polish: responsive tables and a research strip
 
 - **Status strip** under the header: `E1 0 forced · look 2026-11-30 · z 4.80 · carry net −1.90 · 2 open ·

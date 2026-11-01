@@ -70,7 +70,7 @@ python -m espero2.cli run --coin BTC --once --allow-plumbing   # one paper cycle
 |---|---|---|
 | `io.espero2.paper` | 60 s | paper loop, vol-target sizing, funding gate |
 | `io.espero2.optics` | 15 min | `optics → forecast → tape --live` (dashboard data) |
-| `io.espero2.sync` | 07:45 | sync → `e1_feed` → `e1_recorder` → daily tape |
+| `io.espero2.sync` | 07:45 | sync → `e1_feed` → `e1_recorder` → daily tape → carry → E1 data commit |
 | `io.espero2.health` | 08:30 | fails loudly if the copy or the E1 feed stalls |
 | GitHub Actions | every push | tests, audit citations, ledger validation |
 
