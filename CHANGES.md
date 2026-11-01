@@ -67,6 +67,14 @@ at the top.
   keeps it clean and turns the E1 feed into a dated audit trail of exactly what the recorder saw.
 - **Scheduled**: appended to the sync chain after the progress step.
 - Verified by running it now: `e1 commit: no changes`, exit 0.
+### 2026-11-01 · pre-registration: #20 and #21 forecast retests
+
+- **`research/PREREGISTRATION_2026-11-01-lows21-forecast.md`**: the project owner asked for #20 and
+  #21 specifically. Tests whether the event cross-section is forecastable from information known at
+  entry — #21 `share` → signed 24 h excess; #20 prior volatility → 1 h bounce — on the published
+  event files, with fixed design/validation splits and BH across the two primaries.
+- No data fetched; no forward window read.
+
 ### 2026-11-01 · research: retest the remaining audit findings
 
 - **`research/RESULTS_2026-11-01-remaining-findings.md`**: six open audit rows retested out of time —
