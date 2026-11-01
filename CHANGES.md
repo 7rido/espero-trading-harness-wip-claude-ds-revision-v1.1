@@ -67,6 +67,14 @@ at the top.
   keeps it clean and turns the E1 feed into a dated audit trail of exactly what the recorder saw.
 - **Scheduled**: appended to the sync chain after the progress step.
 - Verified by running it now: `e1 commit: no changes`, exit 0.
+### 2026-11-01 · pre-registration: retest the remaining audit findings
+
+- **`research/PREREGISTRATION_2026-11-01-remaining-findings.md`**: six fresh retests (#1, #4, #8, #9b,
+  #15, #43) for the audit rows that are still open, estimator/forecast-flawed and have local data;
+  every other row gets a disposition in the result.
+- Forecasts first: out-of-time rank IC with day-block CIs, a spread hurdle, Newey-West t and BH
+  across the six; #4 and #15 are judged against exposure-matched benchmarks.
+- No data fetched; no forward or sealed window read.
 
 ### 2026-11-01 · TUI polish: responsive tables and a research strip
 
