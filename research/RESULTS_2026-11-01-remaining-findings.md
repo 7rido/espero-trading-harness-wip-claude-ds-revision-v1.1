@@ -30,7 +30,7 @@ spread must also clear cost, which is why #9b is "forecast, not tradeable" rathe
 
 ## #1 — funding extremes
 
-- **Data.** 41 coins, daily Binance settled funding, validation 2024-01-01 → 2026-10-27 (1,030 days).
+- **Data.** 41 funding series (38 after the collision filter), daily Binance settled funding, validation 2024-01-01 → 2026-10-27 (1,030 days).
   Signal: causal 30-day robust funding z; score is **−z**, so extreme negative funding ranks highest.
 - **Validation.** rank IC +0.0111 (95% day-block −0.0002 … +0.0234), Newey-West t 1.75, p 0.079,
   q 0.155; IC was positive on 51.8% of days. Top quintile +4.9 bps vs all events +2.4 bps; spread
