@@ -25,6 +25,8 @@ Every number below is from this repo. No new tests were run for the ratings exce
 | **Tape flow (OFI/CVD/blocks/sweeps)** | BTC, 40k minutes, 29 days | 12 cells, 0 BH at 5–60 min; **OFI at 30–60 s passes BH** (+0.22/+0.13 bps) but is 40–70× below the 9 bps cost | **3** | 5 |
 | **Markout by print size** | BTC, ~3M prints/day, 29 days | >$1M prints **+0.78 bps** drift-adjusted vs $10–100k **−0.08/−0.13** | 2 | **6** |
 | **Trade intensity → volatility** | same sample | top/bottom quintile next-60m RV ratio **1.74×** | 1 | **7** |
+| **VPIN / toxicity** | BTC, 29 days, 500 buckets/day | next-60m variance +7.6e-5 (t 2.98); next-30m \|return\| +3.95 bps (t 2.72), both BH | 1 | **7** |
+| **Maker execution (passive fills)** | SOLUSDT, 1 day | 62.7% fill, capture 0.42 bps, markout +0.47 bps (1m), net +0.90 before fees | n/a | 5 |
 | **Implied vol / VRP** | — | no data | n/a | n/a |
 
 ## What the ratings say

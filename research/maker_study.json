@@ -1,0 +1,43 @@
+{
+ "day": "2026-10-01",
+ "symbol": "SOLUSDT",
+ "minutes": 1434,
+ "fill_rate": 0.6269177126917713,
+ "fills": 1798,
+ "capture_median_bps": 0.42405224323598106,
+ "mark1_mean_bps": 0.47264451066446594,
+ "mark5_mean_bps": 0.29629688226541584,
+ "net_1m_bps": 0.896696753900447,
+ "net_5m_bps": 0.720349125501397,
+ "by_spread_quartile": [
+  {
+   "q": 0,
+   "fills": 452,
+   "capture": 0.42,
+   "mark1": 0.49,
+   "mark5": 1.16
+  },
+  {
+   "q": 1,
+   "fills": 448,
+   "capture": 0.42,
+   "mark1": 0.21,
+   "mark5": -0.27
+  },
+  {
+   "q": 2,
+   "fills": 456,
+   "capture": 0.42,
+   "mark1": 0.49,
+   "mark5": -0.32
+  },
+  {
+   "q": 3,
+   "fills": 442,
+   "capture": 0.43,
+   "mark1": 0.7,
+   "mark5": 0.62
+  }
+ ],
+ "adverse_share": 0.46662958843159064
+}

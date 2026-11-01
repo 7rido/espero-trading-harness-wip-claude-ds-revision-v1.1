@@ -159,6 +159,18 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · VPIN and maker-execution pilots
+
+- **`PREREGISTRATION_vpin.md` + `vpin_study.py`**: VPIN (500 equal-volume buckets/day, 50-bucket window)
+  on 29 BTC days. Both cells pass BH: next-60m realised variance **+7.6e-5** (t 2.98) and next-30m
+  absolute return **+3.95 bps** (t 2.72). A risk/volatility signal, not direction.
+- **`PREREGISTRATION_maker.md` + `maker_study.py`** (one-day pilot, SOL 2026-10-01): **62.7% fill rate**,
+  median capture **0.42 bps**, markout **+0.47 bps** at 1 min, net **+0.90 bps before fees**, adverse
+  share 46.7%. At a 2 bps maker fee the gross becomes **−1.1 bps** — the fee tier decides it; one day is
+  not evidence.
+- Scorecard: VPIN risk **7**, maker execution **5**.
+- Results: `research/RESULTS_vpin.md`, `research/RESULTS_maker.md`.
+
 ### 2026-10-31 · tape study 2: seconds OFI and block markout
 
 - **`research/PREREGISTRATION_tape_2.md`** written before running: H5 seconds OFI (30/60/180 s), H6
