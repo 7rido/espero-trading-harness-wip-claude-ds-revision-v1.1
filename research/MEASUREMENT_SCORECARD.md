@@ -27,6 +27,7 @@ Every number below is from this repo. No new tests were run for the ratings exce
 | **Trade intensity → volatility** | same sample | top/bottom quintile next-60m RV ratio **1.74×** | 1 | **7** |
 | **VPIN / toxicity** | BTC, 29 days, 500 buckets/day | next-60m variance +7.6e-5 (t 2.98); next-30m \|return\| +3.95 bps (t 2.72), both BH | 1 | **7** |
 | **Maker execution (passive fills)** | SOLUSDT, 1 day | 62.7% fill, capture 0.42 bps, markout +0.47 bps (1m), net +0.90 before fees | n/a | 5 |
+| **Volatility-target sizing** | SMA stream, 10 coins, 2020–2026 | matched exposure: Sharpe **0.49** vs **0.84** fixed; DD −11.8 % vs −9.0 % | n/a | 3 |
 | **Tape edges (sweep / absorption / block / divergence)** | BTC, 29 days, 3,200+ events | 8 cells, **0 BH**; means +0.8 to −4.5 bps, all under 9 bps cost; holdout never opened | 1 | 4 |
 | **Implied vol / VRP** | — | no data | n/a | n/a |
 

@@ -33,6 +33,16 @@ at the top.
 
 ## Changelog
 
+### 2026-11-01 · sizing study: vol targeting lost to fixed on the SMA stream
+
+- **`research/sizing_study.py`**: same SMA 20/50 signal, 10 coins, 2020-01 → 2026-03, $10k, 9 bps cost.
+- **Matched exposure** (avg gross $931): fixed Sharpe **0.84**, max DD **−9.0 %**; vol-target (1.208 % risk)
+  Sharpe **0.49**, max DD **−11.8 %**. Vol targeting sized up in calm chop and down in vol expansion.
+- **Live setting** (2 %, $500 cap) runs **1,646** average gross — 1.8× fixed — with −18.9 % DD. The switch
+  from $100 fixed changed the risk budget, not just the sizing rule.
+- Correction recorded: the earlier claim that vol targeting "improves risk regardless" was too strong.
+- Results: `research/RESULTS_sizing.md`; scorecard row added (risk 3).
+
 ### 2026-11-01 · docs refresh and repo hygiene
 
 - **README rewritten**: current state, evidence table with the latest studies, unattended jobs, agent

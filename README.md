@@ -33,6 +33,7 @@ research documents are in [`reference/`](reference), and its 46 numbered tests a
 | Tape edges (sweeps, absorption, blocks, divergence)? | **no** — 8 cells, 0 BH, holdout never opened | [`RESULTS_tape_edges_design.md`](research/RESULTS_tape_edges_design.md) |
 | Tape OFI at seconds? | **yes but sub-cost** — +0.22 bps at 30 s vs 9 bps cost | [`RESULTS_tape_study_2.md`](research/RESULTS_tape_study_2.md) |
 | Tape as volatility instrument? | **yes** — intensity→RV 1.74×, VPIN→variance (BH) | [`RESULTS_vpin.md`](research/RESULTS_vpin.md) |
+| Does vol-target sizing help? | **no on this signal** — Sharpe 0.49 vs 0.84 fixed at matched exposure | [`RESULTS_sizing.md`](research/RESULTS_sizing.md) |
 | SMA strategy? | retired — tracked an equal-weight hold | `strategy_ledger.csv` (`P1`) |
 
 **The only directional edge is the forced-liquidation bounce, and it is still a forward test.** E1's
