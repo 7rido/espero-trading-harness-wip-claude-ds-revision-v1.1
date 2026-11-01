@@ -16,6 +16,8 @@ tail -2 "$LOG"
 rm -f "$LOG"
 echo "== audit"
 "$PY" research/audit_by_number.py --check
+echo "== inheritance"
+"$PY" scripts/check_inheritance.py
 echo "== ledger"
 "$PY" -m espero2.cli ledger > /dev/null
 echo "all checks passed"

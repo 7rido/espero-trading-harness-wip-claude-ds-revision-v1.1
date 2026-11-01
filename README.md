@@ -92,6 +92,15 @@ reference/   the original repository's research documents, verbatim (87 files)
 - [`RESULTS_hardening.md`](research/RESULTS_hardening.md) — selection cost, E1 power, maker fills.
 - [`PLUMBING.md`](PLUMBING.md) — the window the paper loop runs under.
 
+## Research rule (enforced)
+
+Every result names the original finding it extends or contradicts, or states `no ancestor`. A negative
+ancestor justifies not re-running a family; it never counts as evidence. A return claim must name its
+estimator and its cost bar. Nothing is evidence unless its ledger row is `holds` or its registration is
+sealed. The map is [`research/INHERITANCE.md`](research/INHERITANCE.md), the template is
+[`research/RESULT_TEMPLATE.md`](research/RESULT_TEMPLATE.md), and `scripts/check_inheritance.py` fails
+the build if a ledger row or a result document is missing from the map.
+
 ## What is not claimed
 
 - **No strategy is authorised.** No ledger row is `holds`; the loop runs `sma` as plumbing and its books are void.

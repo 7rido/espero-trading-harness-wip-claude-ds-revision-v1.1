@@ -574,6 +574,20 @@ at the top.
 - **Unchanged by design**: ledger gate, paper engine, order paths, launchd plists; the running loop
   was not touched.
 
+### 2026-11-01 · inheritance map v2, the five-mode audit, and the rule in CI
+
+- **`research/INHERITANCE.md`** rewritten to the requested shape: per original id — what it
+  **concluded**, what we **built on it**, and what it **contradicts** (e.g. #21 → R1 finds the effect
+  gone; #26 → R2 replicates but E1 tests the executable fix; #8 → R6 shows factor books flip sign).
+- **The eight unledgered documents audited against the five failure modes** (estimator, cost bar,
+  overlapping windows, executable tag, venue). **Two real gaps found**: `regime-signs` reports means
+  over overlapping 5d/20d windows without a correction; `tape-edges-design` reports means with t
+  without stating the estimator. Both ledgered with the caveat; the other six are clean.
+- **Rule enforced, not just written**: `research/RESULT_TEMPLATE.md` (required sections) and
+  `scripts/check_inheritance.py` fail the build if any ledger row or result document is missing from
+  the map; wired into `scripts/check.sh`. The rule is also in README.
+- **CI**: 46 originals, 20 ledger rows, 20 result documents referenced — all green; suite 193.
+
 ### 2026-11-01 · inheritance map; the eight unledgered documents ledgered
 
 - **`research/INHERITANCE.md`**: every original id (46) mapped to our descendants, and every finding of
