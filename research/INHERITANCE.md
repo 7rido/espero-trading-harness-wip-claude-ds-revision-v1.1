@@ -106,6 +106,7 @@ six are clean, and five of them are explicitly descriptive with no direction cla
 | `RESULTS_tape_study.md` | R16 | audit |
 | `RESULTS_tape_study_2.md` | R17 | audit |
 | `RESULTS_vpin.md` | R18 | audit |
+| `RESULTS_2026-11-01-liq45-forecast.md` | annex (forecast retest) | forecast retest of #45 |
 
 ## The rule (enforced)
 

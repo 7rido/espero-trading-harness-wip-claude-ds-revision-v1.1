@@ -150,6 +150,8 @@ forced-liquidation feed.
 - COIN-M liquidations are one venue family; #45's forward feed is multi-venue. The monthly archive is
   multi-venue but starts every month.
 - Costs are a flat 9 bps and Binance funding, not venue-specific execution.
+- The coin set is the archives' 26 COIN-M symbols (continuous) and 39 symbols (monthly), not a dated
+  eligibility universe; a coin that delisted after the window is still included for the days it traded.
 - The stock analog uses daily bars, three ETFs and no liquidation feed; it is a control, not a test of
   the mechanism.
 
