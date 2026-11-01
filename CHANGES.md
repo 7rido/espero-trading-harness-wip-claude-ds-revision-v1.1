@@ -33,6 +33,16 @@ at the top.
 
 ## Changelog
 
+### 2026-11-01 · carry sleeve registered (before any code)
+
+- **`research/PREREGISTRATION_carry_sleeve.md`**: delta-neutral spot-long (Coinbase) / perp-short (HL)
+  on BTC/ETH/SOL, $1k per side, 30 % of measured capacity.
+- Entry: HL 7-day funding ≥ 5 %/yr, basis ≥ 0, spot spread ≤ 5 bps. Exit: funding < 0 for two days, basis
+  < −10 bps for two days, margin buffer < 25 %, or window end.
+- Costs: 5 bps Coinbase + 4.5 bps HL + 2 bps slippage per fill (~23 bps round trip).
+- Primary metric: funding capture ≥ 0.70 and net > 0 over ≥ 30 observations → ledger `trial`, never `holds`.
+- Window 2026-11-01 → 2026-12-31; thresholds fixed, no re-tuning.
+
 ### 2026-11-01 · sizing study: vol targeting lost to fixed on the SMA stream
 
 - **`research/sizing_study.py`**: same SMA 20/50 signal, 10 coins, 2020-01 → 2026-03, $10k, 9 bps cost.
