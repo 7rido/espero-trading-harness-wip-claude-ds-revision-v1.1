@@ -1,24 +1,48 @@
 # Changes — espero2
 
-Everything built in this project since forking from `espero` (the original), newest at the bottom of
-the changelog. **Maintenance rule: every change, major or minor, gets one dated line here in the
-same turn it is made.** Nothing in this repository is a git commit yet — the tree is the record.
+Everything built in this project since forking from `espero` (the original). **Maintenance rule: every
+change, major or minor, gets one dated line here in the same turn it is made.** The repository is
+public and pushed; commits are the record. The log runs oldest → newest, with a current-state summary
+at the top.
 
 - **Source of the fork:** `/Users/fredp/Espero Trading QuantBot/espero` at `765a5b9` (read-only).
 - **What was reused:** data, recorded market material and the research corpus. **No code was copied**;
   the point was a different implementation with the same discipline.
 - **First version of this file:** 2026-10-30, written after the short/funding work.
 
+## Current state (2026-11-01)
+
+- **171 tests** green; working tree clean, pushed.
+- **Paper loop running** under the plumbing window (`PLUMBING.md` to 2026-12-31): BTC/ETH/SOL, vol-target
+  2 %, funding gate 25 %/yr, $500 cap. Books are **void** and never read as evidence.
+- **E1 recording**: 11 seed events, 0 forced trades; window to 2027-04-30, 70 % power, OBF boundaries set.
+- **Dashboard**: operator optics (10 markets, connections, data sources), gated forecasts, BTC tape.
+- **Research**: the liquidation mechanism is the only directional result that survives selection;
+  carry/XS/regimes/tape edges fail; volatility, VPIN and maker fills are risk/execution instruments.
+- **Data**: 16 substrate tables — see `research/DATA_INVENTORY.md`.
+- **Agent layer**: catalog + sandboxed executor; `run`, `order`, `trade` are refused to agents.
+
 ## Conventions
 
 - **Major**: a new capability (shorts, funding, supervisor) or a schema change.
 - **Minor**: a fix, a test, a doc line, a label.
 - **Breaking**: changes the meaning of an existing journal row or CLI flag; always noted.
-- Tests: `python -m unittest discover -s tests -t .` — currently **46 passing**.
+- Tests: `python -m unittest discover -s tests -t .` — currently **171 passing**.
 
 ---
 
 ## Changelog
+
+### 2026-11-01 · docs refresh and repo hygiene
+
+- **README rewritten**: current state, evidence table with the latest studies, unattended jobs, agent
+  layer, and the claims the project explicitly does not make (void books, fictional testnet venue,
+  no `holds`).
+- **CHANGES**: current-state block added; stale claims fixed ("nothing is committed", "46 tests",
+  "paper loop stopped"); code-standing table and open items refreshed.
+- **Generated `research/forecast.json` untracked + gitignored** — the 15-minute job rewrote it and kept
+  the tree dirty (`6b8ae61`).
+- **Scorecard placeholder fixed** to the tape-edge row (`15bc621`).
 
 ### 2026-10-30 · fork and data
 
@@ -1043,34 +1067,32 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
 
 | area | state |
 |---|---|
-| data | 2.3 GB raw + 14 MB curated + 86 reference docs, hashed |
-| paper engine | long/short, taker fills + slippage, mirrored stops, funding (venue), liquidation floor |
+| data | 16 substrate tables (`research/DATA_INVENTORY.md`), Tardis/monthly samples, live optics cache |
+| paper engine | long/short, taker fills + slippage, stops, funding, liquidation floor, vol-target sizing |
 | journals | per-coin books, bars/signals/orders/equity, heartbeat |
-| execution | testnet only, five guards, long-only unless `--allow-short` |
-| supervision | shell supervisor + launchd unit, heartbeat + `health` |
-| UI | terminal home screen + HTML dashboard |
-| tests | 46 |
+| execution | testnet only, no mainnet path; maker-fill model measured (61–64 %) |
+| supervision | launchd: paper 60 s, optics 15 min, sync 07:45, health 08:30 |
+| UI | terminal home screen + HTML dashboard (optics, forecasts, tape) |
+| research | audit, replications, E1, tape/VPIN/maker studies, scorecard, registrations |
+| agent | catalog + sandboxed executor; privileged verbs refused |
+| tests | 171 |
 
 ## Deviations from the original, on purpose
 
 - No defensive "sell everything" rule; exits are the stop or the regime flip.
 - No leverage, margin maintenance, or liquidation ladder — 1× only, with a zero-equity floor.
 - Funding mixes venues: testnet prices, mainnet realised funding (documented assumption).
-- No forward-test framework, no daily job, no accounts other than the three coin books.
+- Forward tests now exist (E1 recorder + daily job) and the dashboard/optics/tape jobs are scheduled; the original's three-coin book structure remains.
 - The TUI is a port of the *look*; the original's menus for board/scan/fast/carry/forward/factors are
   absent because the modules behind them are.
 
 ## Open items
 
-- Live loop runs `sma` as `plumbing`; no strategy has a `holds` row yet.
-- Testnet prices are unrealistic (SOL spread ~21 bps); fills inherit that.
-- `--funding-venue` is not exposed on the CLI yet (mainnet is the code default).
-- Leverage is fixed at 1x; `Rules` has the knobs but nothing passes them.
-- **Venue: Hyperliquid governs** (holder is non-US, per the holder's statement). The original's
-  `VENUE_CONFIRMATION.md` is a **guard rail for a US holder** - Hyperliquid's terms exclude US persons
-  even though the public API answers from anywhere - and it does not apply here. The repo itself
-  records the resolution in its uncommitted `VENUE_NONUS.md`. Our cost model (4.5 bps taker, hourly
-  funding) and the testnet fill venue are therefore aligned. Still the holder's step zero: confirm
-  the country of residence against Hyperliquid's current terms, and note that a US-based *operator*
-  would still be a US person trading.
-- No git commit; nothing pushed.
+- **E1 is the only live test**: recording until 2027-04-30; forced tags arrive with the daily sync.
+- **Nothing authorised**: no `holds` row; the paper loop remains plumbing and its books void.
+- **Fills are fictional**: HL testnet prices run ~8 % off spot on ~21 bps spreads.
+- **Cascade detector warming up**: needs 7 days of OI snapshots before it can arm.
+- **Carry sleeve not built**: funding is venue-dependent (HL +10.9 %/yr, OKX +3.5 %, Binance −0.3 %);
+  a delta-neutral sleeve needs its own registration and a 30–60 day paper test.
+- **Vol-target sizing not yet measured against fixed sizing on history.**
+- **Fee tier decides maker economics**: +0.9 bps net at zero fees, −1.1 bps at 2 bps.
