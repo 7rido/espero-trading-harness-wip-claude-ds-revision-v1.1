@@ -33,6 +33,15 @@ at the top.
 
 ## Changelog
 
+### 2026-11-01 · TUI updated with the research state
+
+- **`espero2/ui.py`**: new menu item **"Market optics & research state"** renders E1 progress (counts
+  only), the carry sleeve, the top optics markets (state, funding B/HL, OI, CASCADE/BREAK) and the
+  gated forecast labels, plus the BTC tape row — the same JSON the dashboard uses.
+- **Research documents** now reads `research/` (our RESULTS and PREREGISTRATION files), not the
+  original corpus in `reference/`.
+- **Tests**: 5 row-builder tests; suite **188**.
+
 ### 2026-11-01 · E1 progress row (counts only, no statistic)
 
 - **`research/e1_progress.py`**: calendar progress, event count, forced-trade count, next registered look

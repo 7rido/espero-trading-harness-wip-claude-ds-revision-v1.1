@@ -8,6 +8,7 @@ Status panels on top, one action per choice, every action also a plain command. 
 from __future__ import annotations
 
 import subprocess
+import json
 import time
 from pathlib import Path
 from typing import List, Optional
@@ -285,17 +286,108 @@ def _tail_log(console, n: int = 25) -> None:
     console.print(Text("no log yet (sup.log / loop.log)", style=MUTED))
 
 
+
+
+# ---------------------------------------------------------------- research state
+def _json(path: str) -> dict:
+    try:
+        return json.loads(Path(path).read_text())
+    except (OSError, ValueError):
+        return {}
+
+
+def e1_rows(d: dict) -> list[tuple[str, str]]:
+    if not d:
+        return [("state", "no progress file")]
+    return [("window", " → ".join(d.get("window", ["?", "?"]))),
+            ("elapsed", f"{d.get('pct', 0):.1f}% ({d.get('elapsed_days')}/{d.get('total_days')} d)"),
+            ("events", f"{d.get('events', 0):,}"),
+            ("forced trades", f"{d.get('forced', 0):,}"),
+            ("next look", f"{d.get('next_look')} (look {d.get('look_number')})"),
+            ("boundary (z)", "—" if d.get("boundary") is None else f"{d['boundary']:.2f}")]
+
+
+def carry_rows(d: dict) -> list[tuple[str, ...]]:
+    rows = []
+    for coin, pos in (d.get("positions") or {}).items():
+        rows.append((coin, f"${pos['spot_entry']:,.2f} / ${pos['perp_entry']:,.2f}",
+                     f"{pos.get('funding_cum', 0):+.2f}", f"{pos.get('fees', 0):.2f}",
+                     f"{pos.get('net', 0):+.2f}"))
+    return rows
+
+
+def optics_rows(d: dict, limit: int = 6) -> list[tuple[str, ...]]:
+    rows = []
+    for m in (d.get("markets") or [])[:limit]:
+        risk = "CASCADE" if m.get("cascade") else ("BREAK" if (m.get("e1") or {}).get("down_break") else "—")
+        rows.append((m.get("coin", "?"), m.get("state", "?"),
+                     f"{m.get('funding_binance', float('nan')):+.1f}% / "
+                     f"{m.get('funding_hl', float('nan')):+.1f}%",
+                     f"{m.get('oi_hl', 0):,.0f}", risk))
+    return rows
+
+
+def forecast_rows(d: dict, limit: int = 6) -> list[tuple[str, ...]]:
+    rows = []
+    for r in (d.get("rows") or [])[:limit]:
+        rows.append((r.get("coin", "?"), r.get("state", "?"), f"{r.get('median20', 0):+.0f}",
+                     "—" if r.get("share_up") != r.get("share_up") else f"{r['share_up']:.0%}",
+                     r.get("label", "?")))
+    return rows
+
+
+def tape_row(d: dict) -> list[tuple[str, ...]]:
+    if not d:
+        return []
+    return [(d.get("source", "?"), f"{int(d.get('prints', 0)):,}", f"{d.get('buy_share', 0):.0%}",
+             f"{d.get('cvd', 0):+.2f}", d.get("divergence", "—"))]
+
+
+def _table(title: str, headers: list[str], rows: list[tuple]) -> "Table":
+    tbl = Table(title=title, title_style="bold", show_header=True, header_style=MUTED,
+                box=None, padding=(0, 2), expand=False)
+    for h in headers:
+        tbl.add_column(h)
+    for r in rows:
+        tbl.add_row(*[str(x) for x in r])
+    if not rows:
+        tbl.add_row(*["—"] * len(headers))
+    return tbl
+
+
+def research_view(console: "Console") -> None:
+    console.print(Text("E1 progress — counts only, no statistic", style="bold"))
+    console.print(_table("", ["field", "value"], e1_rows(_json("research/e1_progress.json"))))
+    console.print()
+    console.print(Text("carry sleeve — paper, delta-neutral", style="bold"))
+    console.print(_table("", ["coin", "spot / perp entry", "funding", "fees", "net"],
+                         carry_rows(_json("research/carry_sleeve.json"))))
+    console.print()
+    console.print(Text("market optics", style="bold"))
+    console.print(_table("", ["coin", "state", "funding B/HL", "OI", "risk"],
+                         optics_rows(_json("research/optics.json"))))
+    console.print()
+    console.print(Text("forecasts — capped at WATCH while no holds", style="bold"))
+    console.print(_table("", ["coin", "state", "med 20d", "P(up)", "label"],
+                         forecast_rows(_json("research/forecast.json"))))
+    tape = tape_row(_json("research/tape_live.json")) or tape_row(_json("research/tape.json"))
+    console.print()
+    console.print(Text("BTC tape", style="bold"))
+    console.print(_table("", ["source", "prints", "taker buy", "CVD", "divergence"], tape))
+
+
 def _research(console) -> None:
     from rich.markdown import Markdown
-    docs = sorted(Path("reference").glob("RESULTS_*.md"))
+    docs = sorted(list(Path("research").glob("RESULTS_*.md")) +
+                  list(Path("research").glob("PREREGISTRATION_*.md")))
     if not docs:
-        console.print(Text("no reference documents", style=MUTED))
+        console.print(Text("no research documents", style=MUTED))
         return
     pick = questionary.select("Read which?", pointer="❯", style=STYLE,
-                              choices=[d.name[len("RESULTS_"):-3] for d in docs] + ["Back"]).ask()
+                              choices=[d.name[:-3] for d in docs] + ["Back"]).ask()
     if not pick or pick == "Back":
         return
-    path = Path("reference") / f"RESULTS_{pick}.md"
+    path = Path("research") / f"{pick}.md"
     with console.pager(styles=True):
         console.print(Markdown(path.read_text()))
 
@@ -325,7 +417,8 @@ def main(state: str = "paper.db") -> int:
                     "Deposit / reset a book",
                     "Pause / resume",
                     "Show the log",
-                    "Research documents (reference/)",
+                    "Market optics & research state",
+                    "Research documents (research/)",
                     "Run the tests",
                     "Quit",
                 ]).ask()
@@ -358,7 +451,9 @@ def main(state: str = "paper.db") -> int:
                 _toggle_pause(console)
             elif choice == "Show the log":
                 _tail_log(console)
-            elif choice == "Research documents (reference/)":
+            elif choice == "Market optics & research state":
+                research_view(console)
+            elif choice == "Research documents (research/)":
                 _research(console)
             elif choice == "Run the tests":
                 subprocess.run([__import__("sys").executable, "-m", "unittest", "discover",
