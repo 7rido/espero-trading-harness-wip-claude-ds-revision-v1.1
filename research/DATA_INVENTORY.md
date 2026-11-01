@@ -20,3 +20,11 @@ Database: `substrate.duckdb` · tables: 16
 | `tardis_derivative` | 4,415,916 | 2025-01-01 → 2026-10-01 | symbol, ts, funding, predicted, oi, mark |
 | `tardis_liquidations` | 44,353 | 2025-01-01 → 2026-10-01 | symbol, ts, side, price, amount, usd |
 | `trades` | 3,296,200 | 2023-07-10 → 2023-07-10 | symbol, ts, price, qty, buyer_is_maker, day |
+
+## Live snapshots (not substrate tables)
+
+| path | rows / span | what |
+|---|---|---|
+| `data/hlcollect/positions/YYYY-MM-DD/HHMM.csv.gz` | ~5,100 positions per hour | top-2,000 Hyperliquid accounts by account value, including the venue's `liquidationPx` |
+| `data/hlcollect/ctx/YYYY-MM-DD/HHMM.csv.gz` | 178 coins per slot | Hyperliquid mark, mid, funding and open interest |
+| `research/liquidity_map.json` | generated every 15 min | book pools, Coinbase spot flow and the sampled liquidation ladder |

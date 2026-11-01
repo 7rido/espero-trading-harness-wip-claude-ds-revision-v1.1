@@ -18,6 +18,7 @@ OPTICS = Path(__file__).resolve().parents[1] / "research" / "optics.json"
 FORECAST = Path(__file__).resolve().parents[1] / "research" / "forecast.json"
 TAPE = Path(__file__).resolve().parents[1] / "research" / "tape.json"
 TAPE_LIVE = Path(__file__).resolve().parents[1] / "research" / "tape_live.json"
+LIQUIDITY_MAP = Path(__file__).resolve().parents[1] / "research" / "liquidity_map.json"
 CARRY = Path(__file__).resolve().parents[1] / "research" / "carry_sleeve.json"
 E1PROG = Path(__file__).resolve().parents[1] / "research" / "e1_progress.json"
 LIQUIDITY = Path(__file__).resolve().parents[1] / "research" / "forecast_liquidity.json"
@@ -40,6 +41,11 @@ th,td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line)}
 th{color:var(--dim);font-weight:500}
 .up{color:var(--up)}.down{color:var(--down)}
 section{grid-column:1/-1}
+.map-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.map-coin{border:1px solid var(--line);border-radius:8px;padding:10px}
+.map-coin table{margin-top:8px}
+.bar{background:#21262d;height:5px;border-radius:3px;overflow:hidden}
+.bar span{display:block;height:100%}
 """
 
 
@@ -344,6 +350,127 @@ def _tape_card() -> str:
             f'</section>')
 
 
+def _order_flow_liquidity_card() -> str:
+    """Order flow and liquidity map: resting depth, taker flow and the HL liquidation ladder."""
+    try:
+        d = json.loads(LIQUIDITY_MAP.read_text())
+    except (OSError, ValueError):
+        return ""
+    markets = d.get("markets") or []
+    if not markets:
+        return ""
+
+    def fnum(v, fmt: str = "{:+.2f}") -> str:
+        try:
+            f = float(v)
+        except (TypeError, ValueError):
+            return "—"
+        return "—" if f != f else fmt.format(f)
+
+    def usd(v) -> str:
+        try:
+            f = float(v)
+        except (TypeError, ValueError):
+            return "—"
+        return "—" if f != f else f"${_big(abs(f))}"
+
+    def signed_usd(v) -> str:
+        try:
+            f = float(v)
+        except (TypeError, ValueError):
+            return "—"
+        return "—" if f != f else f"{'+' if f >= 0 else '-'}${_big(abs(f))}"
+
+    stale = _age_min(d.get("at")) > 30
+    flags = ("<div class='down'><b>stale</b> — liquidity snapshot older than the refresh window</div>"
+             if stale else "")
+    errors = d.get("errors") or []
+    if errors:
+        flags += (f"<div class='down'>{html.escape('; '.join(str(e) for e in errors)[:300])}</div>")
+    at = str(d.get("at", ""))
+    banner = (f"liquidity pools: <b>coinbase spot book</b> · order flow: <b>coinbase spot trades</b> · "
+              f"liquidation clusters: <b>hyperliquid perp ladder</b> · "
+              f"snapshot {html.escape(at[11:19])}Z · not a signal")
+    blocks = []
+    for m in markets:
+        coin = html.escape(str(m.get("coin", "?")))
+        mid = m.get("mid")
+        if not isinstance(mid, (int, float)) or float(mid) != float(mid):
+            reason = str(m.get("error") or "no mid")[:160]
+            blocks.append(f"<div class=map-coin><div class=coin><span>{coin}</span>"
+                          f"<span class=down>unavailable</span></div>"
+                          f"<div class=muted>{html.escape(reason)}</div></div>")
+            continue
+        mark = m.get("mark")
+        if not isinstance(mark, (int, float)) or float(mark) != float(mark):
+            mark = mid
+        flow = m.get("flow") or {}
+        pools = m.get("pools") or []
+        clusters = m.get("clusters") or []
+        ladder = m.get("ladder") or {}
+        head = (f"spot {_px(float(mid))} · spread {fnum(m.get('spread_bps'), '{:.2f}')} bps · "
+                f"HL mark {_px(float(mark))}")
+        flow_line = (f"{int(flow.get('prints', 0) or 0):,} prints / "
+                     f"{fnum(flow.get('span_min'), '{:.1f}')}m · "
+                     f"{fnum(flow.get('buy_share'), '{:.0%}')} taker buys · "
+                     f"net {signed_usd(flow.get('net_usd', 0))}")
+        npos = int(ladder.get("positions", 0) or 0)
+        if npos:
+            age = _age_min(ladder.get("positions_at"))
+            age_txt = ("no timestamp" if age == float("inf")
+                       else f"{age / 60:.1f}h ago" if age >= 120 else f"{age:.0f}m ago")
+            ladder_line = (f"HL ladder: {npos} pos · sample {usd(ladder.get('sample_usd'))} / "
+                           f"OI {usd(ladder.get('oi_usd'))} "
+                           f"({fnum(ladder.get('coverage_pct'), '{:.0f}')}%) · "
+                           f"nearest any L {fnum(ladder.get('nearest_long_pct'), '{:.1f}')}% / "
+                           f"S {fnum(ladder.get('nearest_short_pct'), '{:.1f}')}% · "
+                           f"<span class=\"{'down' if age > 120 else 'muted'}\">{age_txt}</span>")
+        else:
+            ladder_line = "<span class=down>no local Hyperliquid position snapshot</span>"
+
+        max_pool = max((float(p.get("usd", 0) or 0) for p in pools), default=0.0)
+        pool_rows = []
+        for p in sorted(pools, key=lambda z: (0 if z.get("side") == "ask" else 1,
+                                              abs(float(z.get("distance_pct", 0) or 0)))):
+            side = str(p.get("side", ""))
+            cls = "up" if side == "bid" else "down"
+            width = 100 * float(p.get("usd", 0) or 0) / max_pool if max_pool else 0
+            pool_rows.append(
+                f"<tr><td class={cls}>{html.escape(side)} {_px(float(p.get('price', 0) or 0))}</td>"
+                f"<td>{fnum(p.get('distance_pct'), '{:+.2f}')}%</td><td>{usd(p.get('usd'))}</td>"
+                f"<td><div class=bar><span style='width:{width:.0f}%;"
+                f"background:var(--{cls})'></span></div></td></tr>")
+        max_liq = max((float(c.get("usd", 0) or 0) for c in clusters), default=0.0)
+        liq_rows = []
+        for c in clusters:
+            side = str(c.get("side", ""))
+            cls = "down" if side == "long" else "up"
+            width = 100 * float(c.get("usd", 0) or 0) / max_liq if max_liq else 0
+            liq_rows.append(
+                f"<tr title='{int(c.get('count', 0) or 0)} position(s)'>"
+                f"<td class={cls}>{html.escape(side)} liq {_px(float(c.get('price', 0) or 0))}</td>"
+                f"<td>{fnum(c.get('distance_pct'), '{:+.2f}')}%</td><td>{usd(c.get('usd'))}</td>"
+                f"<td><div class=bar><span style='width:{width:.0f}%;"
+                f"background:var(--{cls})'></span></div></td></tr>")
+        blocks.append(
+            f"<div class=map-coin><div class=coin><span>{coin}</span>"
+            f"<span class=muted>{fnum(m.get('basis_bps'), '{:+.1f}')} bps basis</span></div>"
+            f"<div class=pos>{head}</div><div class=pos>{flow_line}</div>"
+            f"<div class=pos>{ladder_line}</div>"
+            f"<table><thead><tr><th>resting pool</th><th>dist</th><th>notional</th><th></th>"
+            f"</tr></thead><tbody>{''.join(pool_rows) or '<tr><td colspan=4 class=muted>no book</td></tr>'}"
+            f"</tbody></table>"
+            f"<table><thead><tr><th>liq cluster</th><th>dist</th><th>USD</th><th></th></tr></thead>"
+            f"<tbody>{''.join(liq_rows) or '<tr><td colspan=4 class=muted>no clusters</td></tr>'}"
+            f"</tbody></table></div>")
+    return (f'<section class="card" style="grid-column:1/-1">'
+            f'<h1 style="margin-bottom:8px">order flow &amp; liquidity map</h1>'
+            f'<div class="muted" style="margin-bottom:8px">{banner}</div>{flags}'
+            f'<div class="map-grid">{"".join(blocks)}</div>'
+            f'<div class="muted" style="margin-top:10px">{html.escape(str(d.get("read", "")))}</div>'
+            f'</section>')
+
+
 def _carry_card() -> str:
     """Paper delta-neutral carry sleeve; live state written by research/carry_sleeve.py."""
     try:
@@ -513,6 +640,7 @@ def render(store: Store, out: Path, *, address: str | None = None,
 {_optics_card()}
 {_forecast_card()}
 {_tape_card()}
+{_order_flow_liquidity_card()}
 {_carry_card()}
 {_e1_card()}
 {_liquidity_card()}
