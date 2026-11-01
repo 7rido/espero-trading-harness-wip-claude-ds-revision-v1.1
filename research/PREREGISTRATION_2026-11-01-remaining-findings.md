@@ -173,3 +173,19 @@ signal existed before; they cannot rescue a validation failure.
 - Reading any forward-window day, or any sealed holdout.
 - Substituting the design window for the validation window.
 - Calling a secondary horizon or a control a finding.
+
+## Amendment 2026-11-01 — before the verdict is written
+
+The first execution of the daily cross-section showed the ticker collisions already documented in
+`reference/ERRATA.md`: the Yahoo `ARB-USD`, `TIA-USD`, `WLD-USD` and `OP-USD` histories switch
+tokens mid-series, and 21 forward returns in the panel exceed ±100% (up to +680,000%). These are
+data errors, not market moves.
+
+For **#1 and #8 only**, and before any verdict is read or written, this amendment:
+
+- drops the four collision tickers from the daily cross-section;
+- drops any observation whose forward return is outside ±50%.
+
+No split, signal, horizon, criterion or estimator changes. The filter is data quality, disclosed
+here rather than applied silently. #4, #9b, #15 and #43 are unaffected (their series do not contain
+those tickers in the tested windows).
