@@ -12,7 +12,7 @@ at the top.
 
 ## Current state (2026-11-01)
 
-- **171 tests** green; working tree clean, pushed.
+- **200 tests** green; working tree clean, pushed.
 - **Paper loop running** under the plumbing window (`PLUMBING.md` to 2026-12-31): BTC/ETH/SOL, vol-target
   2 %, funding gate 25 %/yr, $500 cap. Books are **void** and never read as evidence.
 - **E1 recording**: 11 seed events, 0 forced trades; window to 2027-04-30, 70 % power, OBF boundaries set.
@@ -27,7 +27,7 @@ at the top.
 - **Major**: a new capability (shorts, funding, supervisor) or a schema change.
 - **Minor**: a fix, a test, a doc line, a label.
 - **Breaking**: changes the meaning of an existing journal row or CLI flag; always noted.
-- Tests: `python -m unittest discover -s tests -t .` — currently **171 passing**.
+- Tests: `python -m unittest discover -s tests -t .` — currently **200 passing**.
 
 ---
 
@@ -67,6 +67,17 @@ at the top.
   keeps it clean and turns the E1 feed into a dated audit trail of exactly what the recorder saw.
 - **Scheduled**: appended to the sync chain after the progress step.
 - Verified by running it now: `e1 commit: no changes`, exit 0.
+### 2026-11-01 · evidence gate: a citation must resolve to a file in this repo
+
+- **`espero2/ledger.py`**: `load()` refuses a row whose `basis`/`note` cites a document that is not an
+  existing file inside this repository; before, the CI ledger step printed the row and passed. The
+  ledger is read under a context manager so a refusal cannot leak the file handle.
+- **`research/audit_by_number.py`**: `--check` requires each finding's `evidence` to be a **file inside
+  the repository**. Before, any existing path — including an absolute path to another project — counted
+  as evidence.
+- **Tests**: `tests/test_evidence_gate.py`, 7 cases: the committed inputs still validate; a missing
+  audit citation, an out-of-repo citation and a verdict/decision contradiction are refused; a ledger
+  row citing a missing document is refused while one citing a real document loads. Suite **200**.
 
 ### 2026-11-01 · TUI polish: responsive tables and a research strip
 

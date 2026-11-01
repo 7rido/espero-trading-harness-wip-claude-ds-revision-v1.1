@@ -123,9 +123,12 @@ def validate(base, findings, runs) -> list[str]:
             errors.append(f"{r['id']}: bad failure_layer {f.get('failure_layer')!r}")
         if not f.get("why") or not f.get("remedy"):
             errors.append(f"{r['id']}: why/remedy missing")
-        ev = ROOT / f.get("evidence", "")
-        if not f.get("evidence") or not ev.exists():
-            errors.append(f"{r['id']}: evidence {f.get('evidence')!r} does not resolve to a file")
+        evidence = f.get("evidence", "")
+        ev = (ROOT / evidence).resolve() if evidence else None
+        inside = ev is not None and ROOT.resolve() in ev.parents and ev.is_file()
+        if not inside:
+            errors.append(f"{r['id']}: evidence {evidence!r} does not resolve to a file "
+                          "inside the repository")
         want = DECISION_TO_VERDICT.get(r["decision"], "")
         got, _ = verdict_of(doc)
         if want and got and want != got:
