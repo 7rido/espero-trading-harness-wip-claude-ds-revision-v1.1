@@ -79,3 +79,6 @@ data_tape/
 
 # oi snapshots for the cascade detector
 research/oi_history.csv
+
+# generated forecast snapshot
+research/forecast.json
