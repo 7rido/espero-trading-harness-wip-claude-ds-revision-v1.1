@@ -33,6 +33,17 @@ at the top.
 
 ## Changelog
 
+### 2026-11-01 · TUI polish: responsive tables and a research strip
+
+- **Status strip** under the header: `E1 0 forced · look 2026-11-30 · z 4.80 · carry net −1.90 · 2 open ·
+  optics 04:09Z` — the research state is visible without opening a menu.
+- **One-line rows**: ledger notes, order reasons and holds are clipped to the terminal width; at 80
+  columns the screen went from **145 to 84 lines** with no wrapping inside a row.
+- **Responsive widths**: sparkline 10/32, holds 15/24, order reason 13/18, ledger note 24/44, padding
+  tight below 100 columns. Verified at 80, 100 and 140 columns with zero over-width lines.
+- **Dead branch removed** (the unused "Refresh" check).
+- Tests: clip + status strip; suite **193**.
+
 ### 2026-11-01 · bug: manual buy on a short corrupted the BTC book
 
 - **Root cause**: `buy_manual` refused only when already *long*. Buying while short replaced the position

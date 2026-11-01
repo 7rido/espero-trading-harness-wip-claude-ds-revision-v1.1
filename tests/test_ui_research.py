@@ -1,5 +1,6 @@
 """The TUI research view renders the live state dicts without touching the network."""
 import unittest
+from unittest import mock
 
 from espero2 import ui
 
@@ -35,3 +36,21 @@ class TestResearchRows(unittest.TestCase):
         d = {"source": "coinbase-spot", "prints": 1000, "buy_share": 0.47,
              "cvd": -0.23, "divergence": "none"}
         self.assertEqual(ui.tape_row(d)[0][0], "coinbase-spot")
+
+
+class TestUiPolish(unittest.TestCase):
+    def test_clip_keeps_short_and_marks_long(self):
+        self.assertEqual(ui._clip("short", 10), "short")
+        out = ui._clip("a much longer note that must not wrap", 12)
+        self.assertEqual(len(out), 12)
+        self.assertTrue(out.endswith("…"))
+
+    def test_status_line_uses_snapshots(self):
+        with mock.patch.object(ui, "_json", side_effect=lambda p: {
+                "research/e1_progress.json": {"forced": 3, "next_look": "2026-11-30", "boundary": 4.8},
+                "research/carry_sleeve.json": {"net": 1.25, "positions": {"BTC": {}}},
+                "research/optics.json": {"at": "2026-11-01T02:30:00+00:00"}}.get(p, {})):
+            line = ui.status_line()
+        self.assertIn("E1 3 forced", line)
+        self.assertIn("carry net +1.25", line)
+        self.assertIn("optics", line)

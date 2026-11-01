@@ -84,6 +84,29 @@ def _holds(store: Store, coin: str) -> str:
 
 
 # --------------------------------------------------------------------- panels
+def _clip(s: str, n: int) -> str:
+    s = str(s)
+    return s if len(s) <= n else s[: n - 1].rstrip() + "…"
+
+
+def status_line() -> str:
+    """One glance at the research state that is not the paper books."""
+    e1 = _json("research/e1_progress.json")
+    carry = _json("research/carry_sleeve.json")
+    opt = _json("research/optics.json")
+    parts = []
+    if e1:
+        b = e1.get("boundary")
+        parts.append(f"E1 {e1.get('forced', 0)} forced · look {e1.get('next_look')} · z "
+                     f"{'—' if b is None else f'{b:.2f}'}")
+    if carry:
+        parts.append(f"carry net {carry.get('net', 0):+.2f} · {len(carry.get('positions') or {})} open")
+    if opt:
+        stamp = str(opt.get("at", ""))
+        parts.append(f"optics {stamp[11:16]}Z" if len(stamp) > 16 else "optics ?")
+    return "  ·  ".join(parts) if parts else "no research snapshots yet"
+
+
 def header(store: Store) -> "Panel":
     h = store.health()
     coins = store.coins()
@@ -118,8 +141,10 @@ def header(store: Store) -> "Panel":
     return Panel(grid, border_style=MUTED, padding=(0, 1))
 
 
-def accounts_table(store: Store) -> "Table":
-    tbl = Table(show_header=True, header_style=MUTED, box=None, padding=(0, 2), expand=False)
+def accounts_table(store: Store, width: int = 120) -> "Table":
+    narrow = width < 100
+    tbl = Table(show_header=True, header_style=MUTED, box=None,
+                padding=(0, 1) if narrow else (0, 2), expand=False)
     for col, just in (("account", "left"), ("equity", "right"), ("day", "right"),
                       ("P&L", "right"), ("curve", "left"), ("holds", "left")):
         tbl.add_column(col, justify=just)
@@ -136,12 +161,15 @@ def accounts_table(store: Store) -> "Table":
         colour = "green" if day >= 0 else "red"
         tbl.add_row(coin, f"${eq:,.2f}", Text(f"{day:+,.2f}", style=colour),
                     Text(f"{pnl:+.2f}%", style="green" if pnl >= 0 else "red"),
-                    Text(spark([e for _, e in rows]), style=ACCENT), _holds(store, coin))
+                    Text(spark([e for _, e in rows], 10 if narrow else 32), style=ACCENT),
+                    _clip(_holds(store, coin), 15 if narrow else 24))
     return tbl
 
 
-def orders_table(store: Store, limit: int = 8) -> "Table":
-    tbl = Table(show_header=True, header_style=MUTED, box=None, padding=(0, 2), expand=False)
+def orders_table(store: Store, limit: int = 8, width: int = 120) -> "Table":
+    narrow = width < 100
+    tbl = Table(show_header=True, header_style=MUTED, box=None,
+                padding=(0, 1) if narrow else (0, 2), expand=False)
     for col, just in (("time", "left"), ("coin", "left"), ("side", "left"), ("qty", "right"),
                       ("price", "right"), ("fee", "right"), ("why", "left")):
         tbl.add_column(col, justify=just)
@@ -151,19 +179,22 @@ def orders_table(store: Store, limit: int = 8) -> "Table":
     for ts, coin, side, qty, px, fee, note in rows:
         tbl.add_row(time.strftime("%m-%d %H:%M", time.localtime(ts)), coin,
                     Text(side, style="green" if side == "buy" else "red"),
-                    f"{qty:.6f}", f"{px:,.2f}", f"{fee:.4f}", note or "")
+                    f"{qty:.6f}", f"{px:,.2f}", f"{fee:.4f}", _clip(note or "", 13 if narrow else 18))
     if not rows:
         tbl.add_row("—", "", "", "", "", "", "none yet")
     return tbl
 
 
-def ledger_table() -> "Table":
-    tbl = Table(show_header=True, header_style=MUTED, box=None, padding=(0, 2), expand=False)
+def ledger_table(width: int = 120) -> "Table":
+    narrow = width < 100
+    tbl = Table(show_header=True, header_style=MUTED, box=None,
+                padding=(0, 1) if narrow else (0, 2), expand=False)
     for col in ("id", "strategy", "status", "statistic", "cost bar", "note"):
         tbl.add_column(col)
+    tbl.columns[1].max_width = 14 if narrow else 18
     for r in ledger.load().values():
         style = {"plumbing": "yellow", "trial": "yellow", "holds": "green", "retired": "red"}.get(r.status, "")
-        note = r.note if len(r.note) <= 60 else r.note[:57] + "..."
+        note = _clip(r.note, 24 if narrow else 44)
         tbl.add_row(r.id, r.strategy, Text(r.status, style=style), r.estimator_matches_claim,
                     r.economic_bar, note)
     return tbl
@@ -171,13 +202,14 @@ def ledger_table() -> "Table":
 
 def render(console: "Console", store: Store) -> None:
     console.print(header(store))
-    console.print(accounts_table(store))
+    console.print(Text(_clip(status_line(), console.width - 1), style=MUTED))
+    console.print(accounts_table(store, console.width))
     console.print()
     console.print(Text("recent orders", style="bold"))
-    console.print(orders_table(store))
+    console.print(orders_table(store, width=console.width))
     console.print()
     console.print(Text("strategy ledger", style="bold"))
-    console.print(ledger_table())
+    console.print(ledger_table(console.width))
 
 
 # -------------------------------------------------------------------- actions
@@ -470,7 +502,6 @@ def main(state: str = "paper.db") -> int:
                 h = store.health()
                 console.print(f"heartbeat {_ago(h['heartbeat'])} (every {h['every']}s) — "
                               f"{'STALE' if h['stale'] else 'ok'}")
-            if choice not in ("Refresh",):
-                questionary.press_any_key_to_continue(style=STYLE).ask()
+            questionary.press_any_key_to_continue(style=STYLE).ask()
     finally:
         store.close()
