@@ -16,6 +16,8 @@ from .store import Store
 
 OPTICS = Path(__file__).resolve().parents[1] / "research" / "optics.json"
 FORECAST = Path(__file__).resolve().parents[1] / "research" / "forecast.json"
+TAPE = Path(__file__).resolve().parents[1] / "research" / "tape.json"
+TAPE_LIVE = Path(__file__).resolve().parents[1] / "research" / "tape_live.json"
 
 CSS = """
 :root{--bg:#0e1116;--card:#161b22;--ink:#e6edf3;--dim:#8b949e;--up:#3fb950;--down:#f85149;--line:#30363d}
@@ -293,6 +295,49 @@ def _forecast_card() -> str:
             f'</table></section>')
 
 
+def _tape_card() -> str:
+    """BTC tape: descriptive flow metrics; live slice preferred when fresh, daily otherwise."""
+    def load(p: Path):
+        try:
+            return json.loads(p.read_text())
+        except (OSError, ValueError):
+            return None
+
+    live, daily = load(TAPE_LIVE), load(TAPE)
+    d = live if live and _age_min(live.get("at")) <= 20 else daily
+    if not d:
+        return ""
+    is_live = d is live
+    stale = _age_min(d.get("at")) > (20 if is_live else 360)
+    prof = d.get("profile", {}) or {}
+    blocks = d.get("blocks", {}) or {}
+    sweeps = d.get("sweeps", {}) or {}
+    ab = d.get("absorption", {}) or {}
+
+    def fnum(v, fmt: str = "{:+.2f}") -> str:
+        return "—" if not isinstance(v, (int, float)) or v != v else fmt.format(v)
+
+    flags = ("<div class='down'><b>stale</b> — tape snapshot older than the refresh window</div>"
+             if stale else "")
+    banner = (f"descriptive flow · venue <b>{html.escape(str(d.get('source')))}</b> · "
+              f"{html.escape(str(d.get('day')))} · not a signal")
+    row = (f"<tr><td>{d.get('symbol')}</td><td>{int(d.get('prints', 0)):,}</td>"
+           f"<td>{float(d.get('buy_share', 0)):.0%}</td><td>{fnum(d.get('cvd'))}</td>"
+           f"<td>{int(blocks.get('count', 0)):,} (${float(blocks.get('usd', 0))/1e6:,.1f}M)</td>"
+           f"<td>{int(sweeps.get('count', 0)):,}</td>"
+           f"<td>{fnum(prof.get('poc_distance_pct'))}%</td>"
+           f"<td>{float(ab.get('share', 0)):.0%}</td>"
+           f"<td>{html.escape(str(d.get('divergence', 'none')))}</td></tr>")
+    return (f'<section class="card" style="grid-column:1/-1">'
+            f'<h1 style="margin-bottom:8px">BTC tape</h1>'
+            f'<div class="muted" style="margin-bottom:8px">{banner}</div>{flags}'
+            f'<table><thead><tr><th>symbol</th><th>prints</th><th>taker buy</th><th>CVD</th>'
+            f'<th>blocks</th><th>sweeps</th><th>POC dist</th><th>absorption</th>'
+            f'<th>divergence</th></tr></thead><tbody>{row}</tbody></table>'
+            f'<div class="muted" style="margin-top:8px">{html.escape(str(d.get("read", "")))}</div>'
+            f'</section>')
+
+
 def render(store: Store, out: Path, *, address: str | None = None,
            account_state: dict | None = None, alpaca_override: dict | None = None) -> Path:
     h = store.health()
@@ -369,6 +414,7 @@ def render(store: Store, out: Path, *, address: str | None = None,
 {_alpaca_card(alp)}
 {_optics_card()}
 {_forecast_card()}
+{_tape_card()}
     <section class="card"><h1 style="margin-bottom:8px">research state</h1>
     <table>{research_rows}</table>
     </section>

@@ -70,3 +70,9 @@ data_exec/
 
 # live optics snapshot
 research/optics.json
+
+# generated tape snapshots
+research/tape.json
+research/tape_live.json
+research/tape_series.csv.gz
+data_tape/

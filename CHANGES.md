@@ -159,6 +159,24 @@ same turn it is made.** Nothing in this repository is a git commit yet — the t
   `cb fills`.
 - **Minor**: 2 tests (header sent + error parsed; portfolios/perp positions parse). Suite: 60.
 
+### 2026-10-31 · BTC tape: research note, metrics, dashboard card
+
+- **`research/TAPE_READING.md`**: what tape reading is (aggressor flow, CVD, blocks, sweeps, volume
+  profile, absorption, divergence), what is *not* observable (icebergs, spoofs, intent), and canonical
+  references (Cont–Kukanov–Stoikov order-flow imbalance; Easley–López de Prado–O'Hara VPIN).
+- **`research/tape.py`**: Binance UM daily aggTrades (~21 MB/day, 1.8M prints) → minute flow, CVD,
+  $100k blocks, same-ms sweeps, 0.1% volume profile (POC/VA70/HVN), absorption and delta divergence;
+  writes `tape.json` + gitignored minute series. **2026-10-29**: 1,804,397 prints, taker buys 48%,
+  CVD −9,891 BTC, 45,226 blocks ($12.2B), 2,881 sweeps, price −2.77% from POC, absorption 23%.
+- **Live mode**: Coinbase last 1,000 prints, 30-minute window, **side-verified with a consecutive-print
+  sign test** (62.5% agreement); venue labelled `coinbase-spot`, never mixed with Binance history.
+- **Dashboard**: full-width **BTC tape** card (prints, taker buy share, CVD, blocks, sweeps, POC
+  distance, absorption, divergence, one-line read), live slice preferred when <20 min old, stale flag.
+- **Scheduled**: 15-min optics job now runs `optics → forecast → tape --live`; the 07:45 sync chain adds
+  the previous day's historical tape.
+- **Tests**: 15 new (CVD, blocks, sweeps, profile, absorption, divergence, live side validation, card);
+  suite **169**.
+
 ### 2026-10-31 · forecasts & recommendations on the dashboard (gated)
 
 - **`research/forecast.py`**: for every market in the optics snapshot, look up its regime state in
