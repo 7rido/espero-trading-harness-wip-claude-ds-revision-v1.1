@@ -19,6 +19,7 @@ FORECAST = Path(__file__).resolve().parents[1] / "research" / "forecast.json"
 TAPE = Path(__file__).resolve().parents[1] / "research" / "tape.json"
 TAPE_LIVE = Path(__file__).resolve().parents[1] / "research" / "tape_live.json"
 CARRY = Path(__file__).resolve().parents[1] / "research" / "carry_sleeve.json"
+E1PROG = Path(__file__).resolve().parents[1] / "research" / "e1_progress.json"
 
 CSS = """
 :root{--bg:#0e1116;--card:#161b22;--ink:#e6edf3;--dim:#8b949e;--up:#3fb950;--down:#f85149;--line:#30363d}
@@ -366,6 +367,30 @@ def _carry_card() -> str:
             f'{"<ul class=muted>" + closed + "</ul>" if closed else ""}</section>')
 
 
+def _e1_card() -> str:
+    """E1 progress: calendar and counts only. Never a return, t or z."""
+    try:
+        d = json.loads(E1PROG.read_text())
+    except (OSError, ValueError):
+        return ""
+    nxt = d.get("next_look") or "—"
+    boundary = d.get("boundary")
+    b_s = "—" if boundary is None else f"{boundary:.2f}"
+    return (f'<section class="card" style="grid-column:1/-1">'
+            f'<h1 style="margin-bottom:8px">E1 progress</h1>'
+            f'<div class="muted" style="margin-bottom:8px">progress only — no statistic is computed '
+            f'here; the window is read at the registered looks</div>'
+            f'<table><thead><tr><th>window</th><th>elapsed</th><th>events</th>'
+            f'<th>forced trades</th><th>next look</th><th>boundary (z)</th></tr></thead>'
+            f'<tbody><tr><td>{html.escape(str(d.get("window")))}</td>'
+            f'<td>{d.get("pct", 0):.1f}% ({d.get("elapsed_days")}/{d.get("total_days")} d)</td>'
+            f'<td>{int(d.get("events", 0)):,}</td><td><b>{int(d.get("forced", 0)):,}</b></td>'
+            f'<td>{html.escape(str(nxt))} (look {d.get("look_number")})</td>'
+            f'<td>{html.escape(b_s)}</td></tr></tbody></table>'
+            f'<div class="muted" style="margin-top:8px">{html.escape(str(d.get("note", "")))}</div>'
+            f'</section>')
+
+
 def render(store: Store, out: Path, *, address: str | None = None,
            account_state: dict | None = None, alpaca_override: dict | None = None) -> Path:
     h = store.health()
@@ -444,6 +469,7 @@ def render(store: Store, out: Path, *, address: str | None = None,
 {_forecast_card()}
 {_tape_card()}
 {_carry_card()}
+{_e1_card()}
     <section class="card"><h1 style="margin-bottom:8px">research state</h1>
     <table>{research_rows}</table>
     </section>

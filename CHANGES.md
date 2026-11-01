@@ -33,6 +33,15 @@ at the top.
 
 ## Changelog
 
+### 2026-11-01 · E1 progress row (counts only, no statistic)
+
+- **`research/e1_progress.py`**: calendar progress, event count, forced-trade count, next registered look
+  and its OBF boundary. It **never computes a return, t or z** — enforced by a test that bans those keys.
+- **Dashboard**: "E1 progress" card with the banner "progress only — no statistic is computed here".
+- **Current**: 11 events, 0 forced, next look 2026-11-30 (boundary 4.80), window 0/181 days locally.
+- **Scheduled**: appended to the 07:45 sync chain after the recorder.
+- **Tests**: 4 progress cases; suite **183**.
+
 ### 2026-11-01 · carry sleeve running (paper)
 
 - **`research/carry_sleeve.py`**: daily check — Coinbase spot long / HL perp short, $1,000 per side,
