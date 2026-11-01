@@ -11,3 +11,11 @@ R7,residual-pairs,retired,clustered,partly,yes,,"RP2: residualisation lifts disc
 R8,residual-pairs-cost,retired,clustered,partly,yes,,"RP3: 3 FDR residual pairs all lose on design after 5bps (net -8.2/-17.0/-9.3 bps/day, t -0.76/-1.58/-1.03, 174-229 round trips); 0 selected, validation not run, holdout unread; seal 9942469; research/RESULTS_rp3.md"
 R9,regime-scan,retired,clustered,partly,no,,"RG1: nine regime families + har_trend; validation 2023 nothing passes BH FDR (best trend_20d t 1.27), har_trend -23bps t -0.27; holdout-only corr_high +330bps t 3.26 but flat in validation; funding_pos untestable; research/RESULTS_regimes.md"
 R10,liquidation-anatomy,audit,clustered,yes,no,,"descriptive: 246 long / 244 short hourly liq spikes (99th pct), 2023-2024; aligned-bear long events n=216, next 1h +12.8bps mean / +23.5 median, 56% up, CI -30..+57; 4 consecutive down hours -> 60% up, median +40bps, mean 0 (fat left tail); short squeezes show nothing; research/RESULTS_liquidation_anatomy.md"
+R11,hardening,audit,clustered,partly,no,,#44: selection cost and power for E1; no new edge claimed; research/RESULTS_hardening.md
+R12,maker,audit,clustered,partly,no,,"#12/#30: one venue-day, descriptive, no inference by design; research/RESULTS_maker.md"
+R13,regime-signs,audit,clustered,partly,no,,"#4/#15: 16 cells, BH, none survive; funding is venue-specific; research/RESULTS_regime_signs.md"
+R14,sizing,audit,clustered,partly,no,,#4: vol targeting vs fixed on the SMA stream; worse at matched exposure; research/RESULTS_sizing.md
+R15,tape-edges-design,audit,clustered,partly,no,,"#18/#21/#26: 8 cells, BH + 9 bps bar, all fail; research/RESULTS_tape_edges_design.md"
+R16,tape-study,audit,clustered,partly,no,,"pre-registered: flow forecasts volatility, not direction; cost bar kills direction; research/RESULTS_tape_study.md"
+R17,tape-study-2,audit,clustered,partly,no,,OFI at 30-60s is BH-significant but 40-70x below the 9 bps cost; research/RESULTS_tape_study_2.md
+R18,vpin,audit,clustered,partly,no,,"#21/#44: VPIN forecasts variance, not direction; pre-registered cells pass; research/RESULTS_vpin.md"

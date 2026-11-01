@@ -564,6 +564,18 @@ at the top.
 - **Unchanged by design**: ledger gate, paper engine, order paths, launchd plists; the running loop
   was not touched.
 
+### 2026-11-01 · inheritance map; the eight unledgered documents ledgered
+
+- **`research/INHERITANCE.md`**: every original id (46) mapped to our descendants, and every finding of
+  ours mapped to its ancestor and the lessons it carries. Numbers: **21 descendants across 16
+  originals**; **30 originals inherited as negative evidence only**; E1 is the forward test of #26.
+- **Audited the 8 documents that had no ledger row** against the five failure modes: all apply a 9 bps
+  cost bar where a return is claimed, use BH for multiplicity, and state one-month/one-venue limits.
+  None overclaims. They are now **R11–R18** with status `audit`, so the trial count is complete.
+- **Ledger now 20 rows**; suite 193 tests green.
+- **Rule added**: a result cites its ancestor or says `no ancestor`; a negative ancestor justifies not
+  re-running a family but never counts as evidence.
+
 ### 2026-10-31 · funding fix in the running loop
 
 - **Bug**: `paper.tick` charged the 1 bp/h constant whenever no funding settlement fell inside the
