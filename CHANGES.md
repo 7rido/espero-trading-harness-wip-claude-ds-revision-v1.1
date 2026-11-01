@@ -33,6 +33,17 @@ at the top.
 
 ## Changelog
 
+### 2026-11-01 · carry sleeve running (paper)
+
+- **`research/carry_sleeve.py`**: daily check — Coinbase spot long / HL perp short, $1,000 per side,
+  5 + 4.5 bps fees and 2 bps slippage per fill; accrues hourly HL funding; exits on two-check funding or
+  basis inversion, or margin buffer below 25 %. State in gitignored `carry_sleeve.json` + curve CSV.
+- **First check (2026-11-01)**: **BTC opened** (funding +10.1 %/yr, basis +14.3 bps) and **SOL opened**
+  (+9.3 %/yr, +10.9 bps); ETH stayed flat at +4.6 %/yr, below the 5 % entry. Fees $1.90; net −$1.90.
+- **Scheduled**: added to the 07:45 sync chain (daily after the data copy).
+- **Dashboard**: carry-sleeve card (open legs, funding, fees, net), banner says not authorised.
+- **Tests**: 8 entry/exit gate tests; suite **179**.
+
 ### 2026-11-01 · carry sleeve registered (before any code)
 
 - **`research/PREREGISTRATION_carry_sleeve.md`**: delta-neutral spot-long (Coinbase) / perp-short (HL)

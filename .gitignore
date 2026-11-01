@@ -82,3 +82,7 @@ research/oi_history.csv
 
 # generated forecast snapshot
 research/forecast.json
+
+# carry sleeve live state
+research/carry_sleeve.json
+research/carry_sleeve_curve.csv

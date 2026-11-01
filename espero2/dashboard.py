@@ -18,6 +18,7 @@ OPTICS = Path(__file__).resolve().parents[1] / "research" / "optics.json"
 FORECAST = Path(__file__).resolve().parents[1] / "research" / "forecast.json"
 TAPE = Path(__file__).resolve().parents[1] / "research" / "tape.json"
 TAPE_LIVE = Path(__file__).resolve().parents[1] / "research" / "tape_live.json"
+CARRY = Path(__file__).resolve().parents[1] / "research" / "carry_sleeve.json"
 
 CSS = """
 :root{--bg:#0e1116;--card:#161b22;--ink:#e6edf3;--dim:#8b949e;--up:#3fb950;--down:#f85149;--line:#30363d}
@@ -340,6 +341,31 @@ def _tape_card() -> str:
             f'</section>')
 
 
+def _carry_card() -> str:
+    """Paper delta-neutral carry sleeve; live state written by research/carry_sleeve.py."""
+    try:
+        d = json.loads(CARRY.read_text())
+    except (OSError, ValueError):
+        return ""
+    rows = []
+    for coin, p in (d.get("positions") or {}).items():
+        rows.append(f"<tr><td><b>{html.escape(coin)}</b></td>"
+                    f"<td>${p['spot_entry']:,.2f} / ${p['perp_entry']:,.2f}</td>"
+                    f"<td>{p.get('funding_cum', 0):+.2f}</td><td>{p.get('fees', 0):.2f}</td>"
+                    f"<td>{p.get('net', 0):+.2f}</td></tr>")
+    closed = "".join(f"<li>{html.escape(c['coin'])}: {html.escape(str(c['reason']))} "
+                     f"({c['net']:+.2f})</li>" for c in d.get("closed", []))
+    banner = (f"paper delta-neutral · {len(d.get('positions') or {})} open · "
+              f"net {d.get('net', 0):+.2f} · not authorised")
+    return (f'<section class="card" style="grid-column:1/-1">'
+            f'<h1 style="margin-bottom:8px">carry sleeve</h1>'
+            f'<div class="muted" style="margin-bottom:8px">{banner}</div>'
+            f'<table><thead><tr><th>coin</th><th>spot / perp entry</th><th>funding</th>'
+            f'<th>fees</th><th>net</th></tr></thead><tbody>'
+            f'{"".join(rows) or "<tr><td colspan=5 class=muted>flat</td></tr>"}</tbody></table>'
+            f'{"<ul class=muted>" + closed + "</ul>" if closed else ""}</section>')
+
+
 def render(store: Store, out: Path, *, address: str | None = None,
            account_state: dict | None = None, alpaca_override: dict | None = None) -> Path:
     h = store.health()
@@ -417,6 +443,7 @@ def render(store: Store, out: Path, *, address: str | None = None,
 {_optics_card()}
 {_forecast_card()}
 {_tape_card()}
+{_carry_card()}
     <section class="card"><h1 style="margin-bottom:8px">research state</h1>
     <table>{research_rows}</table>
     </section>
