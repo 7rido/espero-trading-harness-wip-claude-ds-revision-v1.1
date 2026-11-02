@@ -12,7 +12,7 @@ at the top.
 
 ## Current state (2026-11-01)
 
-- **171 tests** green; working tree clean, pushed.
+- **202 tests** green; working tree clean, pushed.
 - **Paper loop running** under the plumbing window (`PLUMBING.md` to 2026-12-31): BTC/ETH/SOL, vol-target
   2 %, funding gate 25 %/yr, $500 cap. Books are **void** and never read as evidence.
 - **E1 recording**: 11 seed events, 0 forced trades; window to 2027-04-30, 70 % power, OBF boundaries set.
@@ -27,7 +27,7 @@ at the top.
 - **Major**: a new capability (shorts, funding, supervisor) or a schema change.
 - **Minor**: a fix, a test, a doc line, a label.
 - **Breaking**: changes the meaning of an existing journal row or CLI flag; always noted.
-- Tests: `python -m unittest discover -s tests -t .` — currently **171 passing**.
+- Tests: `python -m unittest discover -s tests -t .` — currently **202 passing**.
 
 ---
 
@@ -67,6 +67,27 @@ at the top.
   keeps it clean and turns the E1 feed into a dated audit trail of exactly what the recorder saw.
 - **Scheduled**: appended to the sync chain after the progress step.
 - Verified by running it now: `e1 commit: no changes`, exit 0.
+### 2026-11-01 · #45 forecast retest: rank skill is real, mostly volatility
+
+- **Question**: retest #45's forced-liquidation trade on prices, movement, tape and signals, not only
+  funding and fees — can a pre-entry score forecast which bounces do better?
+- **Data**: the #26 continuous sample, 26 COIN-M coins, 28,029 events / 427 days, prior-observed-day
+  forced tag. Fit 2023-06-26 → 2024-03-31 (3,598 forced down); score once 2024-04-01 → 2024-10-14
+  (2,541). No fetch, no forward window.
+- **Result**: the pre-registered F1 three-layer score has a 4 h rank IC of **0.179** (95 % day-block CI
+  0.093–0.266) and a top quintile of **+24.8 bps** against **+1.9 bps** for all events. 12 h IC 0.140
+  (0.028–0.246); 1 d 0.125 (CI includes 0). The top-quintile mean CI is −69.5…+129.1 bps: rank skill,
+  not a proven selected-trade edge.
+- **Layers**: ATR alone has IC **0.190**, the deepest-break quintile **+31.9 bps**; liquidation share
+  adds a small positive; tape, funding and BTC context do not add rank skill. The composite does not
+  beat the best single layer.
+- **Cross-checks**: the month-start 2020–2026 archive points the same way (4 h IC 0.207, CI
+  0.007–0.378) but is exploratory; the stock analog has 33 validation events and no stable forecast.
+- **Added**: `research/PREREGISTRATION_2026-11-01-liq45-forecast.md`,
+  `research/RESULTS_2026-11-01-liq45-forecast.md`, `research/liq45_forecast.py`,
+  `research/liq45_forecast.json`, 9 tests. Suite **202**.
+- **Not changed**: #45/E1, the ledger, the scorecard, or any order path. The forward window remains the
+  only clean test of the trade.
 
 ### 2026-11-01 · TUI polish: responsive tables and a research strip
 
