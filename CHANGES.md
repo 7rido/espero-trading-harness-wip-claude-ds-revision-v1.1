@@ -67,6 +67,7 @@ at the top.
   keeps it clean and turns the E1 feed into a dated audit trail of exactly what the recorder saw.
 - **Scheduled**: appended to the sync chain after the progress step.
 - Verified by running it now: `e1 commit: no changes`, exit 0.
+
 ### 2026-11-01 · order flow & liquidity map (book pools, taker flow, exact HL ladder)
 
 - **`research/liquidity_map.py`**: three descriptive layers per market, one JSON snapshot. No signal,

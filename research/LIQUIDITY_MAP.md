@@ -111,6 +111,6 @@ two hours. A missing local snapshot leaves the pools and flow in place and says 
 
 ## Dashboard evidence
 
-`research/screenshots/liquidity-map-before.png` and `-after.png` are 1500 × 1400 crops of the same
-frozen dashboard at a 1500 × 6800 viewport: baseline `ba687f3` (tape then carry sleeve) and this
+`research/screenshots/liquidity-map-before.png` and `-after.png` are 1500 × 1600 crops of the same
+frozen dashboard at a 1500 × 7600 viewport: baseline `16eee49` (tape then carry sleeve) and this
 branch (tape, then the map, then carry). The surrounding cards, data snapshot and theme are identical.
