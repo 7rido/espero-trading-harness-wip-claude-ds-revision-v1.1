@@ -67,6 +67,45 @@ at the top.
   keeps it clean and turns the E1 feed into a dated audit trail of exactly what the recorder saw.
 - **Scheduled**: appended to the sync chain after the progress step.
 - Verified by running it now: `e1 commit: no changes`, exit 0.
+### 2026-11-01 · research: #20/#21 forecast retest (owner follow-up)
+
+- **`research/RESULTS_2026-11-01-lows21-forecast.md`**: #21's spike cross-section is **not
+  forecastable** from `share` (IC +0.05, 95% CI −0.06 … +0.17); #20's bounce **is** forecastable by
+  prior volatility (IC +0.028, CI 0.017 … 0.039, t 5.03) but the pooled top-vs-all spread is **+1.9 bps**,
+  below the 9 bps round trip. The original #21 FAIL and #20 real-not-tradable stand.
+- **`research/retest_20_21.py`**, `research/retest_20_21.json`, 8 tests.
+- No data fetched; no forward window read.
+
+### 2026-11-01 · pre-registration: #20 and #21 forecast retests
+
+- **`research/PREREGISTRATION_2026-11-01-lows21-forecast.md`**: the project owner asked for #20 and
+  #21 specifically. Tests whether the event cross-section is forecastable from information known at
+  entry — #21 `share` → signed 24 h excess; #20 prior volatility → 1 h bounce — on the published
+  event files, with fixed design/validation splits and BH across the two primaries.
+- No data fetched; no forward window read.
+
+### 2026-11-01 · research: retest the remaining audit findings
+
+- **`research/RESULTS_2026-11-01-remaining-findings.md`**: six open audit rows retested out of time —
+  #1 funding, #4 TSMOM, #8 multi-factor, #9b lead-lag, #15 trend, #43 horizon map. **No tradeable
+  forecast.** #9b is the only significant IC (0.035, t 5.30) and its 4.0 bps spread is below the 9 bps
+  cost; #4's nominal pass fails a significance test (alpha t 1.10); #43's 12-hour confirmation fails
+  its own deflated bar (−9.6 bps, t −0.97); #1/#8/#15 do not forecast out of time.
+- **`research/remaining_forecasts.py`**, `research/remaining_forecasts.json`, 18 helper tests.
+- The other 39 ids are dispositioned in the result: 6 local retests, 8 re-estimates by #44, 3 clean
+  fails, 9 running forward tests, 8 without data or needing a process fix, 5 not hypotheses.
+- Data-quality amendment before the verdict: ARB/TIA/WLD/OP ticker collisions and |forward return|
+  > 50% are dropped from the daily cross-section (reference/ERRATA.md).
+- No data fetched; no forward window read; no ledger row or order written.
+
+### 2026-11-01 · pre-registration: retest the remaining audit findings
+
+- **`research/PREREGISTRATION_2026-11-01-remaining-findings.md`**: six fresh retests (#1, #4, #8, #9b,
+  #15, #43) for the audit rows that are still open, estimator/forecast-flawed and have local data;
+  every other row gets a disposition in the result.
+- Forecasts first: out-of-time rank IC with day-block CIs, a spread hurdle, Newey-West t and BH
+  across the six; #4 and #15 are judged against exposure-matched benchmarks.
+- No data fetched; no forward or sealed window read.
 
 ### 2026-11-01 · TUI polish: responsive tables and a research strip
 
