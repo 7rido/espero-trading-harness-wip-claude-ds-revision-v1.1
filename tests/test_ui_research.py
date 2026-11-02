@@ -54,3 +54,15 @@ class TestUiPolish(unittest.TestCase):
         self.assertIn("E1 3 forced", line)
         self.assertIn("carry net +1.25", line)
         self.assertIn("optics", line)
+
+
+class TestLiquidityRows(unittest.TestCase):
+    def test_rows_from_snapshot(self):
+        d = {"open_interest_usd": 10.75e9, "volume_24h_usd": 2.51e9, "liq_24h_usd": 27.65e6,
+             "long_share": 0.75, "contracts": 180, "taker_fee_pct": 4.5, "maker_fee_pct": 1.5}
+        rows = ui.liquidity_rows(d)
+        self.assertEqual(rows[0][1], "$10.75B")
+        self.assertIn("75%", rows[2][1])
+
+    def test_empty_is_empty(self):
+        self.assertEqual(ui.liquidity_rows({}), [])

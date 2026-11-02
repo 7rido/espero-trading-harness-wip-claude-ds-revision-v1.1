@@ -33,6 +33,17 @@ at the top.
 
 ## Changelog
 
+### 2026-11-01 · PR #6 visible in the product
+
+- **Dashboard** gains **"HL venue liquidity & forecast audit"**: OI $10.75B, 24 h volume $2.51B,
+  24 h liquidations $27.65M (75 % long), 180 contracts, taker/maker 4.5/1.5 bps, the top-5 coins by OI,
+  history counts from `forecast_liquidity.duckdb` (5 exchange / 150 coin snapshots), and the audit verdict
+  **no model promoted** (CRPS 0.08051 vs 0.08030).
+- **TUI** research view gains the same venue-liquidity block.
+- Banner states the honest status: candidate feature, no history yet, **not used in the forecast**.
+- Snapshot job `io.espero2.liquidity` runs every 15 minutes; card flags stale after 30.
+- Tests: 2 liquidity row tests; suite **195**.
+
 ### 2026-11-01 · live forecast coverage completed (PR #6 follow-through)
 
 - **PR #6 merged** the research layer (`forecast_audit.py`, `forecast_liquidity.py`, `auth_data_audit.py`)

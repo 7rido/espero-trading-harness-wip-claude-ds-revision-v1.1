@@ -20,6 +20,8 @@ TAPE = Path(__file__).resolve().parents[1] / "research" / "tape.json"
 TAPE_LIVE = Path(__file__).resolve().parents[1] / "research" / "tape_live.json"
 CARRY = Path(__file__).resolve().parents[1] / "research" / "carry_sleeve.json"
 E1PROG = Path(__file__).resolve().parents[1] / "research" / "e1_progress.json"
+LIQUIDITY = Path(__file__).resolve().parents[1] / "research" / "forecast_liquidity.json"
+LIQDB = Path(__file__).resolve().parents[1] / "research" / "forecast_liquidity.duckdb"
 
 CSS = """
 :root{--bg:#0e1116;--card:#161b22;--ink:#e6edf3;--dim:#8b949e;--up:#3fb950;--down:#f85149;--line:#30363d}
@@ -391,6 +393,49 @@ def _e1_card() -> str:
             f'</section>')
 
 
+def _liquidity_card() -> str:
+    """Hyperliquid venue liquidity (candidate feature) + the forecast audit verdict."""
+    try:
+        d = json.loads(LIQUIDITY.read_text())
+    except (OSError, ValueError):
+        return ""
+    stale = _age_min(d.get("fetched_at")) > 30
+    try:
+        import duckdb
+        con = duckdb.connect(str(LIQDB), read_only=True)
+        exch = con.execute("SELECT COUNT(*) FROM exchange_snapshots").fetchone()[0]
+        coins = con.execute("SELECT COUNT(*) FROM coin_snapshots").fetchone()[0]
+        con.close()
+    except Exception:                                  # noqa: BLE001
+        exch = coins = 0
+    top = sorted(d.get("coins", []), key=lambda c: c.get("oi_usd", 0), reverse=True)[:5]
+    rows = "".join(
+        f"<tr><td>{html.escape(c['coin'])}</td><td>${c['price']:,.2f}</td>"
+        f"<td>{_big(c['oi_usd'])}</td><td>{c.get('funding_pct', 0):+.4f}%</td></tr>" for c in top)
+    flags = ("<div class='down'><b>stale</b> — liquidity snapshot older than 30 min</div>"
+             if stale else "")
+    banner = (f"candidate feature · no history yet · <b>not used</b> in the forecast · "
+              f"{html.escape(str(d.get('exchange')))} · {html.escape(str(d.get('fetched_at'))) }")
+    return (f'<section class="card" style="grid-column:1/-1">'
+            f'<h1 style="margin-bottom:8px">HL venue liquidity &amp; forecast audit</h1>'
+            f'<div class="muted" style="margin-bottom:8px">{banner}</div>{flags}'
+            f'<table><thead><tr><th>metric</th><th>value</th><th>metric</th><th>value</th></tr></thead>'
+            f'<tbody><tr><td>open interest</td><td>{_big(d.get("open_interest_usd", 0))}</td>'
+            f'<td>24 h volume</td><td>{_big(d.get("volume_24h_usd", 0))}</td></tr>'
+            f'<tr><td>24 h liquidations</td><td>{_big(d.get("liq_24h_usd", 0))} '
+            f'(L {d.get("long_share", 0):.0%})</td>'
+            f'<td>contracts</td><td>{int(d.get("contracts", 0))}</td></tr>'
+            f'<tr><td>taker / maker fee</td><td>{d.get("taker_fee_pct", 0):.1f} / '
+            f'{d.get("maker_fee_pct", 0):.1f} bps</td>'
+            f'<td>history</td><td>{exch} exchange · {coins} coin snapshots</td></tr></tbody></table>'
+            f'<h1 style="margin:12px 0 8px;font-size:14px">top open interest</h1>'
+            f'<table><thead><tr><th>coin</th><th>px</th><th>OI</th><th>funding</th></tr></thead>'
+            f'<tbody>{rows}</tbody></table>'
+            f'<div class="muted" style="margin-top:8px">forecast audit: all models tested, '
+            f'<b>no model promoted</b> (16-state CRPS 0.08051 vs unconditional 0.08030) — '
+            f'see research/FORECAST_AUDIT.md</div></section>')
+
+
 def render(store: Store, out: Path, *, address: str | None = None,
            account_state: dict | None = None, alpaca_override: dict | None = None) -> Path:
     h = store.health()
@@ -470,6 +515,7 @@ def render(store: Store, out: Path, *, address: str | None = None,
 {_tape_card()}
 {_carry_card()}
 {_e1_card()}
+{_liquidity_card()}
     <section class="card"><h1 style="margin-bottom:8px">research state</h1>
     <table>{research_rows}</table>
     </section>

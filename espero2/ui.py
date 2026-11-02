@@ -395,6 +395,16 @@ def _table(title: str, headers: list[str], rows: list[tuple]) -> "Table":
     return tbl
 
 
+def liquidity_rows(d: dict) -> list[tuple[str, str]]:
+    if not d:
+        return []
+    return [("open interest", f"${d.get('open_interest_usd', 0)/1e9:,.2f}B"),
+            ("24h volume", f"${d.get('volume_24h_usd', 0)/1e9:,.2f}B"),
+            ("24h liq", f"${d.get('liq_24h_usd', 0)/1e6:,.1f}M (long {d.get('long_share', 0):.0%})"),
+            ("contracts", f"{int(d.get('contracts', 0))}"),
+            ("fees taker/maker", f"{d.get('taker_fee_pct', 0):.1f} / {d.get('maker_fee_pct', 0):.1f} bps")]
+
+
 def research_view(console: "Console") -> None:
     console.print(Text("E1 progress — counts only, no statistic", style="bold"))
     console.print(_table("", ["field", "value"], e1_rows(_json("research/e1_progress.json"))))
@@ -414,6 +424,11 @@ def research_view(console: "Console") -> None:
     console.print()
     console.print(Text("BTC tape", style="bold"))
     console.print(_table("", ["source", "prints", "taker buy", "CVD", "divergence"], tape))
+    liq = liquidity_rows(_json("research/forecast_liquidity.json"))
+    if liq:
+        console.print()
+        console.print(Text("HL venue liquidity — candidate, not used in the forecast", style="bold"))
+        console.print(_table("", ["metric", "value"], liq))
 
 
 def _research(console) -> None:
