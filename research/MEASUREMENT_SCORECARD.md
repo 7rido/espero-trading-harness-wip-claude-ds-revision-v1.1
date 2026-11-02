@@ -31,6 +31,10 @@ Every number below is from this repo. No new tests were run for the ratings exce
 | **Tape edges (sweep / absorption / block / divergence)** | BTC, 29 days, 3,200+ events | 8 cells, **0 BH**; means +0.8 to −4.5 bps, all under 9 bps cost; holdout never opened | 1 | 4 |
 | **Implied vol / VRP** | — | no data | n/a | n/a |
 
+**Not rated:** the order-flow & liquidity map (`LIQUIDITY_MAP.md`) describes current book depth, taker
+flow and public liquidation prices. It makes no directional claim and has no forward test, so it gets
+no scorecard row.
+
 ## What the ratings say
 
 1. **Only the liquidation mechanism earns a prediction rating above 5.** It is the one result that

@@ -12,11 +12,11 @@ at the top.
 
 ## Current state (2026-11-01)
 
-- **171 tests** green; working tree clean, pushed.
+- **232 tests** green; working tree clean, pushed.
 - **Paper loop running** under the plumbing window (`PLUMBING.md` to 2026-12-31): BTC/ETH/SOL, vol-target
   2 %, funding gate 25 %/yr, $500 cap. Books are **void** and never read as evidence.
 - **E1 recording**: 11 seed events, 0 forced trades; window to 2027-04-30, 70 % power, OBF boundaries set.
-- **Dashboard**: operator optics (10 markets, connections, data sources), gated forecasts, BTC tape.
+- **Dashboard**: operator optics (10 markets, connections, data sources), gated forecasts, BTC tape, order-flow & liquidity map.
 - **Research**: the liquidation mechanism is the only directional result that survives selection;
   carry/XS/regimes/tape edges fail; volatility, VPIN and maker fills are risk/execution instruments.
 - **Data**: 16 substrate tables — see `research/DATA_INVENTORY.md`.
@@ -27,7 +27,7 @@ at the top.
 - **Major**: a new capability (shorts, funding, supervisor) or a schema change.
 - **Minor**: a fix, a test, a doc line, a label.
 - **Breaking**: changes the meaning of an existing journal row or CLI flag; always noted.
-- Tests: `python -m unittest discover -s tests -t .` — currently **171 passing**.
+- Tests: `python -m unittest discover -s tests -t .` — currently **232 passing**.
 
 ---
 
@@ -67,6 +67,28 @@ at the top.
   keeps it clean and turns the E1 feed into a dated audit trail of exactly what the recorder saw.
 - **Scheduled**: appended to the sync chain after the progress step.
 - Verified by running it now: `e1 commit: no changes`, exit 0.
+
+### 2026-11-01 · order flow & liquidity map (book pools, taker flow, exact HL ladder)
+
+- **`research/liquidity_map.py`**: three descriptive layers per market, one JSON snapshot. No signal,
+  no ledger row, no order path.
+- **Resting pools**: Coinbase spot full L2 book, 10 bps buckets inside +/-2 %, touch excluded, adjacent
+  selected buckets merged, top three per side. Pool price is notional-weighted; share is of all depth
+  on that side in the window.
+- **Order flow**: Coinbase spot trades, last 30 minutes or the last 1,000 prints, taker buy share, net
+  taker USD and the largest print. `side_agreement` checks the taker-side assumption (55 % floor).
+- **Liquidation clusters**: the newest local `hlcollect` snapshot, using Hyperliquid's own
+  `liquidationPx` per position. Longs below the mark and shorts above, 25 bps buckets, 50 bps
+  suppression, +/-30 % window, top three per side, plus sample notional against venue open interest.
+  This is the exact ladder from idea 3, not a leverage estimate.
+- **Dashboard**: "order flow & liquidity map" card, three markets side by side; book/trade venue and
+  perp ladder are labelled, the cross-venue basis is shown, and the card flags a stale map or a
+  position snapshot older than two hours.
+- **Note**: `research/LIQUIDITY_MAP.md` documents the method, the sample coverage and what is not
+  observable (hidden orders, cancels, positions outside the top 2,000, forward heatmaps).
+- **Scheduled**: in the 15-minute optics job after `forecast`, before `tape --live`, so a tape
+  failure does not block the map.
+- Tests: 17 map cases + 6 card cases; suite **232**.
 
 ### 2026-11-01 · TUI polish: responsive tables and a research strip
 

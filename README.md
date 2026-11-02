@@ -13,11 +13,11 @@ research documents are in [`reference/`](reference), and its 46 numbered tests a
 
 | | |
 |---|---|
-| tests | **171** green; `scripts/check.sh` also validates audit citations and the ledger |
+| tests | **232** green; `scripts/check.sh` also validates audit citations and the ledger |
 | paper loop | **running** (`io.espero2.paper`, 60 s): BTC/ETH/SOL, vol-target 2 %, 25 %/yr funding gate, $500 cap |
 | books | **void** — `sma` runs as `plumbing` under the window to 2026-12-31; never read as evidence |
 | E1 | recording; **11 seed events, 0 forced trades**; window 2026-10-31 → 2027-04-30, 70 % power |
-| dashboard | books, **operator optics** (10 markets, connections, data freshness), **forecasts** (capped at WATCH), **BTC tape** |
+| dashboard | books, **operator optics** (10 markets, connections, data freshness), **forecasts** (capped at WATCH), **BTC tape**, **order-flow & liquidity map** |
 | agent layer | catalog + sandboxed executor + brief; privileged verbs (`run`, `order`, `trade`) refused |
 | data | 16 substrate tables — see [`DATA_INVENTORY.md`](research/DATA_INVENTORY.md) |
 | repo | clean, pushed |
@@ -56,7 +56,7 @@ It is recorded daily and not read until 2027-04-30.
 python3 -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt
 
-python -m unittest discover -s tests -t .     # 171 tests
+python -m unittest discover -s tests -t .     # 232 tests
 bash scripts/check.sh                         # tests + audit citations + ledger
 python scripts/health_check.py                # unattended jobs alive?
 python -m espero2.cli ledger                  # what may run, and why
@@ -69,7 +69,7 @@ python -m espero2.cli run --coin BTC --once --allow-plumbing   # one paper cycle
 | job | when | what it does |
 |---|---|---|
 | `io.espero2.paper` | 60 s | paper loop, vol-target sizing, funding gate |
-| `io.espero2.optics` | 15 min | `optics → forecast → tape --live` (dashboard data) |
+| `io.espero2.optics` | 15 min | `optics → forecast → liquidity_map → tape --live` (dashboard data) |
 | `io.espero2.sync` | 07:45 | sync → `e1_feed` → `e1_recorder` → daily tape → carry → E1 data commit |
 | `io.espero2.health` | 08:30 | fails loudly if the copy or the E1 feed stalls |
 | GitHub Actions | every push | tests, audit citations, ledger validation |
@@ -79,8 +79,8 @@ python -m espero2.cli run --coin BTC --once --allow-plumbing   # one paper cycle
 ```
 espero2/     ledger gate, paper engine, risk, dashboard, venue clients (HL testnet, Coinbase, Alpaca)
 agent/       tool catalog, sandboxed executor, briefing, smoke test — no trading tools
-research/    audit, replications, E1, tape/VPIN/maker studies, registrations, scorecard, data inventory
-tests/       171 tests, including those that assert a test is *refused*
+research/    audit, replications, E1, tape/VPIN/maker studies, liquidity map, registrations, scorecard, data inventory
+tests/       232 tests, including those that assert a test is *refused*
 scripts/     CI, health, sync, E1 refresh, launchd installers
 reference/   the original repository's research documents, verbatim (87 files)
 ```
@@ -89,6 +89,7 @@ reference/   the original repository's research documents, verbatim (87 files)
 
 - [`MEASUREMENT_SCORECARD.md`](research/MEASUREMENT_SCORECARD.md) — every measurement rated for prediction and risk use.
 - [`DATA_INVENTORY.md`](research/DATA_INVENTORY.md) — every table, rows, span.
+- [`LIQUIDITY_MAP.md`](research/LIQUIDITY_MAP.md) — book pools, taker flow and the exact Hyperliquid liquidation ladder.
 - [`RESULTS_hardening.md`](research/RESULTS_hardening.md) — selection cost, E1 power, maker fills.
 - [`PLUMBING.md`](PLUMBING.md) — the window the paper loop runs under.
 

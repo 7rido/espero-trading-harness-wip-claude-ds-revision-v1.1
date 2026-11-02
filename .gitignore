@@ -77,6 +77,9 @@ research/tape_live.json
 research/tape_series.csv.gz
 data_tape/
 
+# generated order-flow & liquidity map
+research/liquidity_map.json
+
 # oi snapshots for the cascade detector
 research/oi_history.csv
 
