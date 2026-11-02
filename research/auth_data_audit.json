@@ -1,0 +1,20 @@
+{
+ "as_of": "2026-11-02T02:42:48Z",
+ "hyperliquid": {
+  "network": "testnet",
+  "address_present": true,
+  "positions": 1,
+  "open_orders": 0,
+  "fills": 666,
+  "funding_payments": 345,
+  "portfolio_periods": 8
+ },
+ "coinbase": {
+  "environment": "sandbox",
+  "accounts": 4,
+  "portfolios": 2,
+  "orders": 4,
+  "fills": 3
+ },
+ "note": "counts only; no balances, keys, order ids or fills are written"
+}

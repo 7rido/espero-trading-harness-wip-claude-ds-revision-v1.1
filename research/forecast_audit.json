@@ -1,0 +1,164 @@
+{
+ "tables": {
+  "bars_daily": {
+   "rows": 82774,
+   "symbols": 42,
+   "from": "2020-01-01",
+   "to": "2026-03-31"
+  },
+  "rv": {
+   "rows": 82774,
+   "symbols": 42,
+   "from": "2020-01-01",
+   "to": "2026-03-31"
+  },
+  "funding": {
+   "rows": 108374,
+   "symbols": 56,
+   "from": "2023-01-01 00:00:00",
+   "to": "2025-06-30 00:00:00"
+  },
+  "funding_multi": {
+   "rows": 38198,
+   "symbols": 30,
+   "from": "2025-07-01 00:00:00.007000",
+   "to": "2026-10-31 17:00:00.038000"
+  },
+  "metrics": {
+   "rows": 105120,
+   "symbols": 1,
+   "from": "2025-10-31 00:00:00",
+   "to": "2026-10-30 23:55:00"
+  },
+  "tardis_derivative": {
+   "rows": 4415916,
+   "symbols": 2,
+   "from": "2025-01-01 00:00:00.015000",
+   "to": "2026-10-01 23:59:59.001000"
+  },
+  "tardis_liquidations": {
+   "rows": 44353,
+   "symbols": 2,
+   "from": "2025-01-01 00:00:17.372000",
+   "to": "2026-10-01 23:59:12.138000"
+  }
+ },
+ "forecast_at": "2026-11-02T01:24:17+00:00",
+ "current_universe": [
+  {
+   "coin": "BTC",
+   "counts": {
+    "bars_daily": 2282,
+    "rv": 2282,
+    "funding_multi": 3820,
+    "metrics": 0,
+    "tardis_derivative": 2211602
+   },
+   "verdict": "covered"
+  },
+  {
+   "coin": "ENA",
+   "counts": {
+    "bars_daily": 0,
+    "rv": 0,
+    "funding_multi": 0,
+    "metrics": 0,
+    "tardis_derivative": 0
+   },
+   "verdict": "no price history"
+  },
+  {
+   "coin": "ETH",
+   "counts": {
+    "bars_daily": 2282,
+    "rv": 2282,
+    "funding_multi": 3820,
+    "metrics": 0,
+    "tardis_derivative": 0
+   },
+   "verdict": "covered"
+  },
+  {
+   "coin": "HYPE",
+   "counts": {
+    "bars_daily": 0,
+    "rv": 0,
+    "funding_multi": 0,
+    "metrics": 0,
+    "tardis_derivative": 0
+   },
+   "verdict": "no price history"
+  },
+  {
+   "coin": "NEAR",
+   "counts": {
+    "bars_daily": 1989,
+    "rv": 1989,
+    "funding_multi": 0,
+    "metrics": 0,
+    "tardis_derivative": 0
+   },
+   "verdict": "no current funding"
+  },
+  {
+   "coin": "PUMP",
+   "counts": {
+    "bars_daily": 0,
+    "rv": 0,
+    "funding_multi": 0,
+    "metrics": 0,
+    "tardis_derivative": 0
+   },
+   "verdict": "no price history"
+  },
+  {
+   "coin": "SOL",
+   "counts": {
+    "bars_daily": 2020,
+    "rv": 2020,
+    "funding_multi": 3818,
+    "metrics": 105120,
+    "tardis_derivative": 2204314
+   },
+   "verdict": "covered"
+  },
+  {
+   "coin": "UNI",
+   "counts": {
+    "bars_daily": 0,
+    "rv": 0,
+    "funding_multi": 0,
+    "metrics": 0,
+    "tardis_derivative": 0
+   },
+   "verdict": "no price history"
+  },
+  {
+   "coin": "XRP",
+   "counts": {
+    "bars_daily": 2272,
+    "rv": 2272,
+    "funding_multi": 3820,
+    "metrics": 0,
+    "tardis_derivative": 0
+   },
+   "verdict": "covered"
+  },
+  {
+   "coin": "ZEC",
+   "counts": {
+    "bars_daily": 2242,
+    "rv": 2242,
+    "funding_multi": 0,
+    "metrics": 0,
+    "tardis_derivative": 0
+   },
+   "verdict": "no current funding"
+  }
+ ],
+ "notes": [
+  "bars_daily/rv are the historical state inputs; funding is the old funding table.",
+  "funding_multi, metrics and tardis_* are newer and are not used by regime_signs.py yet.",
+  "A current coin with no bars/rv cannot be mapped to a historical state cell."
+ ]
+}

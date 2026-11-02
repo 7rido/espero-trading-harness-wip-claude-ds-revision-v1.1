@@ -1,0 +1,106 @@
+{
+ "start": "2020-01-01",
+ "end": "2026-11-01",
+ "coins": {
+  "BTC": {
+   "bars": 2497,
+   "first": "2020-01-01",
+   "last": "2026-11-01",
+   "state2": "up/low",
+   "ret60": 0.01194181252600024,
+   "vol_pct": 0.2261904761904762,
+   "live_state": "down/low/low",
+   "live_label": "CONTEXT ONLY"
+  },
+  "ETH": {
+   "bars": 2497,
+   "first": "2020-01-01",
+   "last": "2026-11-01",
+   "state2": "down/low",
+   "ret60": -0.049606203703316365,
+   "vol_pct": 0.12301587301587301,
+   "live_state": "down/low/high",
+   "live_label": "CONTEXT ONLY"
+  },
+  "SOL": {
+   "bars": 1964,
+   "first": "2021-06-17",
+   "last": "2026-11-01",
+   "state2": "down/low",
+   "ret60": -0.059860557768924405,
+   "vol_pct": 0.17063492063492064,
+   "live_state": "down/low/high",
+   "live_label": "CONTEXT ONLY"
+  },
+  "XRP": {
+   "bars": 1593,
+   "first": "2020-01-01",
+   "last": "2026-11-01",
+   "state2": "down/low",
+   "ret60": -0.07522025616347072,
+   "vol_pct": 0.47619047619047616,
+   "live_state": "down/low/high",
+   "live_label": "CONTEXT ONLY"
+  },
+  "ZEC": {
+   "bars": 2155,
+   "first": "2020-12-08",
+   "last": "2026-11-01",
+   "state2": "up/low",
+   "ret60": 0.5122396919227845,
+   "vol_pct": 0.14682539682539683,
+   "live_state": "up/low/n/a",
+   "live_label": "UNMAPPED"
+  },
+  "NEAR": {
+   "bars": 1523,
+   "first": "2022-09-01",
+   "last": "2026-11-01",
+   "state2": "up/high",
+   "ret60": 1.2731614135625597,
+   "vol_pct": 0.5714285714285714,
+   "live_state": "up/high/n/a",
+   "live_label": "UNMAPPED"
+  },
+  "HYPE": {
+   "bars": 270,
+   "first": "2026-02-05",
+   "last": "2026-11-01",
+   "state2": "up/low",
+   "ret60": 0.0721876145108098,
+   "vol_pct": 0.096,
+   "live_state": "up/low/n/a",
+   "live_label": "UNMAPPED"
+  },
+  "PUMP": {
+   "bars": 475,
+   "first": "2025-07-15",
+   "last": "2026-11-01",
+   "state2": "up/low",
+   "ret60": 0.025465230166503483,
+   "vol_pct": 0.5,
+   "live_state": "down/low/n/a",
+   "live_label": "UNMAPPED"
+  },
+  "ENA": {
+   "bars": 515,
+   "first": "2025-06-05",
+   "last": "2026-11-01",
+   "state2": "up/high",
+   "ret60": 0.22570049604504638,
+   "vol_pct": 0.6507936507936508,
+   "live_state": "up/high/n/a",
+   "live_label": "UNMAPPED"
+  },
+  "UNI": {
+   "bars": 2237,
+   "first": "2020-09-17",
+   "last": "2026-11-01",
+   "state2": "up/high",
+   "ret60": 0.23133958621632233,
+   "vol_pct": 0.5873015873015873,
+   "live_state": "up/low/n/a",
+   "live_label": "UNMAPPED"
+  }
+ }
+}
