@@ -1,7 +1,14 @@
 # Result — conditional suite over all the data we hold
 
-**Verdict: 51 cells, zero survive FDR.** But the direction is consistent enough across independent
-states to be worth writing down: **crowded positioning underperforms**. Every cell here is
+**Verdict (corrected 2026-11-01): 17 of 51 cells pass BH at 10 %.** The first run reported zero because
+the p-values used a broken normal-tail approximation that capped around 0.006 for large z. The direction
+is the same and now has within-suite significance: **crowded positioning underperforms**.
+
+**But none of the economically meaningful cells survives the full family.** The premium cell's p is
+0.009; over the 121-cell program family that is **0.66**. The cells that do survive family-wise
+correction are sub-cost effects (e.g. "3 % below the 20-day high", −3.6 bps at 1 d, z 4.02) — real, but
+unable to pay a 9 bps round trip. So: statistical significance exists at suite level, none of it is both
+family-wise significant and economic. Every cell here is
 market-relative (coin return minus that day's cross-section), so the 2020–2026 bull drift is removed —
 which is what makes the earlier raw means disappear.
 

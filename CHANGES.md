@@ -33,6 +33,23 @@ at the top.
 
 ## Changelog
 
+### 2026-11-01 · correction: conditional-suite FDR was computed with a broken tail
+
+- **The bug**: `conditional_suite.py` and `regime_signs.py` used a tanh normal approximation that plateaus
+  near p≈0.006 for large z. The suite's first run therefore reported **0/51 BH passes**; with the exact
+  error function, **17/51 pass** at 10 %.
+- **What passes now**: premium top quintile 7d (−222 bps mean, −252 median, 36 % up, z 2.61, p 0.009),
+  funding top quintile 7d (−104 bps), and several high-n sub-cost cells.
+- **What still fails**: the premium cell over the full **121-cell family** gives family-wise p **0.66**;
+  the cells that survive family-wise correction (e.g. 3 % below 20-day high, z 4.02) move only −3.6 bps,
+  far below the 9 bps cost. So the conclusion "nothing both significant and economic" holds — but the
+  earlier "zero passes" sentence was wrong and is corrected in the result doc and scorecard.
+- **Regime cells rechecked**: best cell recomputed to z **1.81** (p 0.07) — my earlier "z 2.7" was an
+  estimate, not a result. 16/16 still fail BH (threshold 0.00625).
+- **Audit rerun**: `forecast_audit.py --eval` reproduced 47,842 rows, CRPS 0.08051 / 0.08011 / 0.08030 —
+  no model promoted; that is a walk-forward comparison, not an FDR test.
+- Tests: **209** green; `scripts/check.sh` passes.
+
 ### 2026-11-01 · PR #6 visible in the product
 
 - **Dashboard** gains **"HL venue liquidity & forecast audit"**: OI $10.75B, 24 h volume $2.51B,

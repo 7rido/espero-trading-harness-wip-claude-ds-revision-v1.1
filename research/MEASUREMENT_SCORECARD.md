@@ -13,7 +13,7 @@ Every number below is from this repo. No new tests were run for the ratings exce
 | **Liquidation mechanism** | 28k breaks, 10 coins, 2023–24 | forced−organic t −5.13, p 2.9e-7; **survives 121-cell correction** | **9** | 8 |
 | **Realised volatility (HAR)** | 38 symbols | QLIKE 0.393 vs EWMA 0.450, beats on 35/38 | 1 | **9** |
 | **Funding level** | 2023–2025, 42 symbols | carry design t 3.13; family-wise 0.19 → fails | 3 | 6 |
-| **Basis / premium** | 1,121 obs | 7d median −252 bps, 36% up; FDR 0.68 → fails | 4 | 6 |
+| **Basis / premium** | 1,121 obs | 7d median −252 bps, 36% up; **passes suite BH (p 0.009)** but family-wise over 121 cells = **0.66** → fails the program bar | **5** | 6 |
 | **Trend (SMA, 60d)** | 42 symbols, 6 yr | SMA retired (tracked hold); regime cells fail | 1 | 3 |
 | **Volume** | 17.5k obs | 51-cell suite: no FDR pass | 2 | 4 |
 | **Open-interest change** | SOL, 117 days | 12 cells, 0 with \|t\|≥2 | 1 | 5 |
