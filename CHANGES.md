@@ -33,6 +33,20 @@ at the top.
 
 ## Changelog
 
+### 2026-11-01 · live forecast coverage completed (PR #6 follow-through)
+
+- **PR #6 merged** the research layer (`forecast_audit.py`, `forecast_liquidity.py`, `auth_data_audit.py`)
+  but left the live forecast with **6 UNMAPPED** markets, because `optics.py` reads only Binance
+  `funding_multi` and those coins had no rows.
+- **The archive had them**: `funding_fetch.py` pulled Binance monthly funding for HYPE, ZEC, NEAR, PUMP,
+  ENA, XPL (and UNI, which appeared in the top-10 during the run) — 1,400–2,900 rows each, plus HL hourly
+  and OKX where available.
+- **Live result**: forecast now **10/10 CONTEXT ONLY, 0 UNMAPPED**; states resolve for every market
+  (BTC `down/low/low`, −187 bps 20 d; HYPE/ZEC `up/low/high`, −319 bps; NEAR/ENA `up/high/high`, −426 bps).
+- **`scripts/refresh_funding.sh`**: refreshes funding for the 17-coin universe once a day, appended to the
+  07:45 sync chain before the E1 data commit, so coverage cannot silently decay.
+- No change to `forecast.py` or `optics.py`: the fix was data and scheduling, as the PR intended.
+
 ### 2026-11-01 · E1 event log auto-committed daily
 
 - **`scripts/e1_commit.sh`**: after the 07:45 recorder runs, commits `e1_events.csv`, `e1_status.json`,

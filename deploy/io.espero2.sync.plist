@@ -7,7 +7,7 @@
     <array>
         <string>/bin/bash</string>
         <string>-lc</string>
-        <string>cd __DIR__ &amp;&amp; /usr/bin/python3 scripts/sync_from_original.py &amp;&amp; .venv/bin/python research/e1_feed.py &amp;&amp; .venv/bin/python research/e1_recorder.py &amp;&amp; .venv/bin/python research/tape.py &amp;&amp; .venv/bin/python research/carry_sleeve.py &amp;&amp; .venv/bin/python research/e1_progress.py &amp;&amp; ./scripts/e1_commit.sh</string>
+        <string>cd __DIR__ &amp;&amp; /usr/bin/python3 scripts/sync_from_original.py &amp;&amp; .venv/bin/python research/e1_feed.py &amp;&amp; .venv/bin/python research/e1_recorder.py &amp;&amp; .venv/bin/python research/tape.py &amp;&amp; .venv/bin/python research/carry_sleeve.py &amp;&amp; .venv/bin/python research/e1_progress.py &amp;&amp; ./scripts/refresh_funding.sh &amp;&amp; ./scripts/e1_commit.sh</string>
     </array>
     <key>WorkingDirectory</key><string>__DIR__</string>
     <key>StartCalendarInterval</key>
