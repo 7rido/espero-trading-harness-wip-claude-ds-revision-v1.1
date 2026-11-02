@@ -16,6 +16,8 @@ import importlib.util
 import json
 import pathlib
 
+import math
+
 import numpy as np
 import pandas as pd
 
@@ -89,7 +91,7 @@ def long_sample() -> list[dict]:
         sd = (r["ci_hi_bps"] - r["ci_lo_bps"]) / 3.92
         z = abs(r["mean_bps"]) / sd if sd > 0 else 0.0
         # normal tail without scipy
-        pvals.append(float(np.exp(-0.5 * z * z)))
+        pvals.append(float(math.erfc(abs(z) / math.sqrt(2))))
     order = np.argsort(pvals)
     m = len(pvals)
     k_max = 0

@@ -12,6 +12,8 @@ import json
 import pathlib
 
 import duckdb
+import math
+
 import numpy as np
 import pandas as pd
 
@@ -103,7 +105,7 @@ def main() -> int:
         se = sd / np.sqrt(n_eff)
         z = abs(r["mean_bps"]) / se if se > 0 else 0.0
         # two-sided normal tail
-        pvals.append(float(2 * (1 - 0.5 * (1 + np.tanh(z / np.sqrt(2) * 0.7978845608)))))
+        pvals.append(float(math.erfc(abs(z) / math.sqrt(2))))
     order = np.argsort(pvals)
     m = len(pvals)
     k_max = 0

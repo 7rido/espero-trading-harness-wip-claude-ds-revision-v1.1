@@ -599,6 +599,18 @@ at the top.
 - **Unchanged by design**: ledger gate, paper engine, order paths, launchd plists; the running loop
   was not touched.
 
+### 2026-11-01 · README refreshed to the day's state
+
+- **Current-state table** corrected: 209 tests, 20 ledger rows with an exact status breakdown (0 holds,
+  1 plumbing, 2 replication, 2 trial, 5 retired, 10 audit), and E1's live counts (34 events, 5 forced
+  breaks, 4 complete 4 h holds, next OBF look 2026-11-30).
+- **Evidence table extended**: pairs (0/231 raw, 3/435 residual and unprofitable), regime families
+  (none pass validation), crowded positioning (descriptive only).
+- **New section "What changed on 2026-11-01"**: E1 feed path, multi-venue data, tape/VPIN/maker/
+  regime/sizing studies, carry sleeve, risk wiring, the funding-cache fix, and the inheritance/CI rule.
+- **Quick start**: Python 3.12 required (the system `python3` is 3.9); `check.sh` now includes the
+  inheritance check.
+
 ### 2026-11-01 · inheritance map v2, the five-mode audit, and the rule in CI
 
 - **`research/INHERITANCE.md`** rewritten to the requested shape: per original id — what it

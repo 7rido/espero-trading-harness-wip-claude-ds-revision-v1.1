@@ -13,13 +13,14 @@ research documents are in [`reference/`](reference), and its 46 numbered tests a
 
 | | |
 |---|---|
-| tests | **171** green; `scripts/check.sh` also validates audit citations and the ledger |
+| tests | **209** green; `scripts/check.sh` also validates audit citations, the inheritance map and the ledger |
 | paper loop | **running** (`io.espero2.paper`, 60 s): BTC/ETH/SOL, vol-target 2 %, 25 %/yr funding gate, $500 cap |
 | books | **void** — `sma` runs as `plumbing` under the window to 2026-12-31; never read as evidence |
-| E1 | recording; **11 seed events, 0 forced trades**; window 2026-10-31 → 2027-04-30, 70 % power |
+| E1 | recording live; **34 events, 5 forced breaks, 4 complete 4 h holds**; window 2026-10-31 → 2027-04-30, next look 2026-11-30 (OBF z 4.80) |
 | dashboard | books, **operator optics** (10 markets, connections, data freshness), **forecasts** (capped at WATCH), **BTC tape** |
 | agent layer | catalog + sandboxed executor + brief; privileged verbs (`run`, `order`, `trade`) refused |
 | data | 16 substrate tables — see [`DATA_INVENTORY.md`](research/DATA_INVENTORY.md) |
+| ledger | **20 rows**: 0 `holds`, 1 `plumbing`, 2 `replication`, 2 `trial`, 5 `retired`, 10 `audit` |
 | repo | clean, pushed |
 
 ## What the evidence says
@@ -34,12 +35,31 @@ research documents are in [`reference/`](reference), and its 46 numbered tests a
 | Tape OFI at seconds? | **yes but sub-cost** — +0.22 bps at 30 s vs 9 bps cost | [`RESULTS_tape_study_2.md`](research/RESULTS_tape_study_2.md) |
 | Tape as volatility instrument? | **yes** — intensity→RV 1.74×, VPIN→variance (BH) | [`RESULTS_vpin.md`](research/RESULTS_vpin.md) |
 | Does vol-target sizing help? | **no on this signal** — Sharpe 0.49 vs 0.84 fixed at matched exposure | [`RESULTS_sizing.md`](research/RESULTS_sizing.md) |
+| Pairs (raw and market-residual)? | **no** — 0/231 survive FDR; 3/435 residual pairs survive, all unprofitable after costs | [`RESULTS_rp2`](research/RESULTS_rp2.md), [`RESULTS_rp3`](research/RESULTS_rp3.md) |
+| Do regime states separate forward returns? | **no** — nine families + `har_trend`, none passes FDR on validation; holdout-only `corr_high` | [`RESULTS_regimes.md`](research/RESULTS_regimes.md) |
+| Crowded positioning? | descriptive only — premium/funding top quintile underperforms in 7 d (−252 bps median, 36 % up), fails FDR | [`RESULTS_conditional_suite.md`](research/RESULTS_conditional_suite.md) |
 | SMA strategy? | retired — tracked an equal-weight hold | `strategy_ledger.csv` (`P1`) |
 
 **The only directional edge is the forced-liquidation bounce, and it is still a forward test.** E1's
 rules were committed before the first window day existed:
 [`PREREGISTRATION_2026-10-30-liq-executable.md`](research/PREREGISTRATION_2026-10-30-liq-executable.md).
 It is recorded daily and not read until 2027-04-30.
+
+## What changed on 2026-11-01
+
+- **E1 got its own feed path**: events derived locally from the raw aggr feed, refreshed daily, with
+  progress-only reporting (a test bans return/t/z fields on the dashboard).
+- **Data**: multi-venue funding (HL hourly, OKX, Binance), OKX liquidations, open interest, order-book
+  imbalance, Tardis samples; 16 tables in the substrate, mapped in `DATA_INVENTORY.md`.
+- **Studies**: tape study 1–2, VPIN, maker pilot, regime signs, tape-edge design, sizing, hardening —
+  all ledgered (`R11`–`R18`), most negative, all with a cost bar and BH where cells are counted.
+- **Carry sleeve**: registration committed before code, paper runner, daily job, dashboard card.
+- **Risk**: vol targeting and a funding gate wired and enabled; the sizing study says vol targeting
+  *lost* to fixed sizing on this signal, so it is on watch.
+- **Bug fixed**: the loop was charging 1 bp/h constant funding on nearly every 60 s tick; it now charges
+  the cached venue rate between settlements.
+- **Governance**: inheritance map, five-mode audit of the eight previously unledgered docs (two gaps
+  found), `RESULT_TEMPLATE.md`, and `check_inheritance.py` in CI.
 
 ## The rules, enforced in code
 
@@ -53,11 +73,11 @@ It is recorded daily and not read until 2027-04-30.
 ## Quick start
 
 ```bash
-python3 -m venv .venv && . .venv/bin/activate
+python3.12 -m venv .venv && . .venv/bin/activate    # 3.10+ required (the system python3 is 3.9)
 pip install -r requirements.txt
 
-python -m unittest discover -s tests -t .     # 171 tests
-bash scripts/check.sh                         # tests + audit citations + ledger
+python -m unittest discover -s tests -t .     # 209 tests
+bash scripts/check.sh                         # tests + audit citations + inheritance + ledger
 python scripts/health_check.py                # unattended jobs alive?
 python -m espero2.cli ledger                  # what may run, and why
 python -m espero2.cli dashboard --open        # the page
@@ -80,7 +100,7 @@ python -m espero2.cli run --coin BTC --once --allow-plumbing   # one paper cycle
 espero2/     ledger gate, paper engine, risk, dashboard, venue clients (HL testnet, Coinbase, Alpaca)
 agent/       tool catalog, sandboxed executor, briefing, smoke test — no trading tools
 research/    audit, replications, E1, tape/VPIN/maker studies, registrations, scorecard, data inventory
-tests/       171 tests, including those that assert a test is *refused*
+tests/       209 tests, including those that assert a test is *refused*
 scripts/     CI, health, sync, E1 refresh, launchd installers
 reference/   the original repository's research documents, verbatim (87 files)
 ```
