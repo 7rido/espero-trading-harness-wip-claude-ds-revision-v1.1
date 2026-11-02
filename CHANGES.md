@@ -42,7 +42,7 @@ at the top.
 - **TUI** research view gains the same venue-liquidity block.
 - Banner states the honest status: candidate feature, no history yet, **not used in the forecast**.
 - Snapshot job `io.espero2.liquidity` runs every 15 minutes; card flags stale after 30.
-- Tests: 2 liquidity row tests; suite **195**.
+- Tests: 2 liquidity row tests; suite **209**.
 
 ### 2026-11-01 · live forecast coverage completed (PR #6 follow-through)
 
