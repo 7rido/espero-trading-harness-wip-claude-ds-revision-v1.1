@@ -1,0 +1,78 @@
+{
+ "start": "2025-01-01 00:00:00+00:00",
+ "venue": "hyperliquid",
+ "coins": {
+  "ZEC": {
+   "coin": "ZEC",
+   "rows": 9493,
+   "first": "2025-10-02 14:00:00.020000",
+   "last": "2026-11-02 02:00:00.037000",
+   "last_rate_bps_hour": 0.362654,
+   "fund7_bps_hour": 0.12944845833333335,
+   "fund7_annual_pct": 11.33968495,
+   "fund_pct": 0.7639269406392694,
+   "fund_state": "high",
+   "stale_days": 0.009530615069444444
+  },
+  "NEAR": {
+   "coin": "NEAR",
+   "rows": 16083,
+   "first": "2025-01-01 00:00:00.054000",
+   "last": "2026-11-02 02:00:00.037000",
+   "last_rate_bps_hour": 0.125,
+   "fund7_bps_hour": 0.10912274404761906,
+   "fund7_annual_pct": 9.559152378571428,
+   "fund_pct": 0.420662100456621,
+   "fund_state": "low",
+   "stale_days": 0.009961858888888888
+  },
+  "ENA": {
+   "coin": "ENA",
+   "rows": 16083,
+   "first": "2025-01-01 00:00:00.054000",
+   "last": "2026-11-02 02:00:00.037000",
+   "last_rate_bps_hour": 0.125,
+   "fund7_bps_hour": 0.13237042261904763,
+   "fund7_annual_pct": 11.595649021428574,
+   "fund_pct": 0.8692351598173516,
+   "fund_state": "high",
+   "stale_days": 0.01044347574074074
+  },
+  "UNI": {
+   "coin": "UNI",
+   "rows": 16083,
+   "first": "2025-01-01 00:00:00.054000",
+   "last": "2026-11-02 02:00:00.037000",
+   "last_rate_bps_hour": 0.125,
+   "fund7_bps_hour": 0.19287718452380953,
+   "fund7_annual_pct": 16.896041364285715,
+   "fund_pct": 0.9333904109589041,
+   "fund_state": "high",
+   "stale_days": 0.010871197175925926
+  },
+  "HYPE": {
+   "coin": "HYPE",
+   "rows": 16083,
+   "first": "2025-01-01 00:00:00.054000",
+   "last": "2026-11-02 02:00:00.037000",
+   "last_rate_bps_hour": 0.44564400000000004,
+   "fund7_bps_hour": 0.2569115654761905,
+   "fund7_annual_pct": 22.505453135714284,
+   "fund_pct": 0.9888127853881279,
+   "fund_state": "high",
+   "stale_days": 0.011296549560185186
+  },
+  "PUMP": {
+   "coin": "PUMP",
+   "rows": 11519,
+   "first": "2025-07-10 04:00:00.033000",
+   "last": "2026-11-02 02:00:00.037000",
+   "last_rate_bps_hour": 0.125,
+   "fund7_bps_hour": 0.10771805952380953,
+   "fund7_annual_pct": 9.436102014285714,
+   "fund_pct": 0.4843607305936073,
+   "fund_state": "low",
+   "stale_days": 0.011603221238425927
+  }
+ }
+}

@@ -51,9 +51,42 @@ the live universe. It does not change the substrate. After the fetch:
 | ENA | 515 | 2025-06-05 | 2026-11-01 | up/high |
 | UNI | 2,237 | 2020-09-17 | 2026-11-01 | up/high |
 
-All ten now have price history in the overlay. The limiting field is still **current funding**: ZEC,
-NEAR, HYPE, PUMP, ENA and UNI have no `funding_multi` history, so the 16-state model still labels
-them `UNMAPPED`. The overlay supports a future 2D fallback; it is not wired into the live forecast.
+All ten now have price history in the overlay. The limiting field is still **current funding**:
+ZEC, NEAR, HYPE, PUMP, ENA and UNI have no `funding_multi` history, so the 16-state model still
+labels them `UNMAPPED`. The overlay supports a future 2D fallback; it is not wired into the live
+forecast.
+
+### Funding coverage (Hyperliquid proxy)
+
+Binance and Bybit public endpoints are geo-blocked from this machine. Hyperliquid's public
+`fundingHistory` endpoint answers, so `python research/forecast_funding.py` paginates it into a
+research-only overlay.
+
+| coin | rows | first | 7d funding | percentile | state |
+|---|---:|---|---:|---:|---|
+| ZEC | 9,493 | 2025-10-02 | +11.3%/yr | 0.76 | high |
+| NEAR | 16,083 | 2025-01-01 | +9.6%/yr | 0.42 | low |
+| ENA | 16,083 | 2025-01-01 | +11.6%/yr | 0.87 | high |
+| UNI | 16,083 | 2025-01-01 | +16.9%/yr | 0.93 | high |
+| HYPE | 16,083 | 2025-01-01 | +22.5%/yr | 0.99 | high |
+| PUMP | 11,519 | 2025-07-10 | +9.4%/yr | 0.48 | low |
+
+Combined with the 2D states, all six now map to an existing 16-state cell:
+
+| coin | 3D state | label |
+|---|---|---|
+| ZEC | up/low/high | CONTEXT ONLY |
+| NEAR | up/high/low | CONTEXT ONLY |
+| ENA | up/high/high | CONTEXT ONLY |
+| UNI | up/high/high | CONTEXT ONLY |
+| HYPE | up/low/high | CONTEXT ONLY |
+| PUMP | up/low/low | CONTEXT ONLY |
+
+This removes the `UNMAPPED` reason, but not the evidence gate. The live forecast is unchanged: it
+still reads the old funding field, and the historical `regime_signs` cells were built with the
+Binance funding table. Using Hyperliquid percentiles inside those cells is a venue proxy, not a
+like-for-like replacement. The overlay is coverage and a candidate for a separate HL-specific model,
+not a promotion of the current forecast.
 
 ## Walk-forward evaluation
 
