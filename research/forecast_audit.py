@@ -140,10 +140,11 @@ def _state_frame() -> pd.DataFrame:
     rs = _regime_module()
     df = rs.build(rs.load())
     df["date"] = pd.to_datetime(df["date"])
-    df["state"] = (np.where(df["ret60"] > 0, "up", "down") + "/"
-                   + np.where(df["vol_pct"] > 0.5, "high", "low") + "/"
+    df["state2"] = (np.where(df["ret60"] > 0, "up", "down") + "/"
+                    + np.where(df["vol_pct"] > 0.5, "high", "low"))
+    df["state"] = (df["state2"] + "/"
                    + np.where(df["fund_pct"] > 0.5, "high", "low"))
-    cols = ["symbol", "date", "state", TARGET]
+    cols = ["symbol", "date", "state", "state2", TARGET]
     return df[cols].dropna(subset=["state", TARGET]).sort_values("date").reset_index(drop=True)
 
 
@@ -186,6 +187,7 @@ def evaluate() -> dict:
     if not dates:
         raise SystemExit("no test dates; check the substrate")
     conditional: list[dict] = []
+    conditional2d: list[dict] = []
     unconditional: list[dict] = []
     skipped_no_history = 0
     for date in dates:
@@ -200,6 +202,10 @@ def evaluate() -> dict:
             state: group[TARGET].to_numpy(dtype=float)
             for state, group in history.groupby("state")
         }
+        by_state2: dict[str, np.ndarray] = {
+            state: group[TARGET].to_numpy(dtype=float)
+            for state, group in history.groupby("state2")
+        }
         for row in test.itertuples(index=False):
             actual = float(getattr(row, TARGET))
             state_sample = by_state.get(str(row.state), np.empty(0))
@@ -209,8 +215,16 @@ def evaluate() -> dict:
             else:
                 sample = global_sample
                 used_fallback = True
+            sample2 = by_state2.get(str(row.state2), np.empty(0))
+            if len(sample2) >= MIN_TRAIN:
+                sample2_values = sample2
+                used_fallback2 = False
+            else:
+                sample2_values = global_sample
+                used_fallback2 = True
             for bucket, values, fallback in (
                 (conditional, sample, used_fallback),
+                (conditional2d, sample2_values, used_fallback2),
                 (unconditional, global_sample, False),
             ):
                 if len(values) < MIN_TRAIN:
@@ -237,8 +251,10 @@ def evaluate() -> dict:
         },
         "rows": len(conditional),
         "conditional": _score(conditional),
+        "conditional2d": _score(conditional2d),
         "unconditional": _score(unconditional),
         "fallback_rows": int(sum(1 for row in conditional if row["fallback"])),
+        "fallback_rows_2d": int(sum(1 for row in conditional2d if row["fallback"])),
         "skipped_dates": skipped_no_history,
         "notes": [
             "Walk-forward, no random splits; training outcomes end at least 20 days before the test outcome opens.",
@@ -251,7 +267,7 @@ def evaluate() -> dict:
     print(f"wrote {OUT_EVAL.relative_to(ROOT)}")
     print(f"test rows: {result['rows']:,} · fallback {result['fallback_rows']:,} "
           f"· skipped dates {result['skipped_dates']}")
-    for key in ("conditional", "unconditional"):
+    for key in ("conditional", "conditional2d", "unconditional"):
         s = result[key]
         print(f"{key:13s} n={s['n']:>7,} CRPS={s.get('crps_mean', float('nan')):.5f} "
               f"Brier={s.get('brier_mean', float('nan')):.5f} PIT={s.get('pit_mean', float('nan')):.3f}")

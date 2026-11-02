@@ -32,6 +32,29 @@ For the ten live forecast coins:
 
 So the six `UNMAPPED` rows are mostly a **data coverage** problem, not a model failure.
 
+### Research overlay
+
+`python research/forecast_coverage.py` fetches public Coinbase daily candles into
+`research/forecast_overlay.duckdb` (gitignored) and computes a two-dimensional trend/vol state for
+the live universe. It does not change the substrate. After the fetch:
+
+| coin | bars | first | last | 2D state |
+|---|---:|---|---|---|
+| BTC | 2,497 | 2020-01-01 | 2026-11-01 | up/low |
+| ETH | 2,497 | 2020-01-01 | 2026-11-01 | down/low |
+| SOL | 1,964 | 2021-06-17 | 2026-11-01 | down/low |
+| XRP | 1,593 | 2020-01-01 | 2026-11-01 | down/low |
+| ZEC | 2,155 | 2020-12-08 | 2026-11-01 | up/low |
+| NEAR | 1,523 | 2022-09-01 | 2026-11-01 | up/high |
+| HYPE | 270 | 2026-02-05 | 2026-11-01 | up/low |
+| PUMP | 475 | 2025-07-15 | 2026-11-01 | up/low |
+| ENA | 515 | 2025-06-05 | 2026-11-01 | up/high |
+| UNI | 2,237 | 2020-09-17 | 2026-11-01 | up/high |
+
+All ten now have price history in the overlay. The limiting field is still **current funding**: ZEC,
+NEAR, HYPE, PUMP, ENA and UNI have no `funding_multi` history, so the 16-state model still labels
+them `UNMAPPED`. The overlay supports a future 2D fallback; it is not wired into the live forecast.
+
 ## Walk-forward evaluation
 
 `python research/forecast_audit.py --eval` writes `research/forecast_eval.json`.
@@ -47,12 +70,14 @@ Result (47,842 test rows):
 | model | CRPS | Brier | PIT mean |
 |---|---:|---:|---:|
 | 16-state conditional | 0.08051 | 0.24024 | 0.518 |
+| 2D trend/vol conditional | 0.08011 | 0.23968 | 0.519 |
 | unconditional | **0.08030** | **0.23951** | 0.518 |
 
-The conditional model does **not** beat the unconditional baseline. It is slightly worse on both
-proper scores, and both PIT distributions are close to uniform but not perfectly calibrated.
+The 16-state model does **not** beat the unconditional baseline. The 2D trend/vol fallback is a
+mixed result: CRPS improves by 0.00019, but Brier worsens by 0.00017. That is not a robust win, and
+PIT is still close to uniform but not perfect.
 
-Interpretation: the current 16 hard state cells add no measurable forecast skill on this sample. The
+Interpretation: neither hard-cell model has demonstrated forecast skill on this sample. The
 `CONTEXT ONLY` labels are therefore justified. Adding a more complex model before extending coverage
 and features would only add overfitting risk.
 
@@ -61,10 +86,13 @@ and features would only add overfitting risk.
 1. **Extend coverage** — current bars/RV/funding for the active universe; unify symbol formats; add
    `funding_multi`, `metrics`, `premium`, and `tardis_derivative` where they have enough history.
 2. **Re-run this audit** after coverage; the conditional sample and PIT bins will change.
-3. **Then** try one model at a time (HAR-RV extension, shrinkage, quantile regression, HMM state
+3. **Test a 2D fallback** against the 16-state model and the unconditional baseline. It reduces
+   `UNMAPPED` rows, but the first result is a tie; do not promote it without a clearer CRPS/Brier
+   improvement.
+4. **Then** try one model at a time (HAR-RV extension, shrinkage, quantile regression, HMM state
    probabilities) and keep only models that beat the unconditional baseline on CRPS/Brier without
    destroying calibration.
-4. **Do not** use E1 holds or the sealed forward test as a forecast target.
+5. **Do not** use E1 holds or the sealed forward test as a forecast target.
 
 The audit is deliberately read-only. It does not write to `paper.db`, `strategy_ledger.csv`, or
 `research/forecast.json`.

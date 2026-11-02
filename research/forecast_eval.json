@@ -1,5 +1,5 @@
 {
- "as_of": "2026-11-02T01:41:54+00:00",
+ "as_of": "2026-11-02T01:55:46+00:00",
  "design": {
   "target": "20-day market-relative return (x20)",
   "test_start": "2023-01-01",
@@ -26,6 +26,24 @@
    3762
   ]
  },
+ "conditional2d": {
+  "n": 47842,
+  "crps_mean": 0.08010964701185688,
+  "brier_mean": 0.23968482741191663,
+  "pit_mean": 0.5194377002498222,
+  "pit_bins": [
+   2660,
+   3726,
+   4663,
+   5522,
+   5906,
+   6112,
+   5715,
+   5372,
+   4695,
+   3471
+  ]
+ },
  "unconditional": {
   "n": 47842,
   "crps_mean": 0.08029930568099217,
@@ -45,6 +63,7 @@
   ]
  },
  "fallback_rows": 607,
+ "fallback_rows_2d": 0,
  "skipped_dates": 0,
  "notes": [
   "Walk-forward, no random splits; training outcomes end at least 20 days before the test outcome opens.",
