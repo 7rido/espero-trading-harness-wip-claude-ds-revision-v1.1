@@ -13,7 +13,7 @@ research documents are in [`reference/`](reference), and its 46 numbered tests a
 
 | | |
 |---|---|
-| tests | **200** green; `scripts/check.sh` also validates audit citations and the ledger |
+| tests | **216** green; `scripts/check.sh` also validates audit citations and the ledger |
 | paper loop | **running** (`io.espero2.paper`, 60 s): BTC/ETH/SOL, vol-target 2 %, 25 %/yr funding gate, $500 cap |
 | books | **void** — `sma` runs as `plumbing` under the window to 2026-12-31; never read as evidence |
 | E1 | recording; **11 seed events, 0 forced trades**; window 2026-10-31 → 2027-04-30, 70 % power |
@@ -56,7 +56,7 @@ It is recorded daily and not read until 2027-04-30.
 python3 -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt
 
-python -m unittest discover -s tests -t .     # 200 tests
+python -m unittest discover -s tests -t .     # 216 tests
 bash scripts/check.sh                         # tests + audit citations + ledger
 python scripts/health_check.py                # unattended jobs alive?
 python -m espero2.cli ledger                  # what may run, and why
@@ -80,7 +80,7 @@ python -m espero2.cli run --coin BTC --once --allow-plumbing   # one paper cycle
 espero2/     ledger gate, paper engine, risk, dashboard, venue clients (HL testnet, Coinbase, Alpaca)
 agent/       tool catalog, sandboxed executor, briefing, smoke test — no trading tools
 research/    audit, replications, E1, tape/VPIN/maker studies, registrations, scorecard, data inventory
-tests/       200 tests, including those that assert a test is *refused*
+tests/       216 tests, including those that assert a test is *refused*
 scripts/     CI, health, sync, E1 refresh, launchd installers
 reference/   the original repository's research documents, verbatim (87 files)
 ```
