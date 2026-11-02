@@ -8,13 +8,16 @@ and `trial` need --allow-plumbing, which is the difference between "the loop wor
 from __future__ import annotations
 
 import csv
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
-LEDGER = Path(__file__).resolve().parents[1] / "strategy_ledger.csv"
+ROOT = Path(__file__).resolve().parents[1]
+LEDGER = ROOT / "strategy_ledger.csv"
 PLUMBING = Path("PLUMBING.md")
 STATUSES = {"plumbing", "trial", "replication", "holds", "retired", "audit"}
 YESNO = {"yes", "partly", "no", "na"}
+CITATION = re.compile(r"(?<![\w/])((?:research|reference)/[\w][\w./-]*\.(?:md|csv|json|py))")
 
 
 @dataclass(frozen=True)
@@ -29,11 +32,28 @@ class Row:
     note: str
 
 
+def citations(basis: str, note: str) -> list[str]:
+    """Repo-relative documents cited in a row's free-text evidence fields."""
+    return [m for text in (basis, note) for m in CITATION.findall(text or "")]
+
+
+def cited_file(rel: str) -> Path | None:
+    """The cited path when it is an existing file inside this repository, else None."""
+    target = (ROOT / rel).resolve()
+    try:
+        target.relative_to(ROOT.resolve())
+    except ValueError:
+        return None
+    return target if target.is_file() else None
+
+
 def load(path: Path = LEDGER) -> dict[str, Row]:
     if not path.exists():
         raise SystemExit(f"no ledger at {path}")
+    with path.open(newline="") as f:
+        raw = list(csv.DictReader(f))
     rows: dict[str, Row] = {}
-    for r in csv.DictReader(path.open()):
+    for r in raw:
         row = Row(**r)
         if row.status not in STATUSES:
             raise SystemExit(f"ledger: {row.id} has status {row.status!r}")
@@ -41,6 +61,10 @@ def load(path: Path = LEDGER) -> dict[str, Row]:
             raise SystemExit(f"ledger: {row.id} has an invalid yes/no field")
         if row.status == "holds" and not (row.estimator_matches_claim == "yes" and row.economic_bar == "yes"):
             raise SystemExit(f"ledger: {row.id} claims holds without a valid statistic and a cost bar")
+        for cite in citations(row.basis, row.note):
+            if cited_file(cite) is None:
+                raise SystemExit(f"ledger: {row.id} cites {cite!r}, which is not a file "
+                                 "in this repository")
         rows[row.strategy] = row
     return rows
 
