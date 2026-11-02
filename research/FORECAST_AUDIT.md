@@ -134,6 +134,18 @@ A single snapshot cannot be a deciding predictor. It can be a candidate feature 
 long/short liquidation imbalance, funding, volume) only after it has a recorded history and beats the
 unconditional baseline in the walk-forward audit. It is not wired into `forecast.py` or any decision.
 
+The snapshot is now scheduled every 15 minutes as `io.espero2.liquidity` (see
+`deploy/io.espero2.liquidity.plist` and `scripts/install-liquidity.sh`). The latest JSON is
+generated and gitignored; the history lives in `research/forecast_liquidity.duckdb`. Check sample
+coverage with:
+
+```text
+.venv/bin/python research/forecast_liquidity.py --status
+```
+
+Do not evaluate the feature until the sample covers multiple market regimes and the audit can use a
+purged walk-forward split. One day of 15-minute snapshots is not a meaningful sample.
+
 ## What to do next
 
 1. **Extend coverage** — current bars/RV/funding for the active universe; unify symbol formats; add

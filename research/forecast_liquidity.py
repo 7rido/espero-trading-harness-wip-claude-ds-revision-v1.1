@@ -103,11 +103,27 @@ def fetch() -> str:
     return urllib.request.urlopen(req, timeout=30).read().decode("utf-8", "replace")
 
 
+def status() -> dict:
+    if not OUT.exists():
+        return {"snapshots": 0, "days": 0, "first": None, "last": None}
+    con = duckdb.connect(str(OUT), read_only=True)
+    rows, first, last = con.execute(
+        "SELECT count(*), min(fetched_at), max(fetched_at) FROM exchange_snapshots"
+    ).fetchone()
+    con.close()
+    days = (last - first).total_seconds() / 86400 if first and last else 0
+    return {"snapshots": int(rows), "days": round(days, 2), "first": str(first), "last": str(last)}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--url", default=URL)
     ap.add_argument("--offline", default=None, help="parse a saved HTML file instead of fetching")
+    ap.add_argument("--status", action="store_true", help="report collection coverage without fetching")
     args = ap.parse_args()
+    if args.status:
+        print(json.dumps(status(), indent=1))
+        return 0
     page = pathlib.Path(args.offline).read_text() if args.offline else fetch()
     parsed = parse_exchange(page)
     fetched_at = dt.datetime.now(dt.timezone.utc).replace(microsecond=0)

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key><string>io.espero2.liquidity</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>-lc</string>
+        <string>cd __DIR__ &amp;&amp; .venv/bin/python research/forecast_liquidity.py</string>
+    </array>
+    <key>WorkingDirectory</key><string>__DIR__</string>
+    <key>StartInterval</key><integer>900</integer>
+    <key>RunAtLoad</key><true/>
+    <key>StandardOutPath</key><string>__DIR__/logs/liquidity.log</string>
+    <key>StandardErrorPath</key><string>__DIR__/logs/liquidity.err</string>
+</dict>
+</plist>
