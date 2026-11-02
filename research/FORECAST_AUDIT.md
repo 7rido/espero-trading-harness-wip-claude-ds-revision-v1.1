@@ -114,6 +114,26 @@ Interpretation: neither hard-cell model has demonstrated forecast skill on this 
 `CONTEXT ONLY` labels are therefore justified. Adding a more complex model before extending coverage
 and features would only add overfitting risk.
 
+
+### Liquidity dashboard: candidate, not predictor
+
+`python research/forecast_liquidity.py` snapshots
+[bitcoinliquidityheatmap.com/exchange/hyperliquid](https://bitcoinliquidityheatmap.com/exchange/hyperliquid)
+into `research/forecast_liquidity.duckdb` (gitignored) and a small
+`research/forecast_liquidity.json`. The snapshot has Hyperliquid OI, 24h volume, funding, 24h
+liquidations, long/short liquidation split and per-coin OI.
+
+Two limitations matter:
+
+- The site has no documented JSON API. The collector parses server-rendered HTML; it is a snapshot,
+  not a historical feed.
+- Its liquidation heatmap is **model-based** — OI, price and realized liquidations mapped to leverage
+  bands — not raw exchange liquidation levels.
+
+A single snapshot cannot be a deciding predictor. It can be a candidate feature (OI concentration,
+long/short liquidation imbalance, funding, volume) only after it has a recorded history and beats the
+unconditional baseline in the walk-forward audit. It is not wired into `forecast.py` or any decision.
+
 ## What to do next
 
 1. **Extend coverage** — current bars/RV/funding for the active universe; unify symbol formats; add
