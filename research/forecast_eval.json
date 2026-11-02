@@ -1,0 +1,55 @@
+{
+ "as_of": "2026-11-02T01:41:54+00:00",
+ "design": {
+  "target": "20-day market-relative return (x20)",
+  "test_start": "2023-01-01",
+  "embargo_days": 20,
+  "min_train": 100,
+  "fallback": "unconditional when a state has fewer than min_train outcomes"
+ },
+ "rows": 47842,
+ "conditional": {
+  "n": 47842,
+  "crps_mean": 0.0805126608073283,
+  "brier_mean": 0.24024300374210825,
+  "pit_mean": 0.5179882310690758,
+  "pit_bins": [
+   3325,
+   3617,
+   4517,
+   5284,
+   5740,
+   5955,
+   5526,
+   5333,
+   4783,
+   3762
+  ]
+ },
+ "unconditional": {
+  "n": 47842,
+  "crps_mean": 0.08029930568099217,
+  "brier_mean": 0.2395055499869781,
+  "pit_mean": 0.5183059398774235,
+  "pit_bins": [
+   2614,
+   3787,
+   4832,
+   5595,
+   5830,
+   6008,
+   5653,
+   5319,
+   4568,
+   3636
+  ]
+ },
+ "fallback_rows": 607,
+ "skipped_dates": 0,
+ "notes": [
+  "Walk-forward, no random splits; training outcomes end at least 20 days before the test outcome opens.",
+  "Conditional is the current 16-state empirical distribution; unconditional is the pooled baseline.",
+  "CRPS and Brier are proper scores; lower is better. PIT should be roughly uniform for calibration.",
+  "This evaluates the distribution, not the WATCH/context label gate."
+ ]
+}
