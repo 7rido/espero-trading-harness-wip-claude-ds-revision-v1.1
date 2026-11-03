@@ -33,6 +33,13 @@ at the top.
 
 ## Changelog
 
+### 2026-11-02 · VISION.md: the alignment document
+
+- **`VISION.md`** written: one-sentence product, seven taste principles, a list of specific
+  misalignments (fake BTC equity, stale dashboard renderer, "merged" vs "working", an uncomputed z-score,
+  testnet prices), five decisions with recommendations, and four questions I genuinely can't answer.
+- README links it first. The rule: major changes are checked against it, and a struck line is a decision.
+
 ### 2026-11-01 · correction: conditional-suite FDR was computed with a broken tail
 
 - **The bug**: `conditional_suite.py` and `regime_signs.py` used a tanh normal approximation that plateaus

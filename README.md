@@ -9,6 +9,11 @@ Built from a read-only audit of the earlier `espero` repository, not forked from
 research documents are in [`reference/`](reference), and its 46 numbered tests are audited in
 [`research/AUDIT_BY_NUMBER.md`](research/AUDIT_BY_NUMBER.md).
 
+## Vision
+
+[`VISION.md`](VISION.md) is the alignment document: the product, the taste it encodes, where the agent
+has misread it, and the five decisions that set the direction. Read that first.
+
 ## Current state (2026-11-01)
 
 | | |
