@@ -6,13 +6,13 @@
  "window_state": "open",
  "ledger_exists": true,
  "ledger_bytes": 9725,
- "events": 65,
- "days_with_events": 3,
+ "events": 91,
+ "days_with_events": 4,
  "first_day": "2026-10-30",
- "last_day": "2026-11-01",
- "forced_down_breaks": 21,
+ "last_day": "2026-11-02",
+ "forced_down_breaks": 37,
  "complete_holds": {
-  "4h": 16,
+  "4h": 32,
   "12h": 3,
   "1d": 0
  },
